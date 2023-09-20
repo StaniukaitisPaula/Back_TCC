@@ -1,25 +1,7 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-
-enum Genero {
-  Masculino,
-  Feminino,
-  Outro 
-}
-
-enum Funcao {
-  TOP,
-  JG,
-  MID,
-  ADC,
-  SUP
-}
-
-enum Jogo{
-  League_of_legends,
-  CSGO,
-  Valorant
-}
-
+import { Genero } from "./enum/Genero";
+import { Jogo } from "./enum/Jogo";
+import { Funcao } from "./enum/Funcao";
 
 
 
@@ -30,19 +12,19 @@ export class Perfil {
   @PrimaryGeneratedColumn()
   id: number
   @Column({length: 100, unique: true})
-  nome_usuario: String
+  nome_usuario: string
   @Column({length: 100})
-  nome_completo: String
+  nome_completo?: string
   @Column({length: 255, unique: true})
-  email: String
+  email: string
   @Column({type : 'text'})
-  senha: String
+  senha: string
   @Column({type : 'date'})
   data_nascimento: Date
   @Column({type : 'text'})
-  foto_perfil: String
+  foto_perfil: string
   @Column({type : 'text'})
-  foto_capa: String
+  foto_capa: string
   @Column({type : 'int'})
   genero: Genero
 }
@@ -58,9 +40,9 @@ export class Jogador {
   @JoinColumn()
   perfil: Perfil
   @Column({length: 100})
-  nickname: String
+  nickname: string
   @Column({length: 255})
-  biografia: String
+  biografia: string
   @Column({type: 'int'})
   jogo: Jogo
   @Column({type: 'int'})
@@ -75,7 +57,9 @@ export class Organizador{
   @JoinColumn()
   perfil: Perfil
   @Column({length: 100})
-  nome_organizacao: String
+  nome_organizacao: string
   @Column({type: 'text'})
-  foto_organizacao: String
+  foto_organizacao: string
+  @Column({type: 'text'})
+  biografia: string
 }
