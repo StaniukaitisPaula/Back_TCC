@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
-import { BadRequestError } from "../helpers/api-erros";
+import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
 import { jogadorRepository , organizadorRepository, userRepository } from "../repositories/UserRepository"
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
-import { env } from "process";
+import { resolve } from "path";
+
+
 
 
 export class UserController {
@@ -153,6 +155,25 @@ export class UserController {
 
   }
 
+  async getProfile(req: Request, res: Response) {
+
+    const user = req.user
+    
+    const player = await jogadorRepository.findOneBy({ perfil : user.id })
+    const organizador = await organizadorRepository.findOneBy({ perfil : user.id })
+
+
+    if(player){
+      const response =  { type: 'jogador', user , player}
+      
+      return res.json(response)
+    }else{
+      const response =  { type: 'organizador', user , organizador}
+      
+      return res.json(response)
+    }
+
+  }
 
 
 }
