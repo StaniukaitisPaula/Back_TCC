@@ -144,7 +144,7 @@ export class UserController {
       throw new BadRequestError('Login ou senha invalidos')
     }
 
-    const token = jwt.sign({ id: user.id}, process.env.JWT_PASS ?? '', {expiresIn: "2h"})
+    const token = jwt.sign({ id: user.id}, process.env.JWT_PASS ?? '', {expiresIn: "1d", })
 
     const {senha:_, ...userLogin} = user
 
