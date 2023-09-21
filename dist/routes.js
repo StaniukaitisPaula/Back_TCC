@@ -6,6 +6,5 @@ const authMiddleware_1 = require("./middlewares/authMiddleware");
 const routes = (0, express_1.Router)();
 routes.post('/user', new UserController_1.UserController().create);
 routes.post('/login', new UserController_1.UserController().login);
-routes.use(authMiddleware_1.authMiddleware);
-routes.get('/profile', new UserController_1.UserController().getProfile);
+routes.get('/profile', authMiddleware_1.authMiddleware, new UserController_1.UserController().getProfile);
 exports.default = routes;

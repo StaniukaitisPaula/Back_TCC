@@ -7,9 +7,7 @@ const routes = Router()
 routes.post('/user', new UserController().create)
 routes.post('/login', new UserController().login)
 
-routes.use(authMiddleware)
-
-routes.get('/profile', new UserController().getProfile)
+routes.get('/profile',authMiddleware , new UserController().getProfile)
 
 
 export default routes
