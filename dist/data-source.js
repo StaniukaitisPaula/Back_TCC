@@ -4,11 +4,11 @@ exports.AppDataSource = void 0;
 require("dotenv/config");
 require("reflect-metadata");
 const typeorm_1 = require("typeorm");
-const port = process.env.DB_PORT;
+//const port = process.env.DB_PORT as number | undefined
 exports.AppDataSource = new typeorm_1.DataSource({
     type: 'mysql',
     host: process.env.DB_HOST,
-    port: port,
+    port: 3306,
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
