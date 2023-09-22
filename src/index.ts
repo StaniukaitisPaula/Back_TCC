@@ -23,7 +23,7 @@ AppDataSource.initialize().then(() => {
 	})
 	app.use(routes)
 	
-	return app.listen(process.env.PORT, () => {
+	return app.listen(3000, () => {
 		console.log("online");
 	})
 })

@@ -20,7 +20,7 @@ data_source_1.AppDataSource.initialize().then(() => {
         next();
     });
     app.use(routes_1.default);
-    return app.listen(process.env.PORT, () => {
+    return app.listen(3000, () => {
         console.log("online");
     });
 });
