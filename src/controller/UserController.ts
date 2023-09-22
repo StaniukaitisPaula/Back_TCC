@@ -33,7 +33,7 @@ export class UserController {
       foto_capa       == undefined ||
       genero          == undefined ||
       tipo_de_usuario == undefined 
-      ) throw new BadRequestError('JSON invalido')
+      ) throw new BadRequestError('JSON invalido' + req.body)
     
 
     const userEmailExists = await userRepository.findOneBy({email})

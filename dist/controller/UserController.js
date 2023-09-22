@@ -20,7 +20,7 @@ class UserController {
             foto_capa == undefined ||
             genero == undefined ||
             tipo_de_usuario == undefined)
-            throw new api_erros_1.BadRequestError('JSON invalido');
+            throw new api_erros_1.BadRequestError('JSON invalido' + req.body);
         const userEmailExists = await UserRepository_1.userRepository.findOneBy({ email });
         const usernameExists = await UserRepository_1.userRepository.findOneBy({ nome_usuario });
         if (userEmailExists) {
