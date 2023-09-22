@@ -3,20 +3,26 @@ import express, { NextFunction, Request, Response } from 'express'
 import { AppDataSource } from './data-source'
 import { errorMiddleware } from './middlewares/error'
 import routes from './routes'
-
-import { option } from './middlewares/options'
+import cors from 'cors'
 
 AppDataSource.initialize().then(() => {
 	const app = express()
 
 	app.use(express.json())
-
-	app.use(routes)
-
+	
 	app.use(errorMiddleware)
-
-	app.use(option)
-
+	
+	app.use((req : Request, res: Response, next: NextFunction) => {
+		
+		res.header('Access-Control-Allow-Origin','*')
+		res.header('Access-Control-Allow-Methods','GET, POST, PUT, DELETE, OPTIONS')
+		
+		app.use(cors())
+		
+		next()
+	})
+	app.use(routes)
+	
 	return app.listen(process.env.PORT, () => {
 		console.log("online");
 	})
