@@ -11,6 +11,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class UserController {
     async create(req, res) {
         const { nome_usuario, nome_completo, email, senha, data_nascimento, foto_perfil, foto_capa, genero, tipo_de_usuario, } = req.body;
+        console.log(req.body);
         if (nome_usuario == undefined ||
             nome_completo == undefined ||
             email == undefined ||
@@ -20,7 +21,7 @@ class UserController {
             foto_capa == undefined ||
             genero == undefined ||
             tipo_de_usuario == undefined)
-            throw new api_erros_1.BadRequestError('JSON invalido' + req.body);
+            throw new api_erros_1.BadRequestError('JSON invalido');
         const userEmailExists = await UserRepository_1.userRepository.findOneBy({ email });
         const usernameExists = await UserRepository_1.userRepository.findOneBy({ nome_usuario });
         if (userEmailExists) {
