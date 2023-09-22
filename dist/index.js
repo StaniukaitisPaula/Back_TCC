@@ -8,7 +8,6 @@ const express_1 = __importDefault(require("express"));
 const data_source_1 = require("./data-source");
 const error_1 = require("./middlewares/error");
 const routes_1 = __importDefault(require("./routes"));
-const cors_1 = __importDefault(require("cors"));
 const options_1 = require("./middlewares/options");
 data_source_1.AppDataSource.initialize().then(() => {
     const app = (0, express_1.default)();
@@ -16,7 +15,6 @@ data_source_1.AppDataSource.initialize().then(() => {
     app.use(routes_1.default);
     app.use(error_1.errorMiddleware);
     app.use(options_1.option);
-    app.use((0, cors_1.default)());
     return app.listen(process.env.PORT, () => {
         console.log("online");
     });
