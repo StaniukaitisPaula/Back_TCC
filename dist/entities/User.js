@@ -65,7 +65,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.OneToOne)(() => Perfil),
     (0, typeorm_1.JoinColumn)(),
-    __metadata("design:type", Number)
+    __metadata("design:type", Perfil)
 ], Jogador.prototype, "perfil", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 100 }),
@@ -76,11 +76,11 @@ __decorate([
     __metadata("design:type", String)
 ], Jogador.prototype, "biografia", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'int' }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Jogador.prototype, "jogo", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'int' }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Jogador.prototype, "funcao", void 0);
 Jogador = __decorate([
@@ -96,7 +96,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.OneToOne)(() => Perfil),
     (0, typeorm_1.JoinColumn)(),
-    __metadata("design:type", Number)
+    __metadata("design:type", Perfil)
 ], Organizador.prototype, "perfil", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 100 }),

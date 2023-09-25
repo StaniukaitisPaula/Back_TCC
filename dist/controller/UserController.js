@@ -100,14 +100,20 @@ class UserController {
     }
     async getProfile(req, res) {
         const user = req.user;
-        const player = await UserRepository_1.jogadorRepository.findOneBy({ perfil: user.id });
-        const organizador = await UserRepository_1.organizadorRepository.findOneBy({ perfil: user.id });
-        if (player) {
-            const response = { type: 'jogador', user, player };
+        //const player = await jogadorRepository.findBy({ perfil : user.id })
+        const player = await UserRepository_1.jogadorRepository.find({ relations: { perfil: true }, where: { perfil: { id: user.id } } });
+        const organizador = await UserRepository_1.organizadorRepository.find({ relations: { perfil: true }, where: { perfil: { id: user.id } } });
+        if (player.length > 0) {
+            player[0].perfil.senha = "";
+            const result = player[0];
+            const response = { type: 'jogador', result };
             return res.json(response);
         }
         else {
-            const response = { type: 'organizador', user, organizador };
+            console.log(organizador);
+            organizador[0].perfil.senha = "";
+            const result = organizador[0];
+            const response = { type: 'organizador', result };
             return res.json(response);
         }
     }

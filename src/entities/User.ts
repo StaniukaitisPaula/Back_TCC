@@ -38,14 +38,14 @@ export class Jogador {
   id: number
   @OneToOne(() => Perfil)
   @JoinColumn()
-  perfil: number
+  perfil: Perfil
   @Column({length: 100})
   nickname: string
   @Column({length: 255})
   biografia: string
-  @Column({type: 'int'})
+  @Column()
   jogo: Jogo
-  @Column({type: 'int'})
+  @Column()
   funcao: Funcao
 }
 
@@ -55,7 +55,7 @@ export class Organizador{
   id: number
   @OneToOne(() => Perfil)
   @JoinColumn()
-  perfil: number
+  perfil: Perfil
   @Column({length: 100})
   nome_organizacao: string
   @Column({type: 'text'})
