@@ -21,10 +21,6 @@ export class Perfil {
   senha: string
   @Column({type : 'date'})
   data_nascimento: Date
-  @Column({type : 'text'})
-  foto_perfil: string
-  @Column({type : 'text'})
-  foto_capa: string
   @Column({type : 'int'})
   genero: Genero
 }
@@ -58,8 +54,6 @@ export class Organizador{
   perfil: Perfil
   @Column({length: 100})
   nome_organizacao: string
-  @Column({type: 'text'})
-  foto_organizacao: string
   @Column({type: 'text'})
   biografia: string
 }

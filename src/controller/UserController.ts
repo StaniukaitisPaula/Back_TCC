@@ -31,8 +31,6 @@ export class UserController {
       email           == undefined ||
       senha           == undefined ||
       data_nascimento == undefined ||
-      foto_perfil     == undefined ||
-      foto_capa       == undefined ||
       genero          == undefined ||
       tipo_de_usuario == undefined 
       ) throw new BadRequestError('JSON invalido')
@@ -58,8 +56,6 @@ export class UserController {
       email,
       senha: hashSenha,
       data_nascimento,
-      foto_perfil,
-      foto_capa,
       genero
     })
 
@@ -110,7 +106,6 @@ export class UserController {
       const newOrganizador = organizadorRepository.create({
         perfil: idPerfil,
         nome_organizacao,
-        foto_organizacao,
         biografia
       })
 
