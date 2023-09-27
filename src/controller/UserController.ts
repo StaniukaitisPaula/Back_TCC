@@ -17,8 +17,6 @@ export class UserController {
       email,
       senha,
       data_nascimento,
-      foto_perfil,
-      foto_capa,
       genero,
       tipo_de_usuario,
     } = req.body
