@@ -17,8 +17,6 @@ class UserController {
             email == undefined ||
             senha == undefined ||
             data_nascimento == undefined ||
-            foto_perfil == undefined ||
-            foto_capa == undefined ||
             genero == undefined ||
             tipo_de_usuario == undefined)
             throw new api_erros_1.BadRequestError('JSON invalido');
@@ -37,8 +35,6 @@ class UserController {
             email,
             senha: hashSenha,
             data_nascimento,
-            foto_perfil,
-            foto_capa,
             genero
         });
         await UserRepository_1.userRepository.save(newUser);
@@ -69,7 +65,6 @@ class UserController {
             const newOrganizador = UserRepository_1.organizadorRepository.create({
                 perfil: idPerfil,
                 nome_organizacao,
-                foto_organizacao,
                 biografia
             });
             await UserRepository_1.organizadorRepository.save(newOrganizador);

@@ -41,14 +41,6 @@ __decorate([
     __metadata("design:type", Date)
 ], Perfil.prototype, "data_nascimento", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'text' }),
-    __metadata("design:type", String)
-], Perfil.prototype, "foto_perfil", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'text' }),
-    __metadata("design:type", String)
-], Perfil.prototype, "foto_capa", void 0);
-__decorate([
     (0, typeorm_1.Column)({ type: 'int' }),
     __metadata("design:type", Number)
 ], Perfil.prototype, "genero", void 0);
@@ -102,10 +94,6 @@ __decorate([
     (0, typeorm_1.Column)({ length: 100 }),
     __metadata("design:type", String)
 ], Organizador.prototype, "nome_organizacao", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'text' }),
-    __metadata("design:type", String)
-], Organizador.prototype, "foto_organizacao", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'text' }),
     __metadata("design:type", String)
