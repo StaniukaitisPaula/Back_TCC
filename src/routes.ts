@@ -9,6 +9,6 @@ routes.post('/register', new UserController().create)
 routes.post('/login', new UserController().login)
 
 routes.get('/profile',authMiddleware, new UserController().getProfile)
-
+// routes.put('/update', new UserController())
 
 export default routes

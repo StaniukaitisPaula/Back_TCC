@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository , organizadorRepository, userRepository } from "../repositories/UserRepository"
+import { jogadorRepository, organizadorRepository, userRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
+import nodemailer from 'nodemailer';
+import crypto     from 'crypto';
 import { resolve } from "path";
+import { Perfil } from '../entities/User';
 
 
 
@@ -177,5 +180,68 @@ export class UserController {
 
   }
 
+  async updateProfile(req: Request, res: Response){
+
+    const user = req.user
+
+    const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
+    const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
+
+    
+
+
 
 }
+
+
+}
+
+
+
+
+
+
+// export const forgotPassword = async (req: Request, res: Response) => {
+
+//   const {
+//      login
+//    } = req.body
+
+//   try{
+//      const user = await userRepository.findOneBy([{ email : login }])
+
+   
+//     const transporter = nodemailer.createTransport({
+//        host: "sandbox.smtp.mailtrap.io",
+//        port: 2525,
+//        auth: {
+//       user: "91c03c9f7733ee",
+//         pass: "****724d"
+//      }
+//     })
+
+//   const newPassword = crypto.randomBytes(4).toString('hex')
+    
+//   transporter.sendMail({
+//     from: 'Administrador <074b0757bf-31f276@inbox.mailtrap.io>',
+//        to: login,
+//        subject: 'Recuperação de Senha!',
+//       html: `<p>Olá, sua nova senha para acessar o sistemas é: ${newPassword}</p><br/><a href="http://localhost:8080/login">Sistema</a>`
+       
+//      }).then(
+//       () => {
+//         userRepository(Perfil){
+
+//           password: newPassword
+//         })
+//        }
+//      )
+
+
+//    } catch (error){
+//      return res.status(404).json({
+//       message: 'User not found'
+//     })
+//      }
+
+//  }
