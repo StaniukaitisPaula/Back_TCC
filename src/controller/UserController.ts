@@ -12,6 +12,8 @@ import { Perfil } from '../entities/User';
 
 
 export class UserController {
+
+  //CADASTRO
   async create(req: Request, res: Response){
   
     const {
@@ -124,6 +126,7 @@ export class UserController {
 
   }
 
+  //LOGIN
   async login(req: Request, res: Response){
     const {
       login,
@@ -152,7 +155,7 @@ export class UserController {
     })
 
   }
-
+//PERFIL
   async getProfile(req: Request, res: Response) {
 
     const user = req.user
@@ -177,7 +180,7 @@ export class UserController {
     }
 
   }
-
+// ATUALIZAR PERFIL
   async updateProfile(req: Request, res: Response){
 
     const user = req.user
@@ -185,10 +188,46 @@ export class UserController {
     const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
     const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
 
-    
+}
 
 
+async validationMobile(req: Request, res: Response){
+  
+  const {
+    nome_usuario,
+    nome_completo,
+    email,
+    senha,
+    data_nascimento,
+    foto_perfil,
+    foto_capa,
+    genero,
+    tipo_de_usuario,
+  } = req.body
+  
+  console.log(req.body)
 
+  if(
+    nome_usuario    == undefined ||
+    nome_completo   == undefined ||
+    email           == undefined ||
+    senha           == undefined ||
+    data_nascimento == undefined ||
+    genero          == undefined ||
+    tipo_de_usuario == undefined 
+    ) throw new BadRequestError('JSON invalido')
+  
+
+  const userEmailExists = await userRepository.findOneBy({email})
+  const usernameExists = await userRepository.findOneBy({nome_usuario})
+  
+
+  if(userEmailExists){
+    throw new BadRequestError('Email já cadastrado!')
+  }
+  if(usernameExists){
+    throw new BadRequestError('Nome de usuario já cadastrado!')
+  }
 }
 
 
