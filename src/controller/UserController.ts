@@ -182,6 +182,34 @@ export class UserController {
     }
 
   }
+
+
+  async getProfileById(req: Request, res: Response) {
+
+    const user = req.params.id
+    
+    //const player = await jogadorRepository.findBy({ perfil : user.id })
+    const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : parseInt(user) } } })
+    const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : parseInt(user) }  
+       } })
+
+    if(player.length > 0){
+      player[0].perfil.senha = ""
+      const result = player[0]
+      const response =  { type: 'jogador', result}
+      
+      return res.json(response)
+    }else{
+      console.log(organizador);
+      organizador[0].perfil.senha = ""
+      const result = organizador[0]
+      const response =  { type: 'organizador', result}
+      
+      return res.json(response)
+    }
+
+    }
+
 // ATUALIZAR PERFIL
   async updateProfile(req: Request, res: Response){
 
@@ -189,6 +217,9 @@ export class UserController {
 
     const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
     const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
+
+
+
 
 }
 
