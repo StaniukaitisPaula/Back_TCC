@@ -10,7 +10,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class UserController {
     async create(req, res) {
-        const { nome_usuario, nome_completo, email, senha, data_nascimento, foto_perfil, foto_capa, genero, tipo_de_usuario, } = req.body;
+        const { nome_usuario, nome_completo, email, senha, data_nascimento, genero, tipo_de_usuario, } = req.body;
         console.log(req.body);
         if (nome_usuario == undefined ||
             nome_completo == undefined ||
