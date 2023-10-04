@@ -23,26 +23,22 @@ export class UserController {
       senha,
       data_nascimento,
       genero,
-      tipo_de_usuario,
+      nickname,
+      biografia
     } = req.body
-    
-    console.log(req.body)
 
     if(
-      nome_usuario    == undefined ||
-      nome_completo   == undefined ||
-      email           == undefined ||
-      senha           == undefined ||
-      data_nascimento == undefined ||
-      genero          == undefined ||
-      tipo_de_usuario == undefined 
-      ) throw new BadRequestError('JSON invalido')
+      nome_usuario    == undefined || nome_usuario    == "" ||
+      email           == undefined || email           == "" ||
+      senha           == undefined || senha           == "" ||
+      data_nascimento == undefined || data_nascimento == "" ||
+      genero          == undefined || 
+      nickname        == undefined || nickname        == "" 
+      ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
     
-
     const userEmailExists = await userRepository.findOneBy({email})
     const usernameExists = await userRepository.findOneBy({nome_usuario})
     
-
     if(userEmailExists){
       throw new BadRequestError('Email já cadastrado!')
     }
@@ -59,75 +55,21 @@ export class UserController {
       email,
       senha: hashSenha,
       data_nascimento,
-      genero
+      genero,
+      nickname,
+      biografia
     })
 
     await userRepository.save(newUser)
 
-    const idPerfil = await userRepository.getId(newUser)
-
     const {senha: _, ...user} = newUser
 
-    if(tipo_de_usuario == 0){
-
-      if(!req.body.jogador){
-        await userRepository.delete({ id : idPerfil })
-        throw new BadRequestError('Falta Informacoes do jogador')
-      }
-      const {
-        nickname,
-        biografia,
-        jogo,
-        funcao
-      } = req.body.jogador
-
-
-
-      const newPlayer = jogadorRepository.create({
-        perfil: idPerfil,
-        nickname,
-        biografia,
-        jogo,
-        funcao
-      })
-
-      await jogadorRepository.save(newPlayer)
-
-      return res.status(201).json(user)
-
-    }else if(tipo_de_usuario == 1){
-      if(!req.body.organizador){
-        await userRepository.delete({ id : idPerfil })
-        throw new BadRequestError('Falta Informacoes do organizador')
-      }
-      const {
-        nome_organizacao,
-        foto_organizacao,
-        biografia
-      } = req.body.organizador
-
-      const newOrganizador = organizadorRepository.create({
-        perfil: idPerfil,
-        nome_organizacao,
-        biografia
-      })
-
-      await organizadorRepository.save(newOrganizador)
-
-      return res.status(201).json(user)
-    }else{
-      await userRepository.delete({ id : idPerfil })
-      throw new BadRequestError('Tipo de Usuario invalido')
-    }
-
-
-    
-
-
+    return res.status(201).json(user)
   }
 
   //LOGIN
   async login(req: Request, res: Response){
+
     const {
       login,
       senha
@@ -145,124 +87,123 @@ export class UserController {
       throw new BadRequestError('Login ou senha invalidos')
     }
 
-    const token = jwt.sign({ id: user.id}, process.env.JWT_PASS ?? '', {expiresIn: "1d", })
+     const token = jwt.sign({ id: user.id}, process.env.JWT_PASS ?? '', {expiresIn: "1d", })
 
-    const {senha:_, ...userLogin} = user
+     const {senha:_, ...userLogin} = user
 
     return res.json({
       user: userLogin,
       token: token
     })
-
   }
-//PERFIL
-  async getProfile(req: Request, res: Response) {
 
-    const user = req.user
+// //PERFIL
+//   async getProfile(req: Request, res: Response) {
+
+//     const user = req.user
     
-    //const player = await jogadorRepository.findBy({ perfil : user.id })
-    const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
-    const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
+//     //const player = await jogadorRepository.findBy({ perfil : user.id })
+//     const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
+//     const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
 
-    if(player.length > 0){
-      player[0].perfil.senha = ""
-      const result = player[0]
-      const response =  { type: 'jogador', result}
+//     if(player.length > 0){
+//       player[0].perfil.senha = ""
+//       const result = player[0]
+//       const response =  { type: 'jogador', result}
       
-      return res.json(response)
-    }else{
-      console.log(organizador);
-      organizador[0].perfil.senha = ""
-      const result = organizador[0]
-      const response =  { type: 'organizador', result}
+//       return res.json(response)
+//     }else{
+//       console.log(organizador);
+//       organizador[0].perfil.senha = ""
+//       const result = organizador[0]
+//       const response =  { type: 'organizador', result}
       
-      return res.json(response)
-    }
+//       return res.json(response)
+//     }
 
-  }
+//   }
 
+//   async getProfileById(req: Request, res: Response) {
 
-  async getProfileById(req: Request, res: Response) {
-
-    const user = req.params.id
+//     const user = req.params.id
     
-    //const player = await jogadorRepository.findBy({ perfil : user.id })
-    const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : parseInt(user) } } })
-    const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : parseInt(user) }  
-       } })
+//     //const player = await jogadorRepository.findBy({ perfil : user.id })
+//     const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : parseInt(user) } } })
+//     const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : parseInt(user) }  
+//        } })
 
-    if(player.length > 0){
-      player[0].perfil.senha = ""
-      const result = player[0]
-      const response =  { type: 'jogador', result}
+//     if(player.length > 0){
+//       player[0].perfil.senha = ""
+//       const result = player[0]
+//       const response =  { type: 'jogador', result}
       
-      return res.json(response)
-    }else{
-      console.log(organizador);
-      organizador[0].perfil.senha = ""
-      const result = organizador[0]
-      const response =  { type: 'organizador', result}
+//       return res.json(response)
+//     }else{
+//       console.log(organizador);
+//       organizador[0].perfil.senha = ""
+//       const result = organizador[0]
+//       const response =  { type: 'organizador', result}
       
-      return res.json(response)
-    }
+//       return res.json(response)
+//     }
 
-    }
+//   }
 
-// ATUALIZAR PERFIL
-  async updateProfile(req: Request, res: Response){
+// // ATUALIZAR PERFIL
+//   async updateProfile(req: Request, res: Response){
 
-    const user = req.user
+//     const user = req.user
 
-    const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
-    const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
-
-
+//     const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
+//     const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
 
 
-}
 
 
-async validationMobile(req: Request, res: Response){
+//   }
+
+
+//   async validationMobile(req: Request, res: Response){
   
-  const {
-    nome_usuario,
-    nome_completo,
-    email,
-    senha,
-    data_nascimento,
-    foto_perfil,
-    foto_capa,
-    genero,
-    tipo_de_usuario,
-  } = req.body
+//   const {
+//     nome_usuario,
+//     nome_completo,
+//     email,
+//     senha,
+//     data_nascimento,
+//     foto_perfil,
+//     foto_capa,
+//     genero,
+//     tipo_de_usuario,
+//   } = req.body
   
-  console.log(req.body)
+//   console.log(req.body)
 
-  if(
-    nome_usuario    == undefined ||
-    nome_completo   == undefined ||
-    email           == undefined ||
-    senha           == undefined ||
-    data_nascimento == undefined ||
-    genero          == undefined ||
-    tipo_de_usuario == undefined 
-    ) throw new BadRequestError('JSON invalido')
-  
-
-  const userEmailExists = await userRepository.findOneBy({email})
-  const usernameExists = await userRepository.findOneBy({nome_usuario})
+//   if(
+//     nome_usuario    == undefined ||
+//     nome_completo   == undefined ||
+//     email           == undefined ||
+//     senha           == undefined ||
+//     data_nascimento == undefined ||
+//     genero          == undefined ||
+//     tipo_de_usuario == undefined 
+//     ) throw new BadRequestError('JSON invalido')
   
 
-  if(userEmailExists){
-    throw new BadRequestError('Email já cadastrado!')
-  }
-  if(usernameExists){
-    throw new BadRequestError('Nome de usuario já cadastrado!')
-  }
-}
+//   const userEmailExists = await userRepository.findOneBy({email})
+//   const usernameExists = await userRepository.findOneBy({nome_usuario})
+  
+
+//   if(userEmailExists){
+//     throw new BadRequestError('Email já cadastrado!')
+//   }
+//   if(usernameExists){
+//     throw new BadRequestError('Nome de usuario já cadastrado!')
+//   }
+//   }
 
 
-}
+//}
 
 
 
@@ -311,5 +252,4 @@ async validationMobile(req: Request, res: Response){
 //       message: 'User not found'
 //     })
 //      }
-
-//  }
+}

@@ -1,10 +1,8 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Genero } from "./enum/Genero";
 import { Jogo } from "./enum/Jogo";
 import { Funcao } from "./enum/Funcao";
-
-
-
+import { Elo } from "./enum/Elo";
 
 
 @Entity('tbl_perfil')
@@ -23,10 +21,11 @@ export class Perfil {
   data_nascimento: Date
   @Column({type : 'int'})
   genero: Genero
+  @Column({length: 100})
+  nickname: string
+  @Column({length: 255})
+  biografia?: string
 }
-
-
-
 
 @Entity('tbl_jogador')
 export class Jogador {
@@ -34,26 +33,43 @@ export class Jogador {
   id: number
   @OneToOne(() => Perfil)
   @JoinColumn()
-  perfil: Perfil
-  @Column({length: 100})
-  nickname: string
-  @Column({length: 255})
-  biografia: string
-  @Column()
+  perfil_id: Perfil
+  @Column({type : 'int'})
   jogo: Jogo
-  @Column()
+  @Column({type : 'int'})
   funcao: Funcao
+  @Column({type : 'int'})
+  elo: Elo
 }
 
-@Entity('tbl_organizador')
-export class Organizador{
+@Entity('tbl_organizacao')
+export class Organizacao{
   @PrimaryGeneratedColumn()
   id: number
   @OneToOne(() => Perfil)
   @JoinColumn()
-  perfil: Perfil
+  dono_id: Perfil
+  // @OneToMany(() => Time, (time) => time.organizacao)
+  // @JoinColumn()
+  // times: Time[]
   @Column({length: 100})
   nome_organizacao: string
   @Column({type: 'text'})
   biografia: string
 }
+
+// @Entity('tbl_time')
+// export class Time{
+//   @PrimaryGeneratedColumn()
+//   id: number
+//   @ManyToOne(() => Organizacao, (organizacao) => organizacao.times)
+//   @JoinColumn()
+//   organizacao: Organizacao
+//   @Column({length: 100})
+//   nome_time: string
+//   @Column({type: 'text'})
+//   biografia: string
+//   @OneToMany(() => Organizacao, (organizacao) => organizacao.times)
+//   @JoinColumn()
+//   jogadores: Organizacao
+// }
