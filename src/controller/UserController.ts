@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
 import { jogadorRepository, organizadorRepository, userRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
@@ -97,31 +97,33 @@ export class UserController {
     })
   }
 
-// //PERFIL
-//   async getProfile(req: Request, res: Response) {
+//PERFIL
+  async getProfile(req: Request, res: Response) {
+    const user = req.user
 
-//     const user = req.user
+    const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } })
+    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } })
+
+    const response = { user: user, playerProfile: playerProfile[0] ? playerProfile[0].id : false, orgProfile: orgProfile[0] ? orgProfile[0].id : false }
     
-//     //const player = await jogadorRepository.findBy({ perfil : user.id })
-//     const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
-//     const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
+    return res.json(response)
 
-//     if(player.length > 0){
-//       player[0].perfil.senha = ""
-//       const result = player[0]
-//       const response =  { type: 'jogador', result}
+    // if(player.length > 0){
+    //   player[0].perfil.senha = ""
+    //   const result = player[0]
+    //   const response =  { type: 'jogador', result}
       
-//       return res.json(response)
-//     }else{
-//       console.log(organizador);
-//       organizador[0].perfil.senha = ""
-//       const result = organizador[0]
-//       const response =  { type: 'organizador', result}
+    //   return res.json(response)
+    // }else{
+    //   console.log(organizador);
+    //   organizador[0].perfil.senha = ""
+    //   const result = organizador[0]
+    //   const response =  { type: 'organizador', result}
       
-//       return res.json(response)
-//     }
+    //   return res.json(response)
+    // }
 
-//   }
+  }
 
 //   async getProfileById(req: Request, res: Response) {
 
