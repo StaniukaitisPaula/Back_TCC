@@ -10,6 +10,6 @@ routes.post('/login', new UserController().login)
 routes.post('/validation', new UserController().validationMobile)
 routes.get('/profile',authMiddleware, new UserController().getProfile)
 routes.get('/profile/:id', new UserController().getProfileById)
-// routes.put('/update', new UserController())
+routes.put('/update',authMiddleware, new UserController().updateProfile)
 
 export default routes
