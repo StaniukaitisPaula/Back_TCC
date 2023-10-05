@@ -10,6 +10,7 @@ import { Perfil } from '../entities/User';
 import { Blob } from "buffer";
 import { DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
+import { Jogo } from '../entities/enum/Jogo';
 
 
 
@@ -261,6 +262,23 @@ export class UserController {
 
 }
 
+//POST JOGADOR / ORGANIZADOR
+//async player(req: Request, res: Response){
+
+//   const {
+//     jogo,
+//     funcao,
+//     elo,
+ 
+//   } = req.body
+
+//   if(
+//     jogo     == undefined || jogo    == "" ||
+//     funcao   == undefined || funcao  == "" ||
+//     elo      == undefined || elo     == "" 
+  
+//     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
+
+//}
 
 }
-
