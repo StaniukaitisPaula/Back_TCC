@@ -125,133 +125,79 @@ export class UserController {
 
   }
 
-//   async getProfileById(req: Request, res: Response) {
+  async getProfileById(req: Request, res: Response) {
 
-//     const user = req.params.id
+    const user = req.params.id
     
-//     //const player = await jogadorRepository.findBy({ perfil : user.id })
-//     const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : parseInt(user) } } })
-//     const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : parseInt(user) }  
-//        } })
+    const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: {id : parseInt(user) } } })
+    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : parseInt(user) } } })
+  
 
-//     if(player.length > 0){
-//       player[0].perfil.senha = ""
-//       const result = player[0]
-//       const response =  { type: 'jogador', result}
+    if(playerProfile.length > 0){
+      playerProfile[0].perfil_id.senha = ""
+      const result = playerProfile[0]
+      const response =  { type: 'jogador', result}
       
-//       return res.json(response)
-//     }else{
-//       console.log(organizador);
-//       organizador[0].perfil.senha = ""
-//       const result = organizador[0]
-//       const response =  { type: 'organizador', result}
+      return res.json(response)
+    }else{
+       console.log(orgProfile);
+      orgProfile[0].dono_id.senha = ""
+      const result = orgProfile[0]
+      const response =  { type: 'organizador', result}
       
-//       return res.json(response)
-//     }
+      return res.json(response)
+    }
 
-//   }
+  }
 
-// // ATUALIZAR PERFIL
-//   async updateProfile(req: Request, res: Response){
+// ATUALIZAR PERFIL
+  // async updateProfile(req: Request, res: Response){
 
-//     const user = req.user
+  //   const user = req.user
 
-//     const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
-//     const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
-
-
-
-
-//   }
-
-
-//   async validationMobile(req: Request, res: Response){
-  
-//   const {
-//     nome_usuario,
-//     nome_completo,
-//     email,
-//     senha,
-//     data_nascimento,
-//     foto_perfil,
-//     foto_capa,
-//     genero,
-//     tipo_de_usuario,
-//   } = req.body
-  
-//   console.log(req.body)
-
-//   if(
-//     nome_usuario    == undefined ||
-//     nome_completo   == undefined ||
-//     email           == undefined ||
-//     senha           == undefined ||
-//     data_nascimento == undefined ||
-//     genero          == undefined ||
-//     tipo_de_usuario == undefined 
-//     ) throw new BadRequestError('JSON invalido')
-  
-
-//   const userEmailExists = await userRepository.findOneBy({email})
-//   const usernameExists = await userRepository.findOneBy({nome_usuario})
-  
-
-//   if(userEmailExists){
-//     throw new BadRequestError('Email já cadastrado!')
-//   }
-//   if(usernameExists){
-//     throw new BadRequestError('Nome de usuario já cadastrado!')
-//   }
-//   }
-
-
-//}
+  //   const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
+  //   const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
 
 
 
 
+  // }
 
+//VALIDACAO PARA O MOBILE
+  async validationMobile(req: Request, res: Response){
+ 
+    const {
+      nome_usuario,
+      nome_completo,
+      email,
+      senha,
+      data_nascimento,
+      genero,
+      nickname,
+      biografia
+    } = req.body
 
-// export const forgotPassword = async (req: Request, res: Response) => {
-
-//   const {
-//      login
-//    } = req.body
-
-//   try{
-//      const user = await userRepository.findOneBy([{ email : login }])
-
-   
-//     const transporter = nodemailer.createTransport({
-//        host: "sandbox.smtp.mailtrap.io",
-//        port: 2525,
-//        auth: {
-//       user: "91c03c9f7733ee",
-//         pass: "****724d"
-//      }
-//     })
-
-//   const newPassword = crypto.randomBytes(4).toString('hex')
+    if(
+      nome_usuario    == undefined || nome_usuario    == "" ||
+      email           == undefined || email           == "" ||
+      senha           == undefined || senha           == "" ||
+      data_nascimento == undefined || data_nascimento == "" ||
+      genero          == undefined || 
+      nickname        == undefined || nickname        == "" 
+      ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
     
-//   transporter.sendMail({
-//     from: 'Administrador <074b0757bf-31f276@inbox.mailtrap.io>',
-//        to: login,
-//        subject: 'Recuperação de Senha!',
-//       html: `<p>Olá, sua nova senha para acessar o sistemas é: ${newPassword}</p><br/><a href="http://localhost:8080/login">Sistema</a>`
-       
-//      }).then(
-//       () => {
-//         userRepository(Perfil){
+    const userEmailExists = await userRepository.findOneBy({email})
+    const usernameExists = await userRepository.findOneBy({nome_usuario})
+    
+    if(userEmailExists){
+      throw new BadRequestError('Email já cadastrado!')
+    }
+    if(usernameExists){
+      throw new BadRequestError('Nome de usuario já cadastrado!')
+    }
 
-//           password: newPassword
-//         })
-//        }
-//      )
-
-
-//    } catch (error){
-//      return res.status(404).json({
-//       message: 'User not found'
-//     })
-//      }
 }
+
+
+}
+
