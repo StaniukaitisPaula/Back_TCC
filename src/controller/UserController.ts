@@ -108,45 +108,31 @@ export class UserController {
     
     return res.json(response)
 
-    // if(player.length > 0){
-    //   player[0].perfil.senha = ""
-    //   const result = player[0]
-    //   const response =  { type: 'jogador', result}
-      
-    //   return res.json(response)
-    // }else{
-    //   console.log(organizador);
-    //   organizador[0].perfil.senha = ""
-    //   const result = organizador[0]
-    //   const response =  { type: 'organizador', result}
-      
-    //   return res.json(response)
-    // }
-
   }
 
   async getProfileById(req: Request, res: Response) {
 
-    const user = req.params.id
-    
-    const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: {id : parseInt(user) } } })
-    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : parseInt(user) } } })
-  
+    const id = req.params.id
 
-    if(playerProfile.length > 0){
-      playerProfile[0].perfil_id.senha = ""
-      const result = playerProfile[0]
-      const response =  { type: 'jogador', result}
-      
-      return res.json(response)
-    }else{
-       console.log(orgProfile);
-      orgProfile[0].dono_id.senha = ""
-      const result = orgProfile[0]
-      const response =  { type: 'organizador', result}
-      
-      return res.json(response)
+    const user = await userRepository.findOneBy({id: parseInt(id)})
+
+    if(user == null){
+      throw new BadRequestError('Usuario não existe!')
     }
+
+    const {
+      nome_usuario,
+      email,
+      senha,
+      ...userReturn
+     } = user
+    
+    const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: {id : parseInt(id) } } })
+    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : parseInt(id) } } })
+  
+    const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0].id : false, orgProfile: orgProfile[0] ? orgProfile[0].id : false }
+
+    return res.json(response)
 
   }
 
