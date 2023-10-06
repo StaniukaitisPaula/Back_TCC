@@ -68,35 +68,42 @@ class UserController {
         const orgProfile = await UserRepository_1.organizadorRepository.find({ relations: { dono_id: true }, where: { dono_id: { id: user.id } } });
         const response = { user: user, playerProfile: playerProfile[0] ? playerProfile[0].id : false, orgProfile: orgProfile[0] ? orgProfile[0].id : false };
         return res.json(response);
-        // if(player.length > 0){
-        //   player[0].perfil.senha = ""
-        //   const result = player[0]
-        //   const response =  { type: 'jogador', result}
-        //   return res.json(response)
-        // }else{
-        //   console.log(organizador);
-        //   organizador[0].perfil.senha = ""
-        //   const result = organizador[0]
-        //   const response =  { type: 'organizador', result}
-        //   return res.json(response)
-        // }
     }
     async getProfileById(req, res) {
-        const user = req.params.id;
-        const playerProfile = await UserRepository_1.jogadorRepository.find({ relations: { perfil_id: true }, where: { perfil_id: { id: parseInt(user) } } });
-        const orgProfile = await UserRepository_1.organizadorRepository.find({ relations: { dono_id: true }, where: { dono_id: { id: parseInt(user) } } });
-        if (playerProfile.length > 0) {
-            playerProfile[0].perfil_id.senha = "";
-            const result = playerProfile[0];
-            const response = { type: 'jogador', result };
-            return res.json(response);
+        const id = req.params.id;
+        const user = await UserRepository_1.userRepository.findOneBy({ id: parseInt(id) });
+        if (user == null) {
+            throw new api_erros_1.BadRequestError('Usuario não existe!');
         }
-        else {
-            console.log(orgProfile);
-            orgProfile[0].dono_id.senha = "";
-            const result = orgProfile[0];
-            const response = { type: 'organizador', result };
-            return res.json(response);
+        const { nome_usuario, email, senha, ...userReturn } = user;
+        const playerProfile = await UserRepository_1.jogadorRepository.find({ relations: { perfil_id: true }, where: { perfil_id: { id: parseInt(id) } } });
+        const orgProfile = await UserRepository_1.organizadorRepository.find({ relations: { dono_id: true }, where: { dono_id: { id: parseInt(id) } } });
+        const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0].id : false, orgProfile: orgProfile[0] ? orgProfile[0].id : false };
+        return res.json(response);
+    }
+    // ATUALIZAR PERFIL
+    // async updateProfile(req: Request, res: Response){
+    //   const user = req.user
+    //   const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
+    //   const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
+    // }
+    //VALIDACAO PARA O MOBILE
+    async validationMobile(req, res) {
+        const { nome_usuario, nome_completo, email, senha, data_nascimento, genero, nickname, biografia } = req.body;
+        if (nome_usuario == undefined || nome_usuario == "" ||
+            email == undefined || email == "" ||
+            senha == undefined || senha == "" ||
+            data_nascimento == undefined || data_nascimento == "" ||
+            genero == undefined ||
+            nickname == undefined || nickname == "")
+            throw new api_erros_1.BadRequestError('JSON invalido, Faltam Informacoes!');
+        const userEmailExists = await UserRepository_1.userRepository.findOneBy({ email });
+        const usernameExists = await UserRepository_1.userRepository.findOneBy({ nome_usuario });
+        if (userEmailExists) {
+            throw new api_erros_1.BadRequestError('Email já cadastrado!');
+        }
+        if (usernameExists) {
+            throw new api_erros_1.BadRequestError('Nome de usuario já cadastrado!');
         }
     }
 }

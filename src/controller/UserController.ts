@@ -7,6 +7,10 @@ import nodemailer from 'nodemailer';
 import crypto     from 'crypto';
 import { resolve } from "path";
 import { Perfil } from '../entities/User';
+import { Blob } from "buffer";
+import { DataSource } from 'typeorm';
+import { Genero } from '../entities/enum/Genero';
+import { Jogo } from '../entities/enum/Jogo';
 
 
 
@@ -137,17 +141,91 @@ export class UserController {
   }
 
 // ATUALIZAR PERFIL
-  // async updateProfile(req: Request, res: Response){
+  async updateProfile(req: Request, res: Response){
 
-  //   const user = req.user
+    const user = req.user
+    const {
+      id,
+      nome_usuario,
+      nome_completo,
+      email,
+      senha,
+      data_nascimento,
+      genero,
+      nickname,
+      biografia
+    } = req.body
 
-  //   const player = await jogadorRepository.find({ relations: { perfil : true  }, where: { perfil: { id : user.id } } })
-  //   const organizador = await organizadorRepository.find({ relations: { perfil : true }, where: { perfil: { id : user.id } } })
+    const hashSenha = await bcrypt.hash(senha, 10)
+
+    let response = {
+      id,
+      nome_usuario,
+      nome_completo,
+      email,
+      senha: hashSenha ,
+      data_nascimento,
+      genero,
+      nickname,
+      biografia
+    }
+
+    if(nome_usuario){
+      if(await userRepository.findOneBy({nome_usuario: nome_usuario})){
+        response.nome_usuario = 'Usuario já existe!'
+      }else{
+        response.nome_usuario = await userRepository.update( { id: user.id }, { nome_usuario: nome_usuario})
+      }
+    
+    }
+    if(email){
+      if(await userRepository.findOneBy({email: email})){
+        response.email = 'Email de usuario já cadastrado!'
+      }else{
+        response.email = Boolean((await userRepository.update( { id: user.id }, { email: email})).affected)
+      }
+
+    }
+    if(senha){
+      if(await userRepository.findOneBy({senha: hashSenha})){
+        response.senha = 'Senha fraca!'
+      }else{
+        response.senha = String ((await userRepository.update( { id: user.id }, { senha: hashSenha})).affected)
+      }
+    }
+    if(data_nascimento){
+      response.senha = String ((await userRepository.update( { id: user.id }, { data_nascimento: data_nascimento})).affected)
+  
+    }
+    if(genero){
+        response.genero =  String ((await userRepository.update( { id: user.id }, { genero: genero})).affected)  
+    }
+
+    if(nickname){
+      if(await userRepository.findOneBy({nickname: nickname})){
+        response.nickname = 'Nickname de usuario já ultilizado!'
+      }else{
+        response.nickname = await userRepository.update( { id: user.id }, { nickname: nickname})
+      }
+    
+    }
+
+    if(biografia){
+      if(await userRepository.findOneBy({biografia: biografia})){
+
+      }else{
+        response.biografia = Boolean ((await userRepository.update( { id: user.id }, { biografia: biografia})).affected)
+      }
+    
+    }
 
 
+    return res.json({
+      response: response
+    })
 
 
-  // }
+  }
 
 //VALIDACAO PARA O MOBILE
   async validationMobile(req: Request, res: Response){
@@ -184,6 +262,23 @@ export class UserController {
 
 }
 
+//POST JOGADOR / ORGANIZADOR
+//async player(req: Request, res: Response){
+
+//   const {
+//     jogo,
+//     funcao,
+//     elo,
+ 
+//   } = req.body
+
+//   if(
+//     jogo     == undefined || jogo    == "" ||
+//     funcao   == undefined || funcao  == "" ||
+//     elo      == undefined || elo     == "" 
+  
+//     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
+
+//}
 
 }
-
