@@ -40,9 +40,9 @@ export class Jogador {
   funcao: Funcao
   @Column({type : 'int'})
   elo: Elo
-  @ManyToOne(() => Time, (time) => time.jogadores)
-  @JoinColumn()
-  time: Time
+  // @ManyToOne(() => Time, (time) => time.jogadores)
+  // @JoinColumn()
+  // time: Time
 }
 
 @Entity('tbl_organizacao')
@@ -52,27 +52,27 @@ export class Organizacao{
   @OneToOne(() => Perfil)
   @JoinColumn()
   dono_id: Perfil
-  @OneToMany(() => Time, (time) => time.organizacao)
-  @JoinColumn()
-  times: Time[]
+  // @OneToMany(() => Time, (time) => time.organizacao)
+  // @JoinColumn()
+  // times: Time[]
   @Column({length: 100})
   nome_organizacao: string
   @Column({type: 'text'})
   biografia: string
 }
 
-@Entity('tbl_time')
-export class Time{
-  @PrimaryGeneratedColumn()
-  id: number
-  @ManyToOne(() => Organizacao, (organizacao) => organizacao.times)
-  @JoinColumn()
-  organizacao: Organizacao
-  @Column({length: 100})
-  nome_time: string
-  @Column({type: 'text'})
-  biografia: string
-  @OneToMany(() => Jogador, (jogador) => jogador.time)
-  @JoinColumn()
-  jogadores: Jogador[]
-}
+// @Entity('tbl_time')
+// export class Time{
+//   @PrimaryGeneratedColumn()
+//   id: number
+//   @ManyToOne(() => Organizacao, (organizacao) => organizacao.times)
+//   @JoinColumn()
+//   organizacao: Organizacao
+//   @Column({length: 100})
+//   nome_time: string
+//   @Column({type: 'text'})
+//   biografia: string
+//   @OneToMany(() => Jogador, (jogador) => jogador.time)
+//   @JoinColumn()
+//   jogadores: Jogador[]
+// }
