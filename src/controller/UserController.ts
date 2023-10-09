@@ -109,10 +109,14 @@ export class UserController {
   async getProfile(req: Request, res: Response) {
     const user = req.user
 
-    const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } })
-    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } })
+    const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
+    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true } })
 
-    const response = { user: user, playerProfile: playerProfile[0] ? playerProfile[0].id : false, orgProfile: orgProfile[0] ? orgProfile[0].id : false }
+
+    
+
+
+    const response = { user: user, playerProfile: playerProfile[0]? playerProfile[0] : false , orgProfile:  orgProfile[0]? orgProfile[0]: false }
     
     return res.json(response)
 
@@ -135,10 +139,10 @@ export class UserController {
       ...userReturn
      } = user
     
-    const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: {id : parseInt(id) } } })
-    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : parseInt(id) } } })
+     const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
+     const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true } })
   
-    const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0].id : false, orgProfile: orgProfile[0] ? orgProfile[0].id : false }
+    const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : false, orgProfile: orgProfile[0] ? orgProfile[0] : false }
 
     return res.json(response)
 
@@ -266,22 +270,48 @@ export class UserController {
 }
 
 //POST JOGADOR / ORGANIZADOR
-//async player(req: Request, res: Response){
+async createPlayer(req: Request, res: Response){
 
-//   const {
-//     jogo,
-//     funcao,
-//     elo,
- 
-//   } = req.body
+  const id = req.user
 
-//   if(
-//     jogo     == undefined || jogo    == "" ||
-//     funcao   == undefined || funcao  == "" ||
-//     elo      == undefined || elo     == "" 
-  
-//     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
-//}
+  const {
+    jogo,
+    funcao,
+    elo,
+  } = req.body
+
+  console.log(jogo);
+  console.log(funcao);
+  console.log(elo);
+
+  if(
+    jogo     == undefined || jogo    == "" ||
+    funcao   == undefined || funcao  == "" ||
+    elo      == undefined || elo     == "" 
+  ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
+
+
+  const jogadorExists = await jogadorRepository.findOneBy({perfil_id: id})
+
+
+  if(jogadorExists) throw new BadRequestError('Perfil Jogador já cadastrado!')
+
+  const newJogador = jogadorRepository.create({
+    jogo,
+    funcao,
+    elo,
+    perfil_id: id,
+  })
+
+  await jogadorRepository.save(newJogador)
+
+  //const {senha: _, ...user} = newUser
+
+  return res.status(201).json(newJogador)
+
+
+
+}
 
 }

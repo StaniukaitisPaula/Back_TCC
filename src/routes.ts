@@ -8,7 +8,7 @@ const routes = Router()
 routes.post('/register', new UserController().create)
 routes.post('/login', new UserController().login)
 routes.post('/validation', new UserController().validationMobile)
-//routes.post('/player', new UserController().player)
+routes.post('/createPlayer',authMiddleware, new UserController().createPlayer)
 
 //GET
 routes.get('/profile',authMiddleware, new UserController().getProfile)

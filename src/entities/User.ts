@@ -54,12 +54,12 @@ export class Time{
   nome_time: string
   @Column({type: 'text'})
   biografia: string
-  @OneToMany(() => Jogador, (jogador) => jogador.time)
+  @OneToMany(() => Jogador, (jogador) => jogador.time_atual)
   @JoinColumn()
   jogadores: Jogador[]
-  @OneToMany(() => Jogador, (jogador) => jogador.time)
+  @OneToMany(() => Jogador, (jogador) => jogador.time_atual)
   @JoinColumn()
-  jogadores_ativos: Jogador[]
+  jogadores_ativos?: Jogador[]
 }
 
 @Entity('tbl_jogador')
@@ -77,6 +77,6 @@ export class Jogador {
   elo: Elo
   @ManyToOne(() => Time, (time) => time.jogadores)
   @JoinColumn()
-  time: Time
+  time_atual?: Time
 }
 
