@@ -42,12 +42,16 @@ export class UserController {
     
     const userEmailExists = await userRepository.findOneBy({email})
     const usernameExists = await userRepository.findOneBy({nome_usuario})
+    const nicknameExists = await userRepository.findOneBy({nickname})
     
     if(userEmailExists){
       throw new BadRequestError('Email já cadastrado!')
     }
     if(usernameExists){
       throw new BadRequestError('Nome de usuario já cadastrado!')
+    }
+    if(nicknameExists){
+      throw new BadRequestError('Nickname já cadastrado!')
     }
 
     const hashSenha = await bcrypt.hash(senha, 10)
