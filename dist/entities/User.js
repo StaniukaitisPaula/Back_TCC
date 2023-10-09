@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Organizacao = exports.Jogador = exports.Perfil = void 0;
+exports.Jogador = exports.Time = exports.Organizacao = exports.Perfil = void 0;
 const typeorm_1 = require("typeorm");
 const Genero_1 = require("./enum/Genero");
 const Jogo_1 = require("./enum/Jogo");
@@ -57,6 +57,67 @@ Perfil = __decorate([
     (0, typeorm_1.Entity)('tbl_perfil')
 ], Perfil);
 exports.Perfil = Perfil;
+let Organizacao = class Organizacao {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], Organizacao.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.OneToOne)(() => Perfil),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", Perfil)
+], Organizacao.prototype, "dono_id", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Time, (time) => time.organizacao),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", Array)
+], Organizacao.prototype, "times", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 100 }),
+    __metadata("design:type", String)
+], Organizacao.prototype, "nome_organizacao", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text' }),
+    __metadata("design:type", String)
+], Organizacao.prototype, "biografia", void 0);
+Organizacao = __decorate([
+    (0, typeorm_1.Entity)('tbl_organizacao')
+], Organizacao);
+exports.Organizacao = Organizacao;
+let Time = class Time {
+};
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    __metadata("design:type", Number)
+], Time.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => Organizacao, (organizacao) => organizacao.times),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", Organizacao)
+], Time.prototype, "organizacao", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 100 }),
+    __metadata("design:type", String)
+], Time.prototype, "nome_time", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text' }),
+    __metadata("design:type", String)
+], Time.prototype, "biografia", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Jogador, (jogador) => jogador.time_atual),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", Array)
+], Time.prototype, "jogadores", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => Jogador, (jogador) => jogador.time_atual),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", Array)
+], Time.prototype, "jogadores_ativos", void 0);
+Time = __decorate([
+    (0, typeorm_1.Entity)('tbl_time')
+], Time);
+exports.Time = Time;
 let Jogador = class Jogador {
 };
 __decorate([
@@ -80,49 +141,12 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'int' }),
     __metadata("design:type", Number)
 ], Jogador.prototype, "elo", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => Time, (time) => time.jogadores),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", Time)
+], Jogador.prototype, "time_atual", void 0);
 Jogador = __decorate([
     (0, typeorm_1.Entity)('tbl_jogador')
 ], Jogador);
 exports.Jogador = Jogador;
-let Organizacao = class Organizacao {
-};
-__decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
-    __metadata("design:type", Number)
-], Organizacao.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.OneToOne)(() => Perfil),
-    (0, typeorm_1.JoinColumn)(),
-    __metadata("design:type", Perfil
-    // @OneToMany(() => Time, (time) => time.organizacao)
-    // @JoinColumn()
-    // times: Time[]
-    )
-], Organizacao.prototype, "dono_id", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ length: 100 }),
-    __metadata("design:type", String)
-], Organizacao.prototype, "nome_organizacao", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'text' }),
-    __metadata("design:type", String)
-], Organizacao.prototype, "biografia", void 0);
-Organizacao = __decorate([
-    (0, typeorm_1.Entity)('tbl_organizacao')
-], Organizacao);
-exports.Organizacao = Organizacao;
-// @Entity('tbl_time')
-// export class Time{
-//   @PrimaryGeneratedColumn()
-//   id: number
-//   @ManyToOne(() => Organizacao, (organizacao) => organizacao.times)
-//   @JoinColumn()
-//   organizacao: Organizacao
-//   @Column({length: 100})
-//   nome_time: string
-//   @Column({type: 'text'})
-//   biografia: string
-//   @OneToMany(() => Organizacao, (organizacao) => organizacao.times)
-//   @JoinColumn()
-//   jogadores: Organizacao
-// }

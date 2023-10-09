@@ -16,5 +16,6 @@ routes.get('/profile/:id', new UserController().getProfileById)
 
 //PUT
 routes.put('/update',authMiddleware, new UserController().updateProfile)
+routes.put('/updatePlayer',authMiddleware, new UserController().updatePlayer)
 
 export default routes

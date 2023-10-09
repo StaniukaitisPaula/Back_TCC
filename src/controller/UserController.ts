@@ -269,7 +269,7 @@ export class UserController {
 
 }
 
-//POST JOGADOR / ORGANIZADOR
+//POST JOGADOR 
 async createPlayer(req: Request, res: Response){
 
   const id = req.user
@@ -313,5 +313,46 @@ async createPlayer(req: Request, res: Response){
 
 
 }
+
+//UPDATE JOGADOR
+async updatePlayer(req: Request, res: Response){
+
+  const id = req.user
+
+
+  const {
+    jogo,
+    funcao,
+    elo,
+  } = req.body
+
+
+  let response = {
+    jogo,
+    funcao,
+    elo
+  }
+
+  if(jogo){
+    response.jogo = Boolean((await jogadorRepository.update( { id: id.id }, { jogo: jogo})).affected)  
+}
+
+if(elo){
+  response.jogo = Boolean((await jogadorRepository.update( { id: id.id }, { elo: elo})).affected)  
+}
+
+return res.json({
+  response: response
+})
+
+  
+  }
+
+  
+
+
+
+
+
 
 }
