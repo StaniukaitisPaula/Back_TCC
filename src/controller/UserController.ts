@@ -189,22 +189,22 @@ export class UserController {
     if(senha){
       const hashSenha = await bcrypt.hash(senha, 10)
 
-      response.senha = String ((await userRepository.update( { id: user.id }, { senha: hashSenha})).affected)
+      response.senha = Boolean((await userRepository.update( { id: user.id }, { senha: hashSenha})).affected)
       
     }
     if(data_nascimento){
-      response.senha = String ((await userRepository.update( { id: user.id }, { data_nascimento: data_nascimento})).affected)
+      response.data_nascimento = Boolean((await userRepository.update( { id: user.id }, { data_nascimento: data_nascimento})).affected)
   
     }
     if(genero){
-        response.genero =  String ((await userRepository.update( { id: user.id }, { genero: genero})).affected)  
+        response.genero = Boolean((await userRepository.update( { id: user.id }, { genero: genero})).affected)  
     }
 
     if(nickname){
       if(await userRepository.findOneBy({nickname: nickname})){
         response.nickname = 'Nickname de usuario já ultilizado!'
       }else{
-        response.nickname = await userRepository.update( { id: user.id }, { nickname: nickname})
+        response.nickname = Boolean(await userRepository.update( { id: user.id }, { nickname: nickname}))
       }
     
     }
