@@ -156,14 +156,14 @@ export class UserController {
       biografia
     } = req.body
 
-    const hashSenha = await bcrypt.hash(senha, 10)
+    
 
     let response = {
       id,
       nome_usuario,
       nome_completo,
       email,
-      senha: hashSenha ,
+      senha,
       data_nascimento,
       genero,
       nickname,
@@ -187,11 +187,10 @@ export class UserController {
 
     }
     if(senha){
-      if(await userRepository.findOneBy({senha: hashSenha})){
-        response.senha = 'Senha fraca!'
-      }else{
-        response.senha = String ((await userRepository.update( { id: user.id }, { senha: hashSenha})).affected)
-      }
+      const hashSenha = await bcrypt.hash(senha, 10)
+
+      response.senha = String ((await userRepository.update( { id: user.id }, { senha: hashSenha})).affected)
+      
     }
     if(data_nascimento){
       response.senha = String ((await userRepository.update( { id: user.id }, { data_nascimento: data_nascimento})).affected)
