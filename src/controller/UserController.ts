@@ -17,8 +17,8 @@ import { Jogo } from '../entities/enum/Jogo';
 
 export class UserController {
 
-  //CADASTRO
-  async create(req: Request, res: Response){
+//CADASTRO
+async create(req: Request, res: Response){
   
     const {
       nome_usuario,
@@ -73,10 +73,10 @@ export class UserController {
     const {senha: _, ...user} = newUser
 
     return res.status(201).json(user)
-  }
+}
 
-  //LOGIN
-  async login(req: Request, res: Response){
+//LOGIN
+async login(req: Request, res: Response){
 
     const {
       login,
@@ -103,10 +103,10 @@ export class UserController {
       user: userLogin,
       token: token
     })
-  }
+}
 
 //PERFIL
-  async getProfile(req: Request, res: Response) {
+async getProfile(req: Request, res: Response) {
     const user = req.user
 
     const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
@@ -117,9 +117,10 @@ export class UserController {
     
     return res.json(response)
 
-  }
+}
 
-  async getProfileById(req: Request, res: Response) {
+// PUXAR PELO ID 
+async getProfileById(req: Request, res: Response) {
 
     const id = req.params.id
 
@@ -141,10 +142,10 @@ export class UserController {
 
     return res.json(response)
 
-  }
+}
 
 // ATUALIZAR PERFIL
-  async updateProfile(req: Request, res: Response){
+async updateProfile(req: Request, res: Response){
 
     const user = req.user
     const {
@@ -227,10 +228,10 @@ export class UserController {
     })
 
 
-  }
+}
 
 //VALIDACAO PARA O MOBILE
-  async validationMobile(req: Request, res: Response){
+async validationMobile(req: Request, res: Response){
  
     const {
       nome_usuario,
@@ -276,9 +277,9 @@ async createPlayer(req: Request, res: Response){
     elo,
   } = req.body
 
-  console.log(jogo);
-  console.log(funcao);
-  console.log(elo);
+  // console.log(jogo);
+  // console.log(funcao);
+  // console.log(elo);
 
   if(
     jogo     == undefined || jogo    == "" ||
@@ -312,28 +313,37 @@ async createPlayer(req: Request, res: Response){
 //UPDATE JOGADOR
 async updatePlayer(req: Request, res: Response){
 
-  const id = req.user
+  const user = req.user
 
 
   const {
+    id,
     jogo,
     funcao,
     elo,
   } = req.body
 
+  console.log(jogo);
+  console.log(funcao);
+  console.log(elo);
 
   let response = {
+    id,
     jogo,
     funcao,
     elo
   }
 
-  if(jogo){
-    response.jogo = Boolean((await jogadorRepository.update( { id: id.id }, { jogo: jogo})).affected)  
+if(jogo){
+    response.jogo = Boolean((await jogadorRepository.update( { id: user.id }, { jogo: jogo})).affected)  
+}
+
+if(funcao){
+  response.jogo = Boolean((await jogadorRepository.update( { id: user.id }, { funcao: funcao})).affected)  
 }
 
 if(elo){
-  response.jogo = Boolean((await jogadorRepository.update( { id: id.id }, { elo: elo})).affected)  
+  response.jogo = Boolean((await jogadorRepository.update( { id: user.id }, { elo: elo})).affected)  
 }
 
 return res.json({
@@ -341,11 +351,10 @@ return res.json({
 })
 
   
-  }
+}
 
-
-
-  async createorganizer(req: Request, res: Response){
+// POST ORGANIZADOR
+async createorganizer(req: Request, res: Response){
 
     const id = req.user
   
