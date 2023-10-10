@@ -343,6 +343,49 @@ return res.json({
   
   }
 
+
+
+  async createorganizer(req: Request, res: Response){
+
+    const id = req.user
+  
+  
+    const {
+      times,
+      nome_organizacao,
+      biografia,
+    } = req.body
+  
+  
+    if(
+      times              == undefined || times              == "" ||
+      nome_organizacao   == undefined || nome_organizacao   == "" ||
+      biografia          == undefined || biografia          == "" 
+    ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
+  
+  
+    const organizadorExists = await organizadorRepository.findOneBy({dono_id: id})
+  
+  
+    if(organizadorExists) throw new BadRequestError('Perfil Organizador já cadastrado!')
+  
+    const newOrganizador = organizadorRepository.create({
+      times,
+      nome_organizacao,
+      biografia,
+      dono_id: id,
+    })
+  
+    await organizadorRepository.save(newOrganizador)
+  
+
+  
+    return res.status(201).json(newOrganizador)
+  
+  
+  
+  }
+  
   
 
 

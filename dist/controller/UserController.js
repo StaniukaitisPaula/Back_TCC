@@ -79,7 +79,7 @@ class UserController {
         if (user == null) {
             throw new api_erros_1.BadRequestError('Usuario não existe!');
         }
-        const { nome_usuario, email, senha, ...userReturn } = user;
+        const { senha, ...userReturn } = user;
         const playerProfile = await UserRepository_1.jogadorRepository.find({ relations: { perfil_id: true }, where: { perfil_id: { id: user.id } }, select: { perfil_id: { id: false } } });
         const orgProfile = await UserRepository_1.organizadorRepository.find({ relations: { dono_id: true }, where: { dono_id: { id: user.id } }, select: { biografia: true, nome_organizacao: true, times: true } });
         const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : false, orgProfile: orgProfile[0] ? orgProfile[0] : false };
@@ -164,7 +164,7 @@ class UserController {
             throw new api_erros_1.BadRequestError('Nome de usuario já cadastrado!');
         }
     }
-    //POST JOGADOR / ORGANIZADOR
+    //POST JOGADOR 
     async createPlayer(req, res) {
         const id = req.user;
         const { jogo, funcao, elo, } = req.body;
@@ -187,6 +187,25 @@ class UserController {
         await UserRepository_1.jogadorRepository.save(newJogador);
         //const {senha: _, ...user} = newUser
         return res.status(201).json(newJogador);
+    }
+    //UPDATE JOGADOR
+    async updatePlayer(req, res) {
+        const id = req.user;
+        const { jogo, funcao, elo, } = req.body;
+        let response = {
+            jogo,
+            funcao,
+            elo
+        };
+        if (jogo) {
+            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: id.id }, { jogo: jogo })).affected);
+        }
+        if (elo) {
+            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: id.id }, { elo: elo })).affected);
+        }
+        return res.json({
+            response: response
+        });
     }
 }
 exports.UserController = UserController;

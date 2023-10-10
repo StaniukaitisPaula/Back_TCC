@@ -15,8 +15,15 @@ import { Genero } from '../entities/enum/Genero';
 
 export class TimeController {
 
-   
-
-
+    async createTime(req: Request, res: Response){
+  
+        const {
+          organizacao,
+          nome_time,
+          biografia
+        
+        
+        } = req.body
+    }
 
 }

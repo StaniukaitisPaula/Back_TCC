@@ -9,6 +9,7 @@ routes.post('/register', new UserController().create)
 routes.post('/login', new UserController().login)
 routes.post('/validation', new UserController().validationMobile)
 routes.post('/createPlayer',authMiddleware, new UserController().createPlayer)
+routes.post('/createOrganizer',authMiddleware, new UserController().createorganizer)
 
 //GET
 routes.get('/profile',authMiddleware, new UserController().getProfile)
