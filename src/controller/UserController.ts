@@ -113,9 +113,6 @@ export class UserController {
     const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true } })
 
 
-    
-
-
     const response = { user: user, playerProfile: playerProfile[0]? playerProfile[0] : false , orgProfile:  orgProfile[0]? orgProfile[0]: false }
     
     return res.json(response)
@@ -133,8 +130,6 @@ export class UserController {
     }
 
     const {
-      nome_usuario,
-      email,
       senha,
       ...userReturn
      } = user
