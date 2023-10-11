@@ -130,6 +130,10 @@ __decorate([
     __metadata("design:type", Perfil)
 ], Jogador.prototype, "perfil_id", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ length: 100 }),
+    __metadata("design:type", String)
+], Jogador.prototype, "nickname", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'int' }),
     __metadata("design:type", Number)
 ], Jogador.prototype, "jogo", void 0);

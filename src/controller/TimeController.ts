@@ -20,9 +20,9 @@ export class TimeController {
         const {
           organizacao,
           nome_time,
-          biografia
-        
-        
+          biografia,
+          jogadores,
+          jogadores_ativos
         } = req.body
     }
 

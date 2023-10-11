@@ -73,6 +73,7 @@ class UserController {
         const response = { user: user, playerProfile: playerProfile[0] ? playerProfile[0] : false, orgProfile: orgProfile[0] ? orgProfile[0] : false };
         return res.json(response);
     }
+    // PUXAR PELO ID 
     async getProfileById(req, res) {
         const id = req.params.id;
         const user = await UserRepository_1.userRepository.findOneBy({ id: parseInt(id) });
@@ -168,9 +169,9 @@ class UserController {
     async createPlayer(req, res) {
         const id = req.user;
         const { jogo, funcao, elo, } = req.body;
-        console.log(jogo);
-        console.log(funcao);
-        console.log(elo);
+        // console.log(jogo);
+        // console.log(funcao);
+        // console.log(elo);
         if (jogo == undefined || jogo == "" ||
             funcao == undefined || funcao == "" ||
             elo == undefined || elo == "")
@@ -190,22 +191,49 @@ class UserController {
     }
     //UPDATE JOGADOR
     async updatePlayer(req, res) {
-        const id = req.user;
-        const { jogo, funcao, elo, } = req.body;
+        const user = req.user;
+        const { id, jogo, funcao, elo, } = req.body;
+        console.log(jogo);
+        console.log(funcao);
+        console.log(elo);
         let response = {
+            id,
             jogo,
             funcao,
             elo
         };
         if (jogo) {
-            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: id.id }, { jogo: jogo })).affected);
+            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: user.id }, { jogo: jogo })).affected);
+        }
+        if (funcao) {
+            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: user.id }, { funcao: funcao })).affected);
         }
         if (elo) {
-            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: id.id }, { elo: elo })).affected);
+            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: user.id }, { elo: elo })).affected);
         }
         return res.json({
             response: response
         });
+    }
+    // POST ORGANIZADOR
+    async createorganizer(req, res) {
+        const id = req.user;
+        const { times, nome_organizacao, biografia, } = req.body;
+        if (times == undefined || times == "" ||
+            nome_organizacao == undefined || nome_organizacao == "" ||
+            biografia == undefined || biografia == "")
+            throw new api_erros_1.BadRequestError('JSON invalido, Faltam Informacoes!');
+        const organizadorExists = await UserRepository_1.organizadorRepository.findOneBy({ dono_id: id });
+        if (organizadorExists)
+            throw new api_erros_1.BadRequestError('Perfil Organizador já cadastrado!');
+        const newOrganizador = UserRepository_1.organizadorRepository.create({
+            times,
+            nome_organizacao,
+            biografia,
+            dono_id: id,
+        });
+        await UserRepository_1.organizadorRepository.save(newOrganizador);
+        return res.status(201).json(newOrganizador);
     }
 }
 exports.UserController = UserController;

@@ -9,6 +9,7 @@ routes.post('/register', new UserController_1.UserController().create);
 routes.post('/login', new UserController_1.UserController().login);
 routes.post('/validation', new UserController_1.UserController().validationMobile);
 routes.post('/createPlayer', authMiddleware_1.authMiddleware, new UserController_1.UserController().createPlayer);
+routes.post('/createOrganizer', authMiddleware_1.authMiddleware, new UserController_1.UserController().createorganizer);
 //GET
 routes.get('/profile', authMiddleware_1.authMiddleware, new UserController_1.UserController().getProfile);
 routes.get('/profile/:id', new UserController_1.UserController().getProfileById);
