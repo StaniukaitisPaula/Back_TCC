@@ -56,7 +56,7 @@ export class Time{
   biografia: string
   @OneToMany(() => Jogador, (jogador) => jogador.time_atual)
   @JoinColumn()
-  jogadores: Jogador[]
+  jogadores?: Jogador[]
   @OneToMany(() => Jogador, (jogador) => jogador.time_atual)
   @JoinColumn()
   jogadores_ativos?: Jogador[]
@@ -69,6 +69,8 @@ export class Jogador {
   @OneToOne(() => Perfil)
   @JoinColumn()
   perfil_id: Perfil
+  @Column({length: 100})
+  nickname: string
   @Column({type : 'int'})
   jogo: Jogo
   @Column({type : 'int'})
