@@ -36,11 +36,11 @@ export class Organizacao{
   dono_id: Perfil
   @OneToMany(() => Time, (time) => time.organizacao)
   @JoinColumn()
-  times: Time[]
+  times?: Time[]
   @Column({length: 100})
   nome_organizacao: string
   @Column({type: 'text'})
-  biografia: string
+  biografia?: string
 }
 
 @Entity('tbl_time')
@@ -53,7 +53,7 @@ export class Time{
   @Column({length: 100})
   nome_time: string
   @Column({type: 'text'})
-  biografia: string
+  biografia?: string
   @OneToMany(() => Jogador, (jogador) => jogador.time_atual)
   @JoinColumn()
   jogadores?: Jogador[]

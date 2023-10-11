@@ -24,6 +24,9 @@ export class TimeController {
           jogadores,
           jogadores_ativos
         } = req.body
+
+
+        
     }
 
 }
