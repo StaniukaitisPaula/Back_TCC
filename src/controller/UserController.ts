@@ -11,6 +11,7 @@ import { Blob } from "buffer";
 import { DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
 import { Jogo } from '../entities/enum/Jogo';
+import { time } from "console";
 
 
 
@@ -399,6 +400,50 @@ async createorganizer(req: Request, res: Response){
   
   }
   
+
+
+//UPDATE ORGAANIZADOR
+  async updateOrganizer(req: Request, res: Response){
+ 
+    const user = req.user
+  
+    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
+    console.log(orgProfile);
+    const {
+      times,
+      nome_organizacao,
+      biografia,
+    } = req.body
+  
+
+    let response = {
+      times,
+      nome_organizacao,
+      biografia,
+    }
+
+    
+  
+  if(times){
+      response.times = Boolean((await organizadorRepository.update( { id: orgProfile[0].id}, { times: times})).affected)  
+  }
+  
+  if(nome_organizacao){
+      response.nome_organizacao = Boolean((await organizadorRepository.update( { id: orgProfile[0].id }, { nome_organizacao: nome_organizacao})).affected)  
+  }
+  
+  if(biografia){
+    response.biografia = Boolean((await organizadorRepository.update( { id: orgProfile[0].id }, { biografia: biografia})).affected)  
+  }
+
+  
+
+  return res.json({
+    response: response
+  })
+  
+    
+  }  
   
 
 

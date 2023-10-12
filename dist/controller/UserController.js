@@ -69,7 +69,7 @@ class UserController {
     async getProfile(req, res) {
         const user = req.user;
         const playerProfile = await UserRepository_1.jogadorRepository.find({ relations: { perfil_id: true }, where: { perfil_id: { id: user.id } }, select: { perfil_id: { id: false } } });
-        const orgProfile = await UserRepository_1.organizadorRepository.find({ relations: { dono_id: true }, where: { dono_id: { id: user.id } }, select: { biografia: true, nome_organizacao: true, times: true } });
+        const orgProfile = await UserRepository_1.organizadorRepository.find({ relations: { dono_id: true }, where: { dono_id: { id: user.id } }, select: { biografia: true, nome_organizacao: true, times: true, dono_id: { id: false } } });
         const response = { user: user, playerProfile: playerProfile[0] ? playerProfile[0] : false, orgProfile: orgProfile[0] ? orgProfile[0] : false };
         return res.json(response);
     }
@@ -82,7 +82,7 @@ class UserController {
         }
         const { senha, ...userReturn } = user;
         const playerProfile = await UserRepository_1.jogadorRepository.find({ relations: { perfil_id: true }, where: { perfil_id: { id: user.id } }, select: { perfil_id: { id: false } } });
-        const orgProfile = await UserRepository_1.organizadorRepository.find({ relations: { dono_id: true }, where: { dono_id: { id: user.id } }, select: { biografia: true, nome_organizacao: true, times: true } });
+        const orgProfile = await UserRepository_1.organizadorRepository.find({ relations: { dono_id: true }, where: { dono_id: { id: user.id } }, select: { biografia: true, nome_organizacao: true, times: true, dono_id: { id: false } } });
         const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : false, orgProfile: orgProfile[0] ? orgProfile[0] : false };
         return res.json(response);
     }
@@ -168,11 +168,12 @@ class UserController {
     //POST JOGADOR 
     async createPlayer(req, res) {
         const id = req.user;
-        const { jogo, funcao, elo, } = req.body;
+        const { nickname, jogo, funcao, elo, } = req.body;
         // console.log(jogo);
         // console.log(funcao);
         // console.log(elo);
-        if (jogo == undefined || jogo == "" ||
+        if (nickname == undefined || nickname == "" ||
+            jogo == undefined || jogo == "" ||
             funcao == undefined || funcao == "" ||
             elo == undefined || elo == "")
             throw new api_erros_1.BadRequestError('JSON invalido, Faltam Informacoes!');
@@ -180,6 +181,7 @@ class UserController {
         if (jogadorExists)
             throw new api_erros_1.BadRequestError('Perfil Jogador já cadastrado!');
         const newJogador = UserRepository_1.jogadorRepository.create({
+            nickname,
             jogo,
             funcao,
             elo,
@@ -192,24 +194,25 @@ class UserController {
     //UPDATE JOGADOR
     async updatePlayer(req, res) {
         const user = req.user;
-        const { id, jogo, funcao, elo, } = req.body;
-        console.log(jogo);
-        console.log(funcao);
-        console.log(elo);
+        const playerProfile = await UserRepository_1.jogadorRepository.find({ relations: { perfil_id: true }, where: { perfil_id: { id: user.id } }, select: { perfil_id: { id: false } } });
+        const { nickname, jogo, funcao, elo, } = req.body;
         let response = {
-            id,
+            nickname,
             jogo,
             funcao,
             elo
         };
+        if (nickname) {
+            response.nickname = Boolean((await UserRepository_1.jogadorRepository.update({ id: playerProfile[0].id }, { nickname: nickname })).affected);
+        }
         if (jogo) {
-            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: user.id }, { jogo: jogo })).affected);
+            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: playerProfile[0].id }, { jogo: jogo })).affected);
         }
         if (funcao) {
-            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: user.id }, { funcao: funcao })).affected);
+            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: playerProfile[0].id }, { funcao: funcao })).affected);
         }
         if (elo) {
-            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: user.id }, { elo: elo })).affected);
+            response.jogo = Boolean((await UserRepository_1.jogadorRepository.update({ id: playerProfile[0].id }, { elo: elo })).affected);
         }
         return res.json({
             response: response
