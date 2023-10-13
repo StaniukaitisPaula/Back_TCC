@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository } from '../repositories/UserRepository';
+import { jogadorRepository, organizadorRepository, userRepository,timeRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
@@ -21,21 +21,45 @@ export class TimeController {
           organizacao,
           nome_time,
           biografia,
-          jogadores,
-          jogadores_ativos
+          // jogadores,
+          // jogadores_ativos
         } = req.body
+
+   
+  
+  
   if(
     organizacao      == undefined || organizacao      == "" ||
     nome_time        == undefined || nome_time        == "" ||
-    biografia        == undefined || biografia        == "" ||
-    jogadores        == undefined || jogadores        == "" || 
-    jogadores_ativos == undefined || jogadores_ativos == "" 
+    biografia        == undefined || biografia        == "" 
+    // jogadores        == undefined || jogadores        == "" || 
+    // jogadores_ativos == undefined || jogadores_ativos == "" 
 
   ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
 
+  const nametimeExists = await timeRepository.findOneBy({nome_time})
 
-        
-    }
+  if(nametimeExists){
+    throw new BadRequestError('Nome de Time ja cadastrado!')
+  }
+
+  
+
+  const newTime = timeRepository.create({
+    organizacao,
+    nome_time,
+    biografia,
+  })
+
+  await timeRepository.save(newTime)
+
+  return res.status(201).json(newTime)
+
+
 
 }
+    }
+
+  
+

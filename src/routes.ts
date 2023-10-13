@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { UserController } from './controller/UserController'
+import { TimeController } from './controller/TimeController'
 import { authMiddleware } from './middlewares/authMiddleware'
 
 const routes = Router()
@@ -10,10 +11,15 @@ routes.post('/login', new UserController().login)
 routes.post('/validation', new UserController().validationMobile)
 routes.post('/createPlayer',authMiddleware, new UserController().createPlayer)
 routes.post('/createOrganizer',authMiddleware, new UserController().createorganizer)
+//POST TIME
+routes.post('/createTime', new TimeController().createTime)
+
 
 //GET
 routes.get('/profile',authMiddleware, new UserController().getProfile)
 routes.get('/profile/:id', new UserController().getProfileById)
+//GET TIME
+
 
 //PUT
 routes.put('/update',authMiddleware, new UserController().updateProfile)

@@ -8,4 +8,4 @@ export const userRepository = AppDataSource.getRepository(Perfil)
 
 export const organizadorRepository = AppDataSource.getRepository(Organizacao)
 
-// export const timeRepository = AppDataSource.getRepository(Time)
+export const timeRepository = AppDataSource.getRepository(Time)

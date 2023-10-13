@@ -401,14 +401,13 @@ async createorganizer(req: Request, res: Response){
   }
   
 
-
 //UPDATE ORGAANIZADOR
-  async updateOrganizer(req: Request, res: Response){
+async updateOrganizer(req: Request, res: Response){
  
     const user = req.user
   
     const orgProfile = await organizadorRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
-    console.log(orgProfile);
+  
     const {
       times,
       nome_organizacao,
@@ -423,7 +422,7 @@ async createorganizer(req: Request, res: Response){
     }
 
     
-  
+
   if(times){
       response.times = Boolean((await organizadorRepository.update( { id: orgProfile[0].id}, { times: times})).affected)  
   }
@@ -437,7 +436,6 @@ async createorganizer(req: Request, res: Response){
   }
 
   
-
   return res.json({
     response: response
   })
