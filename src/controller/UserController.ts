@@ -11,14 +11,15 @@ import { Blob } from "buffer";
 import { DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
 import { Jogo } from '../entities/enum/Jogo';
+import { time } from "console";
 
 
 
 
 export class UserController {
 
-  //CADASTRO
-  async create(req: Request, res: Response){
+//CADASTRO
+async create(req: Request, res: Response){
   
     const {
       nome_usuario,
@@ -73,10 +74,10 @@ export class UserController {
     const {senha: _, ...user} = newUser
 
     return res.status(201).json(user)
-  }
+}
 
-  //LOGIN
-  async login(req: Request, res: Response){
+//LOGIN
+async login(req: Request, res: Response){
 
     const {
       login,
@@ -103,23 +104,24 @@ export class UserController {
       user: userLogin,
       token: token
     })
-  }
+}
 
 //PERFIL
-  async getProfile(req: Request, res: Response) {
+async getProfile(req: Request, res: Response) {
     const user = req.user
 
     const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
-    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true } })
+    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true,  dono_id: {id: false} } })
 
 
     const response = { user: user, playerProfile: playerProfile[0]? playerProfile[0] : false , orgProfile:  orgProfile[0]? orgProfile[0]: false }
     
     return res.json(response)
 
-  }
+}
 
-  async getProfileById(req: Request, res: Response) {
+// PUXAR PELO ID 
+async getProfileById(req: Request, res: Response) {
 
     const id = req.params.id
 
@@ -135,16 +137,16 @@ export class UserController {
      } = user
     
      const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
-     const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true } })
+     const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true, dono_id: {id: false}} })
   
     const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : false, orgProfile: orgProfile[0] ? orgProfile[0] : false }
 
     return res.json(response)
 
-  }
+}
 
 // ATUALIZAR PERFIL
-  async updateProfile(req: Request, res: Response){
+async updateProfile(req: Request, res: Response){
 
     const user = req.user
     const {
@@ -227,10 +229,10 @@ export class UserController {
     })
 
 
-  }
+}
 
 //VALIDACAO PARA O MOBILE
-  async validationMobile(req: Request, res: Response){
+async validationMobile(req: Request, res: Response){
  
     const {
       nome_usuario,
@@ -264,26 +266,28 @@ export class UserController {
 
 }
 
-//POST JOGADOR / ORGANIZADOR
+//POST JOGADOR 
 async createPlayer(req: Request, res: Response){
 
   const id = req.user
 
 
   const {
+    nickname,
     jogo,
     funcao,
     elo,
   } = req.body
 
-  console.log(jogo);
-  console.log(funcao);
-  console.log(elo);
+  // console.log(jogo);
+  // console.log(funcao);
+  // console.log(elo);
 
   if(
-    jogo     == undefined || jogo    == "" ||
-    funcao   == undefined || funcao  == "" ||
-    elo      == undefined || elo     == "" 
+    nickname  == undefined || nickname  == "" ||
+    jogo      == undefined || jogo      == "" ||
+    funcao    == undefined || funcao    == "" ||
+    elo       == undefined || elo       == "" 
   ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
 
@@ -293,6 +297,7 @@ async createPlayer(req: Request, res: Response){
   if(jogadorExists) throw new BadRequestError('Perfil Jogador já cadastrado!')
 
   const newJogador = jogadorRepository.create({
+    nickname,
     jogo,
     funcao,
     elo,
@@ -308,5 +313,140 @@ async createPlayer(req: Request, res: Response){
 
 
 }
+
+//UPDATE JOGADOR
+async updatePlayer(req: Request, res: Response){
+
+  const user = req.user
+
+  const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
+
+  const {
+    nickname,
+    jogo,
+    funcao,
+    elo,
+  } = req.body
+
+  let response = {
+    nickname,
+    jogo,
+    funcao,
+    elo
+  }
+
+if(nickname){
+    response.nickname = Boolean((await jogadorRepository.update( { id: playerProfile[0].id}, { nickname: nickname})).affected)  
+}
+
+if(jogo){
+    response.jogo = Boolean((await jogadorRepository.update( { id: playerProfile[0].id }, { jogo: jogo})).affected)  
+}
+
+if(funcao){
+  response.jogo = Boolean((await jogadorRepository.update( { id: playerProfile[0].id }, { funcao: funcao})).affected)  
+}
+
+if(elo){
+  response.jogo = Boolean((await jogadorRepository.update( { id: playerProfile[0].id }, { elo: elo})).affected)  
+}
+
+return res.json({
+  response: response
+})
+
+  
+}
+
+// POST ORGANIZADOR
+async createorganizer(req: Request, res: Response){
+
+    const id = req.user
+  
+  
+    const {
+      times,
+      nome_organizacao,
+      biografia,
+    } = req.body
+  
+  
+    if(
+      times              == undefined || times              == "" ||
+      nome_organizacao   == undefined || nome_organizacao   == "" ||
+      biografia          == undefined || biografia          == "" 
+    ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
+  
+  
+    const organizadorExists = await organizadorRepository.findOneBy({dono_id: id})
+  
+  
+    if(organizadorExists) throw new BadRequestError('Perfil Organizador já cadastrado!')
+  
+    const newOrganizador = organizadorRepository.create({
+      times,
+      nome_organizacao,
+      biografia,
+      dono_id: id,
+    })
+  
+    await organizadorRepository.save(newOrganizador)
+  
+
+  
+    return res.status(201).json(newOrganizador)
+  
+  
+  
+  }
+  
+
+//UPDATE ORGAANIZADOR
+async updateOrganizer(req: Request, res: Response){
+ 
+    const user = req.user
+  
+    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
+  
+    const {
+      times,
+      nome_organizacao,
+      biografia,
+    } = req.body
+  
+
+    let response = {
+      times,
+      nome_organizacao,
+      biografia,
+    }
+
+    
+
+  if(times){
+      response.times = Boolean((await organizadorRepository.update( { id: orgProfile[0].id}, { times: times})).affected)  
+  }
+  
+  if(nome_organizacao){
+      response.nome_organizacao = Boolean((await organizadorRepository.update( { id: orgProfile[0].id }, { nome_organizacao: nome_organizacao})).affected)  
+  }
+  
+  if(biografia){
+    response.biografia = Boolean((await organizadorRepository.update( { id: orgProfile[0].id }, { biografia: biografia})).affected)  
+  }
+
+  
+  return res.json({
+    response: response
+  })
+  
+    
+  }  
+  
+
+
+
+
+
 
 }
