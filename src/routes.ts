@@ -12,7 +12,7 @@ routes.post('/validation', new UserController().validationMobile)
 routes.post('/createPlayer',authMiddleware, new UserController().createPlayer)
 routes.post('/createOrganizer',authMiddleware, new UserController().createorganizer)
 //POST TIME
-routes.post('/createTime', new TimeController().createTime)
+routes.post('/createTime',authMiddleware, new TimeController().createTime)
 
 
 //GET

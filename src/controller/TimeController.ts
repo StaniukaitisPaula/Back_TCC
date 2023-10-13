@@ -3,10 +3,9 @@ import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
 import { jogadorRepository, organizadorRepository, userRepository,timeRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
-import nodemailer from 'nodemailer';
 import crypto     from 'crypto';
 import { resolve } from "path";
-import { Perfil } from '../entities/User';
+import { Organizacao, Perfil } from '../entities/User';
 import { Blob } from "buffer";
 import { DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
@@ -16,9 +15,9 @@ import { Genero } from '../entities/enum/Genero';
 export class TimeController {
 
     async createTime(req: Request, res: Response){
+        const user = req.user
   
         const {
-          organizacao,
           nome_time,
           biografia,
           // jogadores,
@@ -29,7 +28,6 @@ export class TimeController {
   
   
   if(
-    organizacao      == undefined || organizacao      == "" ||
     nome_time        == undefined || nome_time        == "" ||
     biografia        == undefined || biografia        == "" 
     // jogadores        == undefined || jogadores        == "" || 
@@ -39,9 +37,13 @@ export class TimeController {
 
 
   const nametimeExists = await timeRepository.findOneBy({nome_time})
+  const organizacao  = await organizadorRepository.findOneBy({dono_id: user})
 
   if(nametimeExists){
     throw new BadRequestError('Nome de Time ja cadastrado!')
+  }
+  if(!organizacao){
+    throw new BadRequestError('Organização não cadastrada!')
   }
 
   
