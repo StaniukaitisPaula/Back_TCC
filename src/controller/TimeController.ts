@@ -14,7 +14,8 @@ import { Genero } from '../entities/enum/Genero';
 
 export class TimeController {
 
-    async createTime(req: Request, res: Response){
+//POST TIME  
+async createTime(req: Request, res: Response){
         const user = req.user
   
         const {
@@ -61,6 +62,45 @@ export class TimeController {
 
 
 }
+
+//UPDATE TIME
+async updateTime(req: Request, res: Response){
+
+  const user = req.user
+
+  const time = await timeRepository.find({ relations: { organizacao : true  }, where: { organizacao: { id : user.id } } , select: { organizacao: { id: false } }} )
+
+  const {
+    nome_time,
+    biografia,
+  } = req.body
+
+  console.log(nome_time);
+  
+
+  let response = {
+    nome_time,
+    biografia,
+  }
+
+if(nome_time){
+    response.nome_time = Boolean((await timeRepository.update( { id: time[0].id}, { nome_time: nome_time})).affected)  
+}
+
+if(biografia){
+    response.biografia = Boolean((await timeRepository.update( { id: time[0].id }, { biografia: biografia})).affected)  
+}
+
+
+
+return res.json({
+  response: response
+})
+
+  
+}
+
+
     }
 
   

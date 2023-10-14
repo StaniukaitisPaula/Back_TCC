@@ -25,5 +25,7 @@ routes.get('/profile/:id', new UserController().getProfileById)
 routes.put('/update',authMiddleware, new UserController().updateProfile)
 routes.put('/updatePlayer',authMiddleware, new UserController().updatePlayer)
 routes.put('/updateOrganizer',authMiddleware, new UserController().updateOrganizer)
+//PUT TIME
+routes.put('/updateTime',authMiddleware, new TimeController().updateTime)
 
 export default routes
