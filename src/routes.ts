@@ -19,7 +19,7 @@ routes.post('/createTime',authMiddleware, new TimeController().createTime)
 routes.get('/profile',authMiddleware, new UserController().getProfile)
 routes.get('/profile/:id', new UserController().getProfileById)
 //GET TIME
-
+routes.get('/time',authMiddleware, new TimeController().getTime)
 
 //PUT
 routes.put('/update',authMiddleware, new UserController().updateProfile)
