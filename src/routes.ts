@@ -19,11 +19,13 @@ routes.post('/createTime',authMiddleware, new TimeController().createTime)
 routes.get('/profile',authMiddleware, new UserController().getProfile)
 routes.get('/profile/:id', new UserController().getProfileById)
 //GET TIME
-
+routes.get('/time',authMiddleware, new TimeController().getTime)
 
 //PUT
 routes.put('/update',authMiddleware, new UserController().updateProfile)
 routes.put('/updatePlayer',authMiddleware, new UserController().updatePlayer)
 routes.put('/updateOrganizer',authMiddleware, new UserController().updateOrganizer)
+//PUT TIME
+routes.put('/updateTime',authMiddleware, new TimeController().updateTime)
 
 export default routes
