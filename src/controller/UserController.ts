@@ -365,14 +365,14 @@ async createorganizer(req: Request, res: Response){
   
   
     const {
-      times,
+    
       nome_organizacao,
       biografia,
     } = req.body
   
   
     if(
-      times              == undefined || times              == "" ||
+
       nome_organizacao   == undefined || nome_organizacao   == "" ||
       biografia          == undefined || biografia          == "" 
     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
@@ -384,7 +384,7 @@ async createorganizer(req: Request, res: Response){
     if(organizadorExists) throw new BadRequestError('Perfil Organizador já cadastrado!')
   
     const newOrganizador = organizadorRepository.create({
-      times,
+
       nome_organizacao,
       biografia,
       dono_id: id,

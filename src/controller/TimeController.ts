@@ -21,11 +21,16 @@ async getTime(req: Request, res: Response) {
 
   const team = await timeRepository.find({ relations: { organizacao : true  }, where: { organizacao: { id : user.id } } , select: { organizacao: { id: false } }} )
  
+console.log(team);
+
+
 
 
   const response = { user: user, time: team[0]? team[0] : false }
   
+  
   return res.json(response)
+
 
 }  
 
@@ -105,7 +110,6 @@ if(biografia){
     response.biografia = Boolean((await timeRepository.update( { id: time[0].id }, { biografia: biografia})).affected)  
 }
 
-console.log("oiiiii vi aqui");
 
 
 return res.json({
