@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import crypto     from 'crypto';
 import { resolve } from "path";
-import { Organizacao, Perfil } from '../entities/User';
+import { Organizacao, Perfil, Time } from '../entities/User';
 import { Blob } from "buffer";
 import { DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
@@ -18,20 +18,73 @@ export class TimeController {
 //GET
 async getTime(req: Request, res: Response) {
   const user = req.user
+  let team = [new Time]
 
-  const team = await timeRepository.find({ relations: { organizacao : true  }, where: { organizacao: { id : user.id } } , select: { organizacao: { id: false } }} )
+  if(req.org){
+    let teamResponse = await timeRepository.findBy({ organizacao: req.org }) 
+    if(teamResponse){
+      team = teamResponse
+    }else{
+      throw new BadRequestError('Usuario sem organização')
+    }
+  }else{
+    throw new BadRequestError('Usuario sem organização')
+  }
  
-console.log(team);
+  console.log(team);
 
 
 
 
-  const response = { user: user, time: team[0]? team[0] : false }
+  const response = { user: user, time: team[0]? team : false }
   
   
   return res.json(response)
 
 
+}
+
+async getTimeFilter(req: Request, res: Response) {
+
+  let teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } } }) 
+  let teamfilter = [new Time]
+  
+
+  if(req.body.name && req.body.name != ""){
+    teamfilter = teamResponse.filter( (x) => {  if (x.nome_time.startsWith(req.body.name)) return x  })
+    teamResponse = teamfilter
+
+  }
+  if(req.params.id){
+    teamfilter = teamResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
+    console.log(teamfilter);
+    
+    teamResponse = teamfilter
+  }
+
+  const response = { teams: teamResponse }
+  
+  return res.json(response)
+}  
+
+async getTimeFilterOrg(req: Request, res: Response) {
+
+  let org = new Organizacao
+
+  if(req.params.id){
+    let orgResponse = await organizadorRepository.findOneBy({ id: parseInt(req.params.id) })
+    if(orgResponse){
+        org = orgResponse
+    }
+    
+  }
+  
+
+  let teamResponse = await timeRepository.find( { where: { organizacao: org },  relations: { organizacao:  true  } } ) 
+
+  const response = { teams: teamResponse }
+  
+  return res.json(response)
 }  
 
 //POST TIME  
@@ -119,8 +172,32 @@ return res.json({
   
 }
 
+async deleteTime(req: Request, res: Response){
+  const org = req.org
+  const id = req.params.id
 
-    }
+  console.log(org);
+  console.log(id)
+  
+
+if(id == null || org == undefined)  throw new BadRequestError('Id nao informado ou nao ha org!')
+
+const time = await timeRepository.findOneBy({ id: parseInt(id), organizacao: org })
+
+if(time){
+  timeRepository.delete(time)
+}
+
+
+return res.json({
+  deleted: true
+} )
+
+
+
+}
+
+}
 
   
 
