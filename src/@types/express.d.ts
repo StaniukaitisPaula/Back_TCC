@@ -1,9 +1,11 @@
-import { Perfil } from "../entities/User"
+import { Jogador, Organizacao, Perfil } from "../entities/User"
 
 declare global {
   namespace Express{
     export interface Request{
-      user : Partial<Perfil> 
+      user : Partial<Perfil>
+      player : Partial<Jogador>
+      org : Partial<Organizacao>
     }
   }
 }

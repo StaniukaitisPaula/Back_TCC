@@ -6,7 +6,7 @@ import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
 import crypto     from 'crypto';
 import { resolve } from "path";
-import { Perfil } from '../entities/User';
+import { Perfil, Jogador } from '../entities/User';
 import { Blob } from "buffer";
 import { DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
@@ -444,9 +444,47 @@ async updateOrganizer(req: Request, res: Response){
   }  
   
 
+  async deleteOrganizer(req: Request, res: Response){
+ 
+    const org = req.org
 
+    if(req.org){
 
+      const orgProfile = await organizadorRepository.delete(org)
+    }else{
+      throw new BadRequestError('O usuario nao possui organizacao!')
+    }
+  
+  
+  return res.json({
+    response: true
+  })
+  
+    
+  }  
 
+async getPlayers(req: Request, res: Response) {
+
+  let jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true }}) 
+  let jogadorfilter = [new Jogador]
+  
+
+  if(req.body.name && req.body.name != ""){
+    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.nickname.startsWith(req.body.name)) return x  })
+    jogadorResponse = jogadorfilter
+
+  }
+  if(req.params.id){
+    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
+    console.log(jogadorfilter);
+    
+    jogadorResponse = jogadorfilter
+  }
+
+  const response = { players: jogadorResponse }
+  
+  return res.json(response)
+}  
 
 
 }

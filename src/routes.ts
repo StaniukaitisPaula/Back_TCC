@@ -5,30 +5,37 @@ import { authMiddleware } from './middlewares/authMiddleware'
 
 const routes = Router()
 
-//POST
+//CADASTRO / LOGIN
 routes.post('/register', new UserController().create)
 routes.post('/login', new UserController().login)
 routes.post('/validation', new UserController().validationMobile)
-routes.post('/createPlayer',authMiddleware, new UserController().createPlayer)
-routes.post('/createOrganizer',authMiddleware, new UserController().createorganizer)
-
-//POST TIME
-routes.post('/createTime',authMiddleware, new TimeController().createTime)
 
 
-//GET
+// PERFIL
 routes.get('/profile',authMiddleware, new UserController().getProfile)
 routes.get('/profile/:id', new UserController().getProfileById)
+routes.put('/profile',authMiddleware, new UserController().updateProfile)
 
-//GET TIME
-routes.get('/time',authMiddleware, new TimeController().getTime)
+// JOGADOR
+routes.get('/player', new UserController().getPlayers)
+routes.post('/player',authMiddleware, new UserController().createPlayer)
+routes.put('/player',authMiddleware, new UserController().updatePlayer)
 
-//PUT
-routes.put('/update',authMiddleware, new UserController().updateProfile)
-routes.put('/updatePlayer',authMiddleware, new UserController().updatePlayer)
-routes.put('/updateOrganizer',authMiddleware, new UserController().updateOrganizer)
+// ORGANIZADOR
+routes.post('/organizer',authMiddleware, new UserController().createorganizer)
+routes.put('/organizer',authMiddleware, new UserController().updateOrganizer)
+routes.delete('/organizer',authMiddleware, new UserController().deleteOrganizer)
 
-//PUT TIME
-routes.put('/updateTime',authMiddleware, new TimeController().updateTime)
+// TIME
+routes.get('/team', new TimeController().getTimeFilter)
+routes.get('/team/myteams',authMiddleware, new TimeController().getTime)
+routes.get('/team/:id', new TimeController().getTimeFilter)
+routes.get('/team/org/:id', new TimeController().getTimeFilterOrg)
+routes.post('/team',authMiddleware, new TimeController().createTime)
+routes.put('/team',authMiddleware, new TimeController().updateTime)
+routes.delete('/team/:id',authMiddleware, new TimeController().deleteTime)
+
+
+
 
 export default routes
