@@ -94,6 +94,7 @@ async createTime(req: Request, res: Response){
         const {
           nome_time,
           biografia,
+          jogo,
           // jogadores,
           // jogadores_ativos
         } = req.body
@@ -103,7 +104,8 @@ async createTime(req: Request, res: Response){
   
   if(
     nome_time        == undefined || nome_time        == "" ||
-    biografia        == undefined || biografia        == "" 
+    biografia        == undefined || biografia        == "" ||
+    jogo             == undefined || jogo             == "" 
     // jogadores        == undefined || jogadores        == "" || 
     // jogadores_ativos == undefined || jogadores_ativos == "" 
 
@@ -126,6 +128,7 @@ async createTime(req: Request, res: Response){
     organizacao,
     nome_time,
     biografia,
+    jogo
   })
 
   await timeRepository.save(newTime)

@@ -52,6 +52,8 @@ export class Time{
   organizacao: Organizacao
   @Column({length: 100})
   nome_time: string
+  @Column({type : 'int'})
+  jogo: Jogo
   @Column({type: 'text'})
   biografia?: string
   @OneToMany(() => Jogador, (jogador) => jogador.time_atual, { onDelete: 'CASCADE' })
