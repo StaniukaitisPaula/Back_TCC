@@ -50,8 +50,8 @@ async getTimeFilter(req: Request, res: Response) {
   let teamfilter = [new Time]
   
 
-  if(req.body.name && req.body.name != ""){
-    teamfilter = teamResponse.filter( (x) => {  if (x.nome_time.startsWith(req.body.name)) return x  })
+  if(req.params.name && req.params.name != ""){
+    teamfilter = teamResponse.filter( (x) => {  if (x.nome_time.startsWith(req.params.name)) return x  })
     teamResponse = teamfilter
 
   }
@@ -140,47 +140,47 @@ async createTime(req: Request, res: Response){
 }
 
 //UPDATE TIME
-async updateTime(req: Request, res: Response){
+// async updateTime(req: Request, res: Response){
 
-  const user = req.user
+//   const id = req.params.id
 
-  const time = await organizadorRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
-
-  const {
-    nome_time,
-    biografia,
-  } = req.body
-  console.log(nome_time);
+//   const time = await organizadorRepository.findOneBy({{id: parseInt(id)} } )
+//   const time = await organizadorRepository.findOneBy({ relations: { dono_id : true  }, where: { dono_id: { id : id.id } } , select: { dono_id: { id: false } }}
+//   const {
+//     nome_time,
+//     biografia,
+//   } = req.body
+//   console.log(nome_time);
   
 
-  let response = {
-    nome_time,
-    biografia,
-  }
+//   let response = {
+//     nome_time,
+//     biografia,
+//   }
 
-if(nome_time){
-    response.nome_time = Boolean((await timeRepository.update( { id: time[0].id}, { nome_time: nome_time})).affected)  
-}
+// if(nome_time){
+//     response.nome_time = Boolean((await timeRepository.update( { id: time[0].id}, { nome_time: nome_time})).affected)  
+// }
 
-if(biografia){
-    response.biografia = Boolean((await timeRepository.update( { id: time[0].id }, { biografia: biografia})).affected)  
-}
+// if(biografia){
+//     response.biografia = Boolean((await timeRepository.update( { id: time[0].id }, { biografia: biografia})).affected)  
+// }
 
 
 
-return res.json({
-  response: response
-})
+// return res.json({
+//   response: response
+// })
 
   
-}
+// }
 
 async deleteTime(req: Request, res: Response){
   const org = req.org
   const id = req.params.id
 
-  console.log(org);
-  console.log(id)
+  // console.log(org);
+  // console.log(id)
   
 
 if(id == null || org == undefined)  throw new BadRequestError('Id nao informado ou nao ha org!')
