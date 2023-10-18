@@ -32,7 +32,7 @@ routes.get('/team/myteams',authMiddleware, new TimeController().getTime)
 routes.get('/team/:id', new TimeController().getTimeFilter)
 routes.get('/team/org/:id', new TimeController().getTimeFilterOrg)
 routes.post('/team',authMiddleware, new TimeController().createTime)
-//routes.put('/team',authMiddleware, new TimeController().updateTime)
+routes.put('/team/:id',authMiddleware, new TimeController().updateTime)
 routes.delete('/team/:id',authMiddleware, new TimeController().deleteTime)
 
 

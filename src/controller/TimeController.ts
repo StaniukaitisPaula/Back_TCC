@@ -144,40 +144,45 @@ async createTime(req: Request, res: Response){
 }
 
 //UPDATE TIME
-// async updateTime(req: Request, res: Response){
+async updateTime(req: Request, res: Response){
 
-//   const id = req.params.id
+  const id = req.params.id
 
-//   const time = await organizadorRepository.findOneBy({{id: parseInt(id)} } )
-//   const time = await organizadorRepository.findOneBy({ relations: { dono_id : true  }, where: { dono_id: { id : id.id } } , select: { dono_id: { id: false } }}
-//   const {
-//     nome_time,
-//     biografia,
-//   } = req.body
-//   console.log(nome_time);
+ const times = await timeRepository.findOne({ relations: { organizacao: true  }, where: { organizacao: { id : req.org.id }, id: parseInt(id) } , select: { organizacao: { id: false } }})
+  console.log(times);
+
+  if(times){
+    const {
+        nome_time,
+        biografia,
+      } = req.body
+      console.log(nome_time);
+      
+
+      let response = {
+        nome_time,
+        biografia,
+      }
+
+    if(nome_time){
+        response.nome_time = Boolean((await timeRepository.update( { id: times.id}, { nome_time: nome_time})).affected)  
+    }
+
+    if(biografia){
+        response.biografia = Boolean((await timeRepository.update( { id: times.id }, { biografia: biografia})).affected)  
+    }
+  }else{
+    throw new BadRequestError('Id nao informado ou nao ha org!')
+  }
   
 
-//   let response = {
-//     nome_time,
-//     biografia,
-//   }
 
-// if(nome_time){
-//     response.nome_time = Boolean((await timeRepository.update( { id: time[0].id}, { nome_time: nome_time})).affected)  
-// }
-
-// if(biografia){
-//     response.biografia = Boolean((await timeRepository.update( { id: time[0].id }, { biografia: biografia})).affected)  
-// }
-
-
-
-// return res.json({
-//   response: response
-// })
+return res.json({
+  response: true
+})
 
   
-// }
+}
 
 async deleteTime(req: Request, res: Response){
   const org = req.org
