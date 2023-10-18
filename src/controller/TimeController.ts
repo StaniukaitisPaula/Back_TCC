@@ -9,6 +9,7 @@ import { Organizacao, Perfil, Time } from '../entities/User';
 import { Blob } from "buffer";
 import { DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
+import { isStringObject } from "util/types";
 
 
 
@@ -48,10 +49,13 @@ async getTimeFilter(req: Request, res: Response) {
 
   let teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } } }) 
   let teamfilter = [new Time]
+  let name: string =  req.query.name as string
+  console.log(name);
+  
   
 
-  if(req.params.name && req.params.name != ""){
-    teamfilter = teamResponse.filter( (x) => {  if (x.nome_time.startsWith(req.params.name)) return x  })
+  if(name != undefined && name != "" ){
+    teamfilter = teamResponse.filter( (x) => {  if (x.nome_time.toLowerCase().startsWith(name.toLocaleLowerCase())) return x  })
     teamResponse = teamfilter
 
   }
