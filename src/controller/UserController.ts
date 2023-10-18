@@ -469,8 +469,8 @@ async getPlayers(req: Request, res: Response) {
   let jogadorfilter = [new Jogador]
   
 
-  if(req.body.name && req.body.name != ""){
-    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.nickname.startsWith(req.body.name)) return x  })
+  if(req.params.name && req.params.name != ""){
+    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.nickname.startsWith(req.params.name)) return x  })
     jogadorResponse = jogadorfilter
 
   }
