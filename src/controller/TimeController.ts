@@ -52,7 +52,7 @@ async getTimeFilter(req: Request, res: Response) {
   const perPageNumber = parseInt(perPage)
   const pagenumber = parseInt(page)
 
-  console.log(perPageNumber * pagenumber);
+  console.log(perPageNumber);
   
   const skip = (perPageNumber * pagenumber) - perPageNumber;
   console.log(skip)
