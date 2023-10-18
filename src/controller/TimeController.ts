@@ -46,8 +46,8 @@ async getTime(req: Request, res: Response) {
 async getTimeFilter(req: Request, res: Response) {
 
 
-  let perPage: number = parseInt(req.query.name as string)
-  let page: number = parseInt(req.query.name as string)
+  let perPage: string = req.query.name as string
+  let page: string = req.query.name as string
   console.log(page);
   console.log(perPage);
   
