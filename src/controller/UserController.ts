@@ -18,7 +18,7 @@ import { time } from "console";
 
 export class UserController {
 
-//CADASTRO
+//CADASTRO / LOGIN
 async create(req: Request, res: Response){
   
     const {
@@ -76,7 +76,6 @@ async create(req: Request, res: Response){
     return res.status(201).json(user)
 }
 
-//LOGIN
 async login(req: Request, res: Response){
 
     const {
@@ -106,7 +105,41 @@ async login(req: Request, res: Response){
     })
 }
 
-//PERFIL
+async validationMobile(req: Request, res: Response){
+ 
+    const {
+      nome_usuario,
+      nome_completo,
+      email,
+      senha,
+      data_nascimento,
+      genero,
+      nickname,
+      biografia
+    } = req.body
+
+    if(
+      nome_usuario    == undefined || nome_usuario    == "" ||
+      email           == undefined || email           == "" ||
+      senha           == undefined || senha           == "" ||
+      data_nascimento == undefined || data_nascimento == "" ||
+      genero          == undefined || 
+      nickname        == undefined || nickname        == "" 
+      ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
+    
+    const userEmailExists = await userRepository.findOneBy({email})
+    const usernameExists = await userRepository.findOneBy({nome_usuario})
+    
+    if(userEmailExists){
+      throw new BadRequestError('Email já cadastrado!')
+    }
+    if(usernameExists){
+      throw new BadRequestError('Nome de usuario já cadastrado!')
+    }
+
+}
+
+// GET 
 async getProfile(req: Request, res: Response) {
     const user = req.user
 
@@ -114,13 +147,12 @@ async getProfile(req: Request, res: Response) {
     const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true,  dono_id: {id: false} } })
 
 
-    const response = { user: user, playerProfile: playerProfile[0]? playerProfile[0] : false , orgProfile:  orgProfile[0]? orgProfile[0]: false }
+    const response = { user: user, playerProfile: playerProfile[0]? playerProfile[0] : null , orgProfile:  orgProfile[0]? orgProfile[0]: null }
     
     return res.json(response)
 
 }
 
-// PUXAR PELO ID 
 async getProfileById(req: Request, res: Response) {
 
     const id = req.params.id
@@ -139,13 +171,125 @@ async getProfileById(req: Request, res: Response) {
      const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
      const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true, dono_id: {id: false}} })
   
-    const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : false, orgProfile: orgProfile[0] ? orgProfile[0] : false }
+    const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : null, orgProfile: orgProfile[0] ? orgProfile[0] : null }
 
     return res.json(response)
 
 }
 
-// ATUALIZAR PERFIL
+async getPlayers(req: Request, res: Response) {
+
+  let jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true }}) 
+  let jogadorfilter = [new Jogador]
+  let name: string =  req.query.name as string
+
+  if(name != undefined && name != "" ){
+    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.nickname.toLowerCase().startsWith(name.toLowerCase())) return x  })
+    jogadorResponse = jogadorfilter
+
+  }
+  if(req.params.id){
+    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
+    console.log(jogadorfilter);
+    
+    jogadorResponse = jogadorfilter
+  }
+
+  const response = { players: jogadorResponse }
+  
+  return res.json(response)
+}  
+
+//POST JOGADOR / ORGANIZADOR 
+async createPlayer(req: Request, res: Response){
+
+  const id = req.user
+
+
+  const {
+    nickname,
+    jogo,
+    funcao,
+    elo,
+  } = req.body
+
+  // console.log(jogo);
+  // console.log(funcao);
+  // console.log(elo);
+
+  if(
+    nickname  == undefined || nickname  == "" ||
+    jogo      == undefined || jogo      == "" ||
+    funcao    == undefined || funcao    == "" ||
+    elo       == undefined || elo       == "" 
+  ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
+
+
+  const jogadorExists = await jogadorRepository.findOneBy({perfil_id: id})
+
+
+  if(jogadorExists) throw new BadRequestError('Perfil Jogador já cadastrado!')
+
+  const newJogador = jogadorRepository.create({
+    nickname,
+    jogo,
+    funcao,
+    elo,
+    perfil_id: id,
+  })
+
+  await jogadorRepository.save(newJogador)
+
+  //const {senha: _, ...user} = newUser
+
+  return res.status(201).json(newJogador)
+
+
+
+}
+
+async createorganizer(req: Request, res: Response){
+
+    const id = req.user
+  
+  
+    const {
+    
+      nome_organizacao,
+      biografia,
+    } = req.body
+  
+  
+    if(
+
+      nome_organizacao   == undefined || nome_organizacao   == "" ||
+      biografia          == undefined || biografia          == "" 
+    ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
+  
+  
+    const organizadorExists = await organizadorRepository.findOneBy({dono_id: id})
+  
+  
+    if(organizadorExists) throw new BadRequestError('Perfil Organizador já cadastrado!')
+  
+    const newOrganizador = organizadorRepository.create({
+
+      nome_organizacao,
+      biografia,
+      dono_id: id,
+    })
+  
+    await organizadorRepository.save(newOrganizador)
+  
+
+  
+    return res.status(201).json(newOrganizador)
+  
+  
+  
+}
+
+// PUT
 async updateProfile(req: Request, res: Response){
 
     const user = req.user
@@ -231,90 +375,8 @@ async updateProfile(req: Request, res: Response){
 
 }
 
-//VALIDACAO PARA O MOBILE
-async validationMobile(req: Request, res: Response){
- 
-    const {
-      nome_usuario,
-      nome_completo,
-      email,
-      senha,
-      data_nascimento,
-      genero,
-      nickname,
-      biografia
-    } = req.body
 
-    if(
-      nome_usuario    == undefined || nome_usuario    == "" ||
-      email           == undefined || email           == "" ||
-      senha           == undefined || senha           == "" ||
-      data_nascimento == undefined || data_nascimento == "" ||
-      genero          == undefined || 
-      nickname        == undefined || nickname        == "" 
-      ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
-    
-    const userEmailExists = await userRepository.findOneBy({email})
-    const usernameExists = await userRepository.findOneBy({nome_usuario})
-    
-    if(userEmailExists){
-      throw new BadRequestError('Email já cadastrado!')
-    }
-    if(usernameExists){
-      throw new BadRequestError('Nome de usuario já cadastrado!')
-    }
-
-}
-
-//POST JOGADOR 
-async createPlayer(req: Request, res: Response){
-
-  const id = req.user
-
-
-  const {
-    nickname,
-    jogo,
-    funcao,
-    elo,
-  } = req.body
-
-  // console.log(jogo);
-  // console.log(funcao);
-  // console.log(elo);
-
-  if(
-    nickname  == undefined || nickname  == "" ||
-    jogo      == undefined || jogo      == "" ||
-    funcao    == undefined || funcao    == "" ||
-    elo       == undefined || elo       == "" 
-  ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
-
-
-  const jogadorExists = await jogadorRepository.findOneBy({perfil_id: id})
-
-
-  if(jogadorExists) throw new BadRequestError('Perfil Jogador já cadastrado!')
-
-  const newJogador = jogadorRepository.create({
-    nickname,
-    jogo,
-    funcao,
-    elo,
-    perfil_id: id,
-  })
-
-  await jogadorRepository.save(newJogador)
-
-  //const {senha: _, ...user} = newUser
-
-  return res.status(201).json(newJogador)
-
-
-
-}
-
-//UPDATE JOGADOR
+//UPDATE JOGADOR / ORGANIZADOR
 async updatePlayer(req: Request, res: Response){
 
   const user = req.user
@@ -358,50 +420,6 @@ return res.json({
   
 }
 
-// POST ORGANIZADOR
-async createorganizer(req: Request, res: Response){
-
-    const id = req.user
-  
-  
-    const {
-    
-      nome_organizacao,
-      biografia,
-    } = req.body
-  
-  
-    if(
-
-      nome_organizacao   == undefined || nome_organizacao   == "" ||
-      biografia          == undefined || biografia          == "" 
-    ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
-  
-  
-    const organizadorExists = await organizadorRepository.findOneBy({dono_id: id})
-  
-  
-    if(organizadorExists) throw new BadRequestError('Perfil Organizador já cadastrado!')
-  
-    const newOrganizador = organizadorRepository.create({
-
-      nome_organizacao,
-      biografia,
-      dono_id: id,
-    })
-  
-    await organizadorRepository.save(newOrganizador)
-  
-
-  
-    return res.status(201).json(newOrganizador)
-  
-  
-  
-  }
-  
-
-//UPDATE ORGAANIZADOR
 async updateOrganizer(req: Request, res: Response){
  
     const user = req.user
@@ -444,7 +462,8 @@ async updateOrganizer(req: Request, res: Response){
   }  
   
 
-  async deleteOrganizer(req: Request, res: Response){
+  //DELETE
+ async deleteOrganizer(req: Request, res: Response){
  
     const org = req.org
 
@@ -463,28 +482,6 @@ async updateOrganizer(req: Request, res: Response){
     
   }  
 
-async getPlayers(req: Request, res: Response) {
-
-  let jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true }}) 
-  let jogadorfilter = [new Jogador]
-  let name: string =  req.query.name as string
-
-  if(name != undefined && name != "" ){
-    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.nickname.toLowerCase().startsWith(name.toLowerCase())) return x  })
-    jogadorResponse = jogadorfilter
-
-  }
-  if(req.params.id){
-    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
-    console.log(jogadorfilter);
-    
-    jogadorResponse = jogadorfilter
-  }
-
-  const response = { players: jogadorResponse }
-  
-  return res.json(response)
-}  
 
 
 }

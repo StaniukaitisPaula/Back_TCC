@@ -21,6 +21,7 @@ async getTime(req: Request, res: Response) {
   const user = req.user
   let team = [new Time]
 
+
   if(req.org){
     let teamResponse = await timeRepository.findBy({ organizacao: req.org }) 
     if(teamResponse){
@@ -32,10 +33,6 @@ async getTime(req: Request, res: Response) {
     throw new BadRequestError('Usuario sem organização')
   }
  
-  console.log(team);
-
-
-
 
   const response = { user: user, time: team[0]? team : false }
   
@@ -91,7 +88,7 @@ async getTimeFilterOrg(req: Request, res: Response) {
   return res.json(response)
 }  
 
-//POST TIME  
+//POST 
 async createTime(req: Request, res: Response){
         const user = req.user
   
@@ -149,14 +146,14 @@ async updateTime(req: Request, res: Response){
   const id = req.params.id
 
  const times = await timeRepository.findOne({ relations: { organizacao: true  }, where: { organizacao: { id : req.org.id }, id: parseInt(id) } , select: { organizacao: { id: false } }})
-  console.log(times);
+  // console.log(times);
 
   if(times){
     const {
         nome_time,
         biografia,
       } = req.body
-      console.log(nome_time);
+      // console.log(nome_time);
       
 
       let response = {
@@ -184,6 +181,8 @@ return res.json({
   
 }
 
+
+// DELETE
 async deleteTime(req: Request, res: Response){
   const org = req.org
   const id = req.params.id
