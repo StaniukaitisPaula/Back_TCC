@@ -467,10 +467,10 @@ async getPlayers(req: Request, res: Response) {
 
   let jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true }}) 
   let jogadorfilter = [new Jogador]
-  
+  let name: string =  req.query.name as string
 
-  if(req.params.name && req.params.name != ""){
-    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.nickname.startsWith(req.params.name)) return x  })
+  if(name != undefined && name != "" ){
+    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.nickname.toLowerCase().startsWith(name.toLowerCase())) return x  })
     jogadorResponse = jogadorfilter
 
   }
