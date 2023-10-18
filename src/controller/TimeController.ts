@@ -51,10 +51,11 @@ async getTimeFilter(req: Request, res: Response) {
   console.log(page);
   console.log(perPage);
   
-  const skip = (perPage * page) - perPage;
-  console.log(skip)
+  //const skip = (perPage * page) - perPage;
+  //console.log(skip)
+  // take: perPage, skip: skip
 
-  let teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } }, take: perPage, skip: skip }) 
+  let teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } },  }) 
   let teamfilter = [new Time]
   let name: string =  req.query.name as string
   
