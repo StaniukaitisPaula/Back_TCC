@@ -21,6 +21,7 @@ async getTime(req: Request, res: Response) {
   const user = req.user
   let team = [new Time]
 
+  
 
   if(req.org){
     let teamResponse = await timeRepository.findBy({ organizacao: req.org }) 
@@ -44,11 +45,16 @@ async getTime(req: Request, res: Response) {
 
 async getTimeFilter(req: Request, res: Response) {
 
-  let teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } } }) 
+
+  const {
+    perPage,
+    page,
+  } = req.params;
+  const skip = (parseInt(perPage) * parseInt(page)) - parseInt(perPage);
+
+  let teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } }, take: parseInt(perPage), skip }) 
   let teamfilter = [new Time]
   let name: string =  req.query.name as string
-  console.log(name);
-  
   
 
   if(name != undefined && name != "" ){
