@@ -46,7 +46,7 @@ async getTime(req: Request, res: Response) {
 async getTimeFilter(req: Request, res: Response) {
 
 
-  const {
+  let {
     perPage,
     page,
   } = req.params;
