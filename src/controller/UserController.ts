@@ -424,11 +424,11 @@ if(jogo){
 }
 
 if(funcao){
-  response.jogo = Boolean((await jogadorRepository.update( { id: playerProfile[0].id }, { funcao: funcao})).affected)  
+  response.funcao = Boolean((await jogadorRepository.update( { id: playerProfile[0].id }, { funcao: funcao})).affected)  
 }
 
 if(elo){
-  response.jogo = Boolean((await jogadorRepository.update( { id: playerProfile[0].id }, { elo: elo})).affected)  
+  response.elo = Boolean((await jogadorRepository.update( { id: playerProfile[0].id }, { elo: elo})).affected)  
 }
 
 return res.json({
