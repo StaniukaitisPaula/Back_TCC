@@ -67,6 +67,7 @@ async getTimeFilter(req: Request, res: Response) {
     teamResponse = await timeRepository.find({ relations: { organizacao: { dono_id: true  } }}) 
   }
   
+  //console.log(teamResponse);
 
 
   if(name != undefined && name != "" ){

@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { UserController } from './controller/UserController'
 import { TimeController } from './controller/TimeController'
+import { VagasController } from './controller/VagasController'
 import { authMiddleware } from './middlewares/authMiddleware'
 
 const routes = Router()
@@ -34,6 +35,11 @@ routes.get('/team/org/:id', new TimeController().getTimeFilterOrg)
 routes.post('/team',authMiddleware, new TimeController().createTime)
 routes.put('/team/:id',authMiddleware, new TimeController().updateTime)
 routes.delete('/team/:id',authMiddleware, new TimeController().deleteTime)
+
+// POSTAGEM 
+routes.get('/post',authMiddleware, new VagasController().getpost)
+routes.post('/post',authMiddleware, new VagasController().createpost)
+routes.put('/post/:id',authMiddleware, new VagasController().updateProfile)
 
 
 
