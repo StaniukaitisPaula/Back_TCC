@@ -54,12 +54,20 @@ async getTimeFilter(req: Request, res: Response) {
 
   
   const skip = (perPageNumber * pagenumber) - perPageNumber;
-  console.log(skip)
 
-  let teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } }, take: perPageNumber, skip: skip }) 
+  let teamResponse = [new Time]
   let teamfilter = [new Time]
   let name: string =  req.query.name as string
+
+
+  if( !isNaN(perPageNumber) && !isNaN(pagenumber)){
+    teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } }, take: perPageNumber, skip: skip }) 
+
+  }else{
+    teamResponse = await timeRepository.find({ relations: { organizacao: { dono_id: true  } }}) 
+  }
   
+
 
   if(name != undefined && name != "" ){
     teamfilter = teamResponse.filter( (x) => {  if (x.nome_time.toLowerCase().startsWith(name.toLocaleLowerCase())) return x  })
@@ -68,12 +76,14 @@ async getTimeFilter(req: Request, res: Response) {
   }
   if(req.params.id){
     teamfilter = teamResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
-    console.log(teamfilter);
+    // console.log(teamfilter);
     
     teamResponse = teamfilter
   }
 
-  const response = { teams: teamResponse }
+  let timeCount = await timeRepository.count()
+
+  const response = { teams: teamResponse, limit: timeCount }
   
   return res.json(response)
 }  
