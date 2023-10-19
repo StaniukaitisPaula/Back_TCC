@@ -179,9 +179,26 @@ async getProfileById(req: Request, res: Response) {
 
 async getPlayers(req: Request, res: Response) {
 
-  let jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true }}) 
+  let perPage: string =  req.query.perPage as string
+  let page: string =  req.query.page as string
+
+  const perPageNumber = parseInt(perPage)
+  const pagenumber = parseInt(page)
+
+  const skip = (perPageNumber * pagenumber) - perPageNumber;
+   
+  let jogadorResponse = [new Jogador]
   let jogadorfilter = [new Jogador]
   let name: string =  req.query.name as string
+
+
+  if( !isNaN(perPageNumber) && !isNaN(pagenumber)){
+    jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true }, take: perPageNumber, skip: skip}) 
+
+  }else{
+    jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true }})
+  }
+  
 
   if(name != undefined && name != "" ){
     jogadorfilter = jogadorResponse.filter( (x) => {  if (x.nickname.toLowerCase().startsWith(name.toLowerCase())) return x  })
@@ -190,12 +207,13 @@ async getPlayers(req: Request, res: Response) {
   }
   if(req.params.id){
     jogadorfilter = jogadorResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
-    console.log(jogadorfilter);
+    // console.log(jogadorfilter);
     
     jogadorResponse = jogadorfilter
   }
+  let jogadorCount = await jogadorRepository.count()
 
-  const response = { players: jogadorResponse }
+  const response = { players: jogadorResponse, limit: jogadorCount }
   
   return res.json(response)
 }  
