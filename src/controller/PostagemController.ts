@@ -6,14 +6,14 @@ import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
 import crypto     from 'crypto';
 import { resolve } from "path";
-import { Perfil, Jogador } from '../entities/User';
+import { Perfil, Jogador, Postagem } from '../entities/User';
 import { Funcao } from '../entities/enum/Funcao';
 
 
-export class VagasController {
+export class PostagemController {
 
 // GET
-async getpost(req: Request, res: Response) {
+async getPostToken(req: Request, res: Response) {
     const user = req.user
 
     const postProfile = await postagemRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
@@ -25,12 +25,47 @@ async getpost(req: Request, res: Response) {
 
 }
 
+async getpost(req: Request, res: Response) {
+
+    let perPage: string =  req.query.perPage as string
+    let page: string =  req.query.page as string
+  
+    const perPageNumber = parseInt(perPage)
+    const pagenumber = parseInt(page)
+  
+    const skip = (perPageNumber * pagenumber) - perPageNumber;
+     
+    let postagemResponse = [new Postagem]
+    let posatgemFilter = [new Postagem]
+
+  
+    if( !isNaN(perPageNumber) && !isNaN(pagenumber)){
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true }, take: perPageNumber, skip: skip}) 
+  
+    }else{
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true }})
+    }
+
+    if(req.params.id){
+      posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
+      // console.log(jogadorfilter);
+      
+      postagemResponse = posatgemFilter
+    }
+    let postCount = await postagemRepository.count()
+  
+    const response = { players: postagemResponse, limit: postCount }
+    
+    return res.json(response)
+
+}
+
 //POST
 async createpost(req: Request, res: Response){
 
     const id = req.user
-  
-  
+
+
     const {
         descricao,
         jogo,
@@ -38,7 +73,7 @@ async createpost(req: Request, res: Response){
         elo,
         tipo
     } = req.body
-  
+
     if(
         descricao  == undefined || descricao  == "" ||
         jogo       == undefined || jogo       == "" ||
@@ -47,7 +82,7 @@ async createpost(req: Request, res: Response){
         tipo       == undefined || tipo       == "" 
 
     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
-  
+
 
     const newPost = postagemRepository.create({
 
@@ -58,24 +93,24 @@ async createpost(req: Request, res: Response){
         tipo,
        dono_id: id,
     })
-  
-    await postagemRepository.save(newPost)
-  
 
-  
+    await postagemRepository.save(newPost)
+
+
+
     return res.status(201).json(newPost)
-  
-  
   
 }
 
 //PUT
-async updateProfile(req: Request, res: Response){
-
+async updatepost(req: Request, res: Response){
+  
+  
     const id = req.params.id
  
     const postagem = await postagemRepository.findOne({ relations: { dono_id: true  }, where: { dono_id: { id : req.org.id }, id: parseInt(id) } , select: { dono_id: { id: false } }})
-    
+       
+
     if(postagem){
  const {
 
@@ -119,9 +154,9 @@ async updateProfile(req: Request, res: Response){
 
 
     }else{
-        throw new BadRequestError('Id nao informado ou nao ha org!')
+        throw new BadRequestError('Id nao informado!')
       }
-   
+
 
 
     return res.json({
