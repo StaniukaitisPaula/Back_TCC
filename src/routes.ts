@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { UserController } from './controller/UserController'
 import { TimeController } from './controller/TimeController'
-import { VagasController } from './controller/VagasController'
+import { PostagemController } from './controller/PostagemController';
 import { authMiddleware } from './middlewares/authMiddleware'
 
 const routes = Router()
@@ -37,9 +37,15 @@ routes.put('/team/:id',authMiddleware, new TimeController().updateTime)
 routes.delete('/team/:id',authMiddleware, new TimeController().deleteTime)
 
 // POSTAGEM 
-routes.get('/post',authMiddleware, new VagasController().getpost)
-routes.post('/post',authMiddleware, new VagasController().createpost)
-routes.put('/post/:id',authMiddleware, new VagasController().updateProfile)
+routes.get('/post', new PostagemController().getpost)
+routes.get('/post',authMiddleware, new PostagemController().getPostToken)
+routes.post('/post',authMiddleware, new PostagemController().createpost)
+routes.put('/post/:id',authMiddleware, new PostagemController().updatepost)
+
+// PROPOSTAS
+
+
+// VAGAS
 
 
 
