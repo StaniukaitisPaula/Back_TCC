@@ -71,6 +71,7 @@ async createpost(req: Request, res: Response){
         jogo,
         funcao,
         elo,
+        hora,
         tipo
     } = req.body
 
@@ -79,6 +80,7 @@ async createpost(req: Request, res: Response){
         jogo       == undefined || jogo       == "" ||
         funcao     == undefined || funcao     == "" ||
         elo        == undefined || elo        == "" ||
+        hora       == undefined || hora       == "" ||
         tipo       == undefined || tipo       == "" 
 
     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
@@ -90,6 +92,7 @@ async createpost(req: Request, res: Response){
         jogo,
         funcao,
         elo,
+        hora,
         tipo,
        dono_id: id,
     })
@@ -118,6 +121,7 @@ async updatepost(req: Request, res: Response){
         jogo,
         funcao,
         elo,
+        hora,
         tipo
     } = req.body
 
@@ -129,6 +133,7 @@ async updatepost(req: Request, res: Response){
       jogo,
       funcao,
       elo,
+      hora,
       tipo
     }
 
