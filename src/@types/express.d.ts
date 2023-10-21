@@ -1,4 +1,4 @@
-import { Jogador, Organizacao, Perfil } from "../entities/User"
+import { Jogador, Organizacao, Perfil, Postagem } from "../entities/User"
 
 declare global {
   namespace Express{
@@ -6,6 +6,8 @@ declare global {
       user : Partial<Perfil>
       player : Partial<Jogador>
       org : Partial<Organizacao>
+      post : Partial<Postagem> 
+      
     }
   }
 }
