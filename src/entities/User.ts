@@ -89,7 +89,7 @@ export class Jogador {
 export class Postagem {
   @PrimaryGeneratedColumn()
   id: number
-  @OneToOne(() => Perfil)
+  @ManyToOne(() => Perfil)
   @JoinColumn()
   dono_id: Perfil
   @Column({type : 'text'})
