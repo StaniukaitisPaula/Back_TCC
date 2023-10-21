@@ -93,13 +93,15 @@ export class Postagem {
   @JoinColumn()
   dono_id: Perfil
   @Column({type : 'text'})
-  descricao: String
+  descricao: string
   @Column({type : 'int'})
   jogo: Jogo
   @Column({type : 'int'})
   funcao: Funcao[]
   @Column({type : 'int'})
-  elo?: Elo
+  elo?: Elo  
+  @Column()
+  hora: string
   @Column({type : "boolean"})
   tipo: boolean
 }
@@ -115,7 +117,7 @@ export class Proposta {
   @JoinColumn()
   para: Perfil
   @Column({type : 'text'})
-  menssagem: String
+  menssagem: string
 }
 
 @Entity('tbl_Peneira')
@@ -129,6 +131,6 @@ export class Peneira {
   @JoinColumn()
   jogadores?: Perfil[]
   @Column({type : 'text'})
-  menssagem: String
+  menssagem: string
 }
 
