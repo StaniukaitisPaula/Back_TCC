@@ -101,7 +101,7 @@ export class Postagem {
   @Column({type : 'int'})
   elo?: Elo  
   @Column()
-  hora: string
+  hora: string  
   @Column({type : "boolean"})
   tipo: boolean
 }
