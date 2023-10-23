@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import crypto     from 'crypto';
 import { resolve } from "path";
-import { Organizacao, Perfil, Time } from '../entities/User';
+import { Organizacao, Perfil, Time, Jogador } from '../entities/User';
 import { Blob } from "buffer";
 import { DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
@@ -293,7 +293,7 @@ if(
   !time || time.organizacao.id != req.org.id
 ) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
 
-const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true } })
+const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }})
 console.log(jogador);
 
 
@@ -302,9 +302,12 @@ if(
 ) throw new BadRequestError('Jogador não exite!')
 
 let jogadores = time.jogadores
+let Jogadorfilter
 
-jogadores ? jogadores = jogadores.filter( (x) => { x.id !=  jogador.id  })   : jogadores = []
+jogadores ? Jogadorfilter = jogadores.filter( (x) => { x.id !=  jogador.id  })   : jogadores = []
 
+
+time.jogadores = Jogadorfilter
 
 timeRepository.save(time)
 
