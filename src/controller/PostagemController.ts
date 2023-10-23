@@ -99,8 +99,8 @@ async createpost(req: Request, res: Response){
        dono_id: id,
     })
 
-    newPost.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
-    console.log(newPost);
+    // newPost.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
+    // console.log(newPost);
     
     await postagemRepository.save(newPost)
 

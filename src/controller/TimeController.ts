@@ -10,6 +10,7 @@ import { Blob } from "buffer";
 import { DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
 import { isStringObject } from "util/types";
+import { time } from 'console';
 
 
 
@@ -228,6 +229,90 @@ return res.json({
 
 
 }
+
+async insertJogador(req: Request, res: Response){
+
+  const idTime = parseInt(req.params.time)
+  const idJogador = parseInt(req.params.jogador)
+
+if(
+    idTime     == undefined ||
+    idJogador  == undefined ||
+    isNaN(idTime)           || isNaN(idJogador)
+
+) throw new BadRequestError('Faltam Informacoes!')
+
+const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: true } })
+
+
+if(
+  !time || time.organizacao.id != req.org.id
+) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
+
+const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true } })
+console.log(jogador);
+
+
+if(
+  !jogador
+) throw new BadRequestError('Jogador não exite!')
+
+let jogadores = time.jogadores
+
+jogadores ? jogadores.push(jogador) : jogadores = [jogador]
+
+if(jogadores.length > 10) throw new BadRequestError('Time atigil o limite de jogadores')
+
+time.jogadores = jogadores
+
+timeRepository.save(time)
+
+return res.json({
+  added: true
+} )
+
+
+}
+
+async deleteJogador(req: Request, res: Response){
+  
+  const idTime = parseInt(req.params.time)
+  const idJogador = parseInt(req.params.jogador)
+
+if(
+    idTime     == undefined ||
+    idJogador  == undefined ||
+    isNaN(idTime)           || isNaN(idJogador)
+
+) throw new BadRequestError('Faltam Informacoes!')
+
+const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: true } })
+
+
+if(
+  !time || time.organizacao.id != req.org.id
+) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
+
+const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true } })
+console.log(jogador);
+
+
+if(
+  !jogador
+) throw new BadRequestError('Jogador não exite!')
+
+let jogadores = time.jogadores
+
+jogadores ? jogadores = jogadores.filter( (x) => { x.id !=  jogador.id  })   : jogadores = []
+
+
+timeRepository.save(time)
+
+return res.json({
+  removed: true
+} )
+}
+
 
 }
 

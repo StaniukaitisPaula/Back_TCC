@@ -47,7 +47,7 @@ export class Organizacao{
 export class Time{
   @PrimaryGeneratedColumn()
   id: number
-  @ManyToOne(() => Organizacao, (organizacao) => organizacao.times, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Organizacao, (organizacao) => organizacao.times, { orphanedRowAction: 'delete' })
   @JoinColumn()
   organizacao: Organizacao
   @Column({length: 100})
@@ -56,10 +56,10 @@ export class Time{
   jogo: Jogo
   @Column({type: 'text'})
   biografia?: string
-  @OneToMany(() => Jogador, (jogador) => jogador.time_atual, { onDelete: 'CASCADE' })
+  @OneToMany(() => Jogador, (jogador) => jogador.time_atual, {eager:true})
   @JoinColumn()
   jogadores?: Jogador[]
-  @OneToMany(() => Jogador, (jogador) => jogador.time_atual, { onDelete: 'CASCADE' })
+  @OneToMany(() => Jogador, (jogador) => jogador.ativo , {eager:true})
   @JoinColumn()
   jogadores_ativos?: Jogador[]
 }
@@ -79,9 +79,12 @@ export class Jogador {
   funcao: Funcao
   @Column({type : 'int'})
   elo: Elo
-  @ManyToOne(() => Time, (time) => time.jogadores, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Time, (time) => time.jogadores)
   @JoinColumn()
   time_atual?: Time
+  @ManyToOne(() => Time, (time) => time.jogadores)
+  @JoinColumn()
+  ativo?: Time
 }
 
 
