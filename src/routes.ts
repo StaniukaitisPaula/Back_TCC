@@ -35,6 +35,9 @@ routes.get('/team/org/:id', new TimeController().getTimeFilterOrg)
 routes.post('/team',authMiddleware, new TimeController().createTime)
 routes.put('/team/:id',authMiddleware, new TimeController().updateTime)
 routes.delete('/team/:id',authMiddleware, new TimeController().deleteTime)
+routes.put('/team/:time/:jogador',authMiddleware, new TimeController().insertJogador)
+routes.delete('/team/:time/:jogador',authMiddleware, new TimeController().deleteJogador)
+
 
 // POSTAGEM 
 routes.get('/post', new PostagemController().getpostPlayer)
