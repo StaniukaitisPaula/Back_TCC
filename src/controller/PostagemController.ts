@@ -25,7 +25,7 @@ async getPostToken(req: Request, res: Response) {
 
 }
 
-async getpost(req: Request, res: Response) {
+async getpostPlayer(req: Request, res: Response) {
 
     let perPage: string =  req.query.perPage as string
     let page: string =  req.query.page as string
@@ -54,7 +54,7 @@ async getpost(req: Request, res: Response) {
     }
     let postCount = await postagemRepository.count()
   
-    const response = { players: postagemResponse, limit: postCount }
+    const response = { players: postagemResponse,limit: postCount }
     
     return res.json(response)
 
@@ -65,6 +65,8 @@ async createpost(req: Request, res: Response){
 
     const id = req.user
 
+    const data = new Date().getTime()
+    
 
     const {
         descricao,
@@ -81,7 +83,7 @@ async createpost(req: Request, res: Response){
         funcao     == undefined || funcao     == "" ||
         elo        == undefined || elo        == "" ||
         hora       == undefined || hora       == "" ||
-        tipo       == undefined || tipo       == "" 
+        tipo       == undefined 
 
     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
@@ -92,11 +94,14 @@ async createpost(req: Request, res: Response){
         jogo,
         funcao,
         elo,
-        hora,
+        // hora,
         tipo,
        dono_id: id,
     })
 
+    newPost.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
+    console.log(newPost);
+    
     await postagemRepository.save(newPost)
 
 
@@ -111,6 +116,7 @@ async updatepost(req: Request, res: Response){
   
     const id = req.params.id
 
+    const data = new Date().getTime()
 
  
     const postagem = await postagemRepository.findOne({ relations: { dono_id: true  }, where: { dono_id: { id : req.post.id }, id: parseInt(id) } , select: { dono_id: { id: false } }})
@@ -136,6 +142,7 @@ async updatepost(req: Request, res: Response){
       hora,
       tipo
     }
+    response.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
 
     if(descricao){
       response.descricao = Boolean((await postagemRepository.update( { id: postagem.id }, { descricao: descricao})).affected)
@@ -153,9 +160,9 @@ async updatepost(req: Request, res: Response){
         response.elo = Boolean((await postagemRepository.update( { id: postagem.id }, { elo: elo})).affected)
     }
 
-    if(hora){
-      response.hora = Boolean((await postagemRepository.update( { id: postagem.id }, { hora: hora})).affected)
-  }
+  /// if(hora){
+      //response.hora = Boolean((await postagemRepository.update( { id: postagem.id }, { hora: hora})).affected)
+ // }
 
     if(tipo){
         response.tipo = Boolean((await postagemRepository.update( { id: postagem.id }, { tipo: tipo})).affected)
@@ -170,7 +177,14 @@ async updatepost(req: Request, res: Response){
       response: response
     })
 }
-//DELETE
+
+
+ //DELETE
+
+
+
+
+
 
 
 

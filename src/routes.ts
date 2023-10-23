@@ -37,7 +37,7 @@ routes.put('/team/:id',authMiddleware, new TimeController().updateTime)
 routes.delete('/team/:id',authMiddleware, new TimeController().deleteTime)
 
 // POSTAGEM 
-routes.get('/post', new PostagemController().getpost)
+routes.get('/post', new PostagemController().getpostPlayer)
 routes.get('/post',authMiddleware, new PostagemController().getPostToken)
 routes.post('/post',authMiddleware, new PostagemController().createpost)
 routes.put('/post/:id',authMiddleware, new PostagemController().updatepost)
