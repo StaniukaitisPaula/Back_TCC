@@ -3,6 +3,7 @@ import { UserController } from './controller/UserController'
 import { TimeController } from './controller/TimeController'
 import { PostagemController } from './controller/PostagemController';
 import { authMiddleware } from './middlewares/authMiddleware'
+import { PropostaController } from './controller/PropostaController';
 
 const routes = Router()
 
@@ -46,8 +47,9 @@ routes.post('/post',authMiddleware, new PostagemController().createpost)
 routes.put('/post/:id',authMiddleware, new PostagemController().updatepost)
 
 // PROPOSTAS
-
-
+routes.get('/offer', authMiddleware, new PropostaController().verPropostas)
+routes.post('/offer/:time/:jogador',authMiddleware, new PropostaController().enviarProposta)
+routes.delete('/offer/:time',authMiddleware, new PropostaController().responderProposta)
 // VAGAS
 
 

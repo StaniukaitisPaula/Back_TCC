@@ -177,8 +177,6 @@ async updatepost(req: Request, res: Response){
       response: response
     })
 }
-
-
  //DELETE
 
 

@@ -25,6 +25,9 @@ export class Perfil {
   nickname: string
   @Column({length: 255})
   biografia?: string
+  @OneToMany(() => Proposta, (proposta) => proposta.para , { onDelete: 'CASCADE' })
+  @JoinColumn()
+  propostas?: Proposta[]
 }
 
 @Entity('tbl_organizacao')
@@ -62,6 +65,9 @@ export class Time{
   @OneToMany(() => Jogador, (jogador) => jogador.ativo , {eager:true})
   @JoinColumn()
   jogadores_ativos?: Jogador[]
+  @OneToMany(() => Proposta, (proposta) => proposta.de , {eager:true})
+  @JoinColumn()
+  propostas?: Proposta[]
 }
 
 @Entity('tbl_jogador')
@@ -113,10 +119,10 @@ export class Postagem {
 export class Proposta {
   @PrimaryGeneratedColumn()
   id: number
-  @ManyToMany(() => Perfil)
+  @ManyToOne(() => Time, (time) => time.propostas)
   @JoinColumn()
-  de: Perfil
-  @ManyToMany(() => Perfil)
+  de: Time
+  @ManyToOne(() => Perfil, (perfil) => perfil.propostas)
   @JoinColumn()
   para: Perfil
   @Column({type : 'text'})

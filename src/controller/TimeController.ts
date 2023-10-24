@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository,timeRepository } from '../repositories/UserRepository';
+import { jogadorRepository, organizadorRepository, userRepository, timeRepository, propostaRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import crypto     from 'crypto';
@@ -249,13 +249,16 @@ if(
   !time || time.organizacao.id != req.org.id
 ) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
 
-const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true } })
+const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
+
 console.log(jogador);
 
 
 if(
   !jogador
 ) throw new BadRequestError('Jogador não exite!')
+
+if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
 
 let jogadores = time.jogadores
 
@@ -301,13 +304,17 @@ if(
   !jogador
 ) throw new BadRequestError('Jogador não exite!')
 
-let jogadores = time.jogadores
-let Jogadorfilter
+let jogadores = time.jogadores;
+let jogadorFilter;
 
-jogadores ? Jogadorfilter = jogadores.filter( (x) => { x.id !=  jogador.id  })   : jogadores = []
+if (jogadores) {
+  jogadorFilter = jogadores.filter(x => x.id !== jogador.id);
+} else {
+  jogadores = [];
+}
 
 
-time.jogadores = Jogadorfilter
+time.jogadores = jogadorFilter
 
 timeRepository.save(time)
 
@@ -315,6 +322,9 @@ return res.json({
   removed: true
 } )
 }
+
+
+
 
 
 }
