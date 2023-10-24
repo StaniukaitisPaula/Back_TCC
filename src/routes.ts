@@ -42,7 +42,7 @@ routes.delete('/team/:time/:jogador',authMiddleware, new TimeController().delete
 
 // POSTAGEM 
 routes.get('/post', new PostagemController().getpostPlayer)
-routes.get('/post',authMiddleware, new PostagemController().getPostToken)
+routes.get('/post/teste',authMiddleware, new PostagemController().getPostToken)
 routes.post('/post',authMiddleware, new PostagemController().createpost)
 routes.put('/post/:id',authMiddleware, new PostagemController().updatepost)
 
@@ -50,6 +50,8 @@ routes.put('/post/:id',authMiddleware, new PostagemController().updatepost)
 routes.get('/offer', authMiddleware, new PropostaController().verPropostas)
 routes.post('/offer/:time/:jogador',authMiddleware, new PropostaController().enviarProposta)
 routes.delete('/offer/:time',authMiddleware, new PropostaController().responderProposta)
+
+
 // VAGAS
 
 

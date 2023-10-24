@@ -20,6 +20,7 @@ async getPostToken(req: Request, res: Response) {
 
 
     const response = { user: user, postProfile: postProfile[0]? postProfile[0] : null  }
+    // const response = { user: user, oi: postProfile[0]? postProfile[0] : null , orgProfile:  postProfile[0]? postProfile[0]: null }
     
     return res.json(response)
 
@@ -160,9 +161,9 @@ async updatepost(req: Request, res: Response){
         response.elo = Boolean((await postagemRepository.update( { id: postagem.id }, { elo: elo})).affected)
     }
 
-  /// if(hora){
-      //response.hora = Boolean((await postagemRepository.update( { id: postagem.id }, { hora: hora})).affected)
- // }
+  if(hora){
+      response.hora = Boolean((await postagemRepository.update( { id: postagem.id }, { hora: hora})).affected)
+ }
 
     if(tipo){
         response.tipo = Boolean((await postagemRepository.update( { id: postagem.id }, { tipo: tipo})).affected)
