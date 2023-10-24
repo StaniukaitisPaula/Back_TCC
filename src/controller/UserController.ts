@@ -143,7 +143,7 @@ async validationMobile(req: Request, res: Response){
 async getProfile(req: Request, res: Response) {
     const user = req.user
 
-    const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
+    const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true, time_atual: true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
     const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true,  dono_id: {id: false} } })
 
 
@@ -157,7 +157,7 @@ async getProfileById(req: Request, res: Response) {
 
     const id = req.params.id
 
-    const user = await userRepository.findOneBy({id: parseInt(id)})
+    const user = await userRepository.findOne({ where: {id: parseInt(id)}})
 
     if(user == null){
       throw new BadRequestError('Usuario não existe!')
@@ -168,7 +168,7 @@ async getProfileById(req: Request, res: Response) {
       ...userReturn
      } = user
     
-     const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
+     const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true, time_atual: true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
      const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true, dono_id: {id: false}} })
   
     const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : null, orgProfile: orgProfile[0] ? orgProfile[0] : null }
@@ -193,10 +193,10 @@ async getPlayers(req: Request, res: Response) {
 
 
   if( !isNaN(perPageNumber) && !isNaN(pagenumber)){
-    jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true }, take: perPageNumber, skip: skip}) 
+    jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true, time_atual: true }, take: perPageNumber, skip: skip}) 
 
   }else{
-    jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true }})
+    jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true, time_atual: true }})
   }
   
 
