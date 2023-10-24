@@ -19,9 +19,11 @@ async getPostToken(req: Request, res: Response) {
     const postProfile = await postagemRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
 
 
-    const response = { user: user, postProfile: postProfile[0]? postProfile[0] : null  }
-    
+   const response = { user: user, postProfile: postProfile[0]? postProfile[0] : null  }
+   // const response = { user: user, Profile: postProfile[0]? postProfile[0] : null , orgProfile:  postProfile[0]? postProfile[0]: null }
+  console.log("oiii");  
     return res.json(response)
+
 
 }
 
@@ -32,6 +34,9 @@ async getpostPlayer(req: Request, res: Response) {
   
     const perPageNumber = parseInt(perPage)
     const pagenumber = parseInt(page)
+
+ 
+
   
     const skip = (perPageNumber * pagenumber) - perPageNumber;
      
@@ -54,7 +59,7 @@ async getpostPlayer(req: Request, res: Response) {
     }
     let postCount = await postagemRepository.count()
   
-    const response = { players: postagemResponse,limit: postCount }
+    const response = { post: postagemResponse,limit: postCount }
     
     return res.json(response)
 
@@ -160,9 +165,9 @@ async updatepost(req: Request, res: Response){
         response.elo = Boolean((await postagemRepository.update( { id: postagem.id }, { elo: elo})).affected)
     }
 
-  /// if(hora){
-      //response.hora = Boolean((await postagemRepository.update( { id: postagem.id }, { hora: hora})).affected)
- // }
+  if(hora){
+      response.hora = Boolean((await postagemRepository.update( { id: postagem.id }, { hora: hora})).affected)
+ }
 
     if(tipo){
         response.tipo = Boolean((await postagemRepository.update( { id: postagem.id }, { tipo: tipo})).affected)
