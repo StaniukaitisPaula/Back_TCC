@@ -45,6 +45,8 @@ routes.get('/post', new PostagemController().getpostPlayer)
 routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken)
 routes.post('/post',authMiddleware, new PostagemController().createpost)
 routes.put('/post/:id',authMiddleware, new PostagemController().updatepost)
+routes.delete('/post/:id',authMiddleware, new PostagemController().deletePpost)
+
 
 // PROPOSTAS
 routes.get('/offer', authMiddleware, new PropostaController().verPropostas)
