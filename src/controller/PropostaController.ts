@@ -47,12 +47,14 @@ async enviarProposta(req: Request, res: Response){
       
       if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
       
-      const proposta = propostaRepository.create({ de: time, para: jogador.perfil_id , menssagem: menssagem ? menssagem : ""})
+      const proposta = await propostaRepository.create({ de: time, para: jogador.perfil_id , menssagem: menssagem ? menssagem : ""})
 
-      propostaRepository.save(proposta)
+      const oila = await propostaRepository.save(proposta)
+      console.log(oila);
+      
       
       res.json({
-        proposta: proposta
+        proposta: oila
       })
       
       
@@ -103,8 +105,11 @@ async responderProposta(req: Request, res: Response){
 
   const proposta = await propostaRepository.findOne({where: { de: time, para: jogador.perfil_id }})
 
+console.log(aceitar);
 
   if(aceitar == true && proposta){
+    console.log("oi");
+    
     let jogadores = time.jogadores
 
     jogadores ? jogadores.push(jogador) : jogadores = [jogador]
