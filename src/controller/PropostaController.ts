@@ -105,7 +105,7 @@ async responderProposta(req: Request, res: Response){
 
   const proposta = await propostaRepository.findOne({where: { de: time, para: jogador.perfil_id }})
 
-console.log(aceitar);
+        console.log(aceitar);
 
   if(aceitar == true && proposta){
     console.log("oi");
@@ -118,12 +118,12 @@ console.log(aceitar);
     
     time.jogadores = jogadores
     
-    timeRepository.save(time)
+    await timeRepository.save(time)
 
-    propostaRepository.delete(proposta)
+    await propostaRepository.delete(proposta)
 
   }else if(proposta){
-    propostaRepository.delete(proposta)
+    await propostaRepository.delete(proposta)
   }
   
   res.json({
