@@ -95,12 +95,13 @@ async getTimeFilterOrg(req: Request, res: Response) {
   let org = new Organizacao
 
   if(req.params.id){
-    let orgResponse = await organizadorRepository.findOneBy({ id: parseInt(req.params.id) })
+    let orgResponse = await organizadorRepository.findOneBy({ dono_id: { id: parseInt(req.params.id) } }) 
     if(orgResponse){
         org = orgResponse
     }
     
   }
+  console.log(org)
   
 
   let teamResponse = await timeRepository.find( { where: { organizacao: org },  relations: { organizacao:  true  } } ) 

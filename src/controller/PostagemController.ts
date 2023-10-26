@@ -21,7 +21,7 @@ async getPostToken(req: Request, res: Response) {
 
     const response = { user: user, postProfile: postProfile[0]? postProfile[0] : null  }
     //console.log(postProfile);
-    return res.json(response)
+    return res.json(postProfile)
 
 }
 
@@ -30,6 +30,7 @@ async getpostPlayer(req: Request, res: Response) {
     let perPage: string =  req.query.perPage as string
     let page: string =  req.query.page as string
   
+
     const perPageNumber = parseInt(perPage)
     const pagenumber = parseInt(page)
   
@@ -54,7 +55,7 @@ async getpostPlayer(req: Request, res: Response) {
     }
     let postCount = await postagemRepository.count()
   
-    const response = { players: postagemResponse,limit: postCount }
+    const response = {post: postagemResponse, limit: postCount }
   
     
     
@@ -115,14 +116,12 @@ async createpost(req: Request, res: Response){
 //PUT
 async updatepost(req: Request, res: Response){
   
-  
-    const id = req.params.id
+    const idPost = req.params.id
 
-    const data = new Date().getTime()
+  const postagem = await postagemRepository.findOne({ where: { dono_id:  {id: parseInt(idPost)}} , select: { dono_id: { id: false } }})
 
- 
-    const postagem = await postagemRepository.findOne({ relations: { dono_id: true  }, where: { dono_id: { id : req.post.id }, id: parseInt(id) } , select: { dono_id: { id: false } }})
        
+console.log(postagem);
 
     if(postagem){
  const {
@@ -136,7 +135,6 @@ async updatepost(req: Request, res: Response){
     } = req.body
     
     let response = {
-      id,
       descricao,
       jogo,
       funcao,
@@ -144,7 +142,7 @@ async updatepost(req: Request, res: Response){
       hora,
       tipo
     }
-    response.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
+    // response.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
 
     if(descricao){
       response.descricao = Boolean((await postagemRepository.update( { id: postagem.id }, { descricao: descricao})).affected)
@@ -172,15 +170,27 @@ async updatepost(req: Request, res: Response){
 
 
     }
+    
 
 
 
     return res.json({
-      response: response
+      response: postagem
     })
 }
- //DELETE
 
+
+ //DELETE
+async deletePpost(req: Request, res: Response){
+
+
+
+return res.json({
+  response: true
+})
+
+
+} 
 
 
 
