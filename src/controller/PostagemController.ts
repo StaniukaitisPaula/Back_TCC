@@ -116,12 +116,12 @@ async createpost(req: Request, res: Response){
 //PUT
 async updatepost(req: Request, res: Response){
   
-    const idPost = req.params.id
+  const idPost = req.params.id
 
-  const postagem = await postagemRepository.findOne({ where: { dono_id:  {id: parseInt(idPost)}} , select: { dono_id: { id: false } }})
+  const postagem = await postagemRepository.findOne({ where: { dono_id: {}} })
 
        
-console.log(postagem);
+  console.log(postagem);
 
     if(postagem){
  const {
@@ -171,9 +171,6 @@ console.log(postagem);
 
     }
     
-
-
-
     return res.json({
       response: postagem
     })
@@ -183,7 +180,15 @@ console.log(postagem);
  //DELETE
 async deletePpost(req: Request, res: Response){
 
+  const idPost = req.params.id
 
+  if(idPost){
+    
+    const post = await postagemRepository.delete(idPost)
+
+  }else{
+    throw new BadRequestError('!!!')
+  }
 
 return res.json({
   response: true
@@ -191,7 +196,6 @@ return res.json({
 
 
 } 
-
 
 
 

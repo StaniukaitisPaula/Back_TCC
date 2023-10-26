@@ -51,7 +51,7 @@ routes.delete('/post/:id',authMiddleware, new PostagemController().deletePpost)
 // PROPOSTAS
 routes.get('/offer', authMiddleware, new PropostaController().verPropostas)
 routes.post('/offer/:time/:jogador',authMiddleware, new PropostaController().enviarProposta)
-routes.delete('/offer/:time',authMiddleware, new PropostaController().responderProposta)
+routes.delete('/offer/:id',authMiddleware, new PropostaController().responderProposta)
 
 
 // VAGAS

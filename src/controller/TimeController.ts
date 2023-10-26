@@ -65,7 +65,7 @@ async getTimeFilter(req: Request, res: Response) {
     teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } }, take: perPageNumber, skip: skip }) 
 
   }else{
-    teamResponse = await timeRepository.find({ relations: { organizacao: { dono_id: true  } }}) 
+    teamResponse = await timeRepository.find({ relations: { organizacao: { dono_id: true  }, jogadores: { perfil_id: true }, jogadores_ativos: { perfil_id: true } }}) 
   }
   
   //console.log(teamResponse);
@@ -163,6 +163,55 @@ async createTime(req: Request, res: Response){
 
 }
 
+
+async insertJogador(req: Request, res: Response){
+
+  const idTime = parseInt(req.params.time)
+  const idJogador = parseInt(req.params.jogador)
+
+if(
+    idTime     == undefined ||
+    idJogador  == undefined ||
+    isNaN(idTime)           || isNaN(idJogador)
+
+) throw new BadRequestError('Faltam Informacoes!')
+
+const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: true } })
+
+
+if(
+  !time || time.organizacao.id != req.org.id
+) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
+
+const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
+
+console.log(jogador);
+
+
+if(
+  !jogador
+) throw new BadRequestError('Jogador não exite!')
+
+if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
+
+let jogadores = time.jogadores
+
+jogadores ? jogadores.push(jogador) : jogadores = [jogador]
+
+if(jogadores.length > 10) throw new BadRequestError('Time atigil o limite de jogadores')
+
+time.jogadores = jogadores
+
+timeRepository.save(time)
+
+return res.json({
+  added: true
+} )
+
+
+}
+
+
 //UPDATE TIME
 async updateTime(req: Request, res: Response){
 
@@ -231,52 +280,7 @@ return res.json({
 
 }
 
-async insertJogador(req: Request, res: Response){
 
-  const idTime = parseInt(req.params.time)
-  const idJogador = parseInt(req.params.jogador)
-
-if(
-    idTime     == undefined ||
-    idJogador  == undefined ||
-    isNaN(idTime)           || isNaN(idJogador)
-
-) throw new BadRequestError('Faltam Informacoes!')
-
-const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: true } })
-
-
-if(
-  !time || time.organizacao.id != req.org.id
-) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
-
-const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
-
-console.log(jogador);
-
-
-if(
-  !jogador
-) throw new BadRequestError('Jogador não exite!')
-
-if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
-
-let jogadores = time.jogadores
-
-jogadores ? jogadores.push(jogador) : jogadores = [jogador]
-
-if(jogadores.length > 10) throw new BadRequestError('Time atigil o limite de jogadores')
-
-time.jogadores = jogadores
-
-timeRepository.save(time)
-
-return res.json({
-  added: true
-} )
-
-
-}
 
 async deleteJogador(req: Request, res: Response){
   
