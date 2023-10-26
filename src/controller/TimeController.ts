@@ -202,10 +202,10 @@ if(jogadores.length > 10) throw new BadRequestError('Time atigil o limite de jog
 
 time.jogadores = jogadores
 
-timeRepository.save(time)
+const a = await timeRepository.save(time)
 
 return res.json({
-  added: true
+  added: a
 } )
 
 
@@ -321,10 +321,10 @@ if (jogadores) {
 
 time.jogadores = jogadorFilter
 
-timeRepository.save(time)
+const a = await timeRepository.save(time)
 
 return res.json({
-  removed: true
+  removed: a
 } )
 }
 
