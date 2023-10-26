@@ -87,7 +87,7 @@ async responderProposta(req: Request, res: Response){
   
   
   if(
-    !time || time.organizacao.id != req.org.dono_id?.id
+    !time
   ) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
   
   const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
