@@ -68,7 +68,7 @@ async createpost(req: Request, res: Response){
 
     const id = req.user
 
-    const data = new Date().getTime()
+   // const data = new Date().getTime()
     
 
     const {
@@ -90,6 +90,10 @@ async createpost(req: Request, res: Response){
 
     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
+    const verifique = await postagemRepository.findOneBy({dono_id: id }) 
+
+    if(verifique)throw new BadRequestError('Postagem ja exsite!')
+     
 
     const newPost = postagemRepository.create({
 
@@ -117,11 +121,10 @@ async createpost(req: Request, res: Response){
 async updatepost(req: Request, res: Response){
   
   const idPost = req.params.id
+  const  user  = req.user 
 
-  const postagem = await postagemRepository.findOne({ where: { dono_id: {}} })
+  const postagem = await postagemRepository.findOne({ where: { dono_id: user} })
 
-       
-  console.log(postagem);
 
     if(postagem){
  const {
