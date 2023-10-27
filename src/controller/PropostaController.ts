@@ -76,7 +76,7 @@ async verPropostas(req: Request, res: Response){
 async responderProposta(req: Request, res: Response){
     const idTime = parseInt(req.params.time)
     const idJogador = req.user.id
-    const aceitar = req.body.aceitar
+    const aceitar = Boolean(req.params.aceitar)
   
   if(
       idTime     == undefined ||
