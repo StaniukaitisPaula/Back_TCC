@@ -31,7 +31,6 @@ async enviarProposta(req: Request, res: Response){
       
       const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: true } })
       
-      
       if(
         !time || time.organizacao.id != req.org.id
       ) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
@@ -46,6 +45,10 @@ async enviarProposta(req: Request, res: Response){
       ) throw new BadRequestError('Jogador não exite!')
       
       if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
+
+     const verifique = await propostaRepository.findOneBy({de: time, para: jogador.perfil_id}) 
+
+     if(verifique)throw new BadRequestError('Proposta ja enviada!')
       
       const proposta = await propostaRepository.create({ de: time, para: jogador.perfil_id , menssagem: menssagem ? menssagem : ""})
 
