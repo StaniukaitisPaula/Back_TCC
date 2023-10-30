@@ -33,6 +33,7 @@ async getpostPlayer(req: Request, res: Response) {
 
     const perPageNumber = parseInt(perPage)
     const pagenumber = parseInt(page)
+    const tipo = Boolean(parseInt(req.params.tipo))
   
     const skip = (perPageNumber * pagenumber) - perPageNumber;
      
@@ -41,10 +42,12 @@ async getpostPlayer(req: Request, res: Response) {
 
   
     if( !isNaN(perPageNumber) && !isNaN(pagenumber)){
-      postagemResponse = await postagemRepository.find({relations: { dono_id: true }, take: perPageNumber, skip: skip}) 
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true }, take: perPageNumber, skip: skip, where:{tipo: tipo} }) 
   
+    
+      
     }else{
-      postagemResponse = await postagemRepository.find({relations: { dono_id: true }})
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true }, where: {tipo: tipo}  })
     }
 
     if(req.params.id){
