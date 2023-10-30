@@ -114,7 +114,7 @@ export class Postagem {
   @Column({type : "boolean"})
   tipo: boolean
   @Column({type: 'text'})
-  pros: string
+  pros?: string
 }
 
 @Entity('tbl_Proposta')
