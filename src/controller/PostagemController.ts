@@ -18,10 +18,10 @@ async getPostToken(req: Request, res: Response) {
 
     const postProfile = await postagemRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
 
-//onsole.log(postProfile);
+    
     const response = { user: user, postProfile: postProfile[0]? postProfile[0] : null  }
     
-    return res.json(postProfile)
+    return res.json(response)
 
 }
 
@@ -60,7 +60,7 @@ async getpostPlayer(req: Request, res: Response) {
   
     const response = {post: postagemResponse, limit: postCount }
   
-    
+    console.log(postagemResponse);
     
     return res.json(response)
 
@@ -106,7 +106,7 @@ async createpost(req: Request, res: Response){
         jogo,
         funcao,
         elo,
-        // hora,
+        hora,
         tipo,
         pros,
        dono_id: id,
