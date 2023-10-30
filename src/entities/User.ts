@@ -113,6 +113,8 @@ export class Postagem {
   hora: string  
   @Column({type : "boolean"})
   tipo: boolean
+  @Column({type: 'text'})
+  pros: string
 }
 
 @Entity('tbl_Proposta')

@@ -18,9 +18,9 @@ async getPostToken(req: Request, res: Response) {
 
     const postProfile = await postagemRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
 
-
+//onsole.log(postProfile);
     const response = { user: user, postProfile: postProfile[0]? postProfile[0] : null  }
-    //console.log(postProfile);
+    
     return res.json(postProfile)
 
 }
@@ -80,7 +80,8 @@ async createpost(req: Request, res: Response){
         funcao,
         elo,
         hora,
-        tipo
+        tipo,
+        pros
     } = req.body
 
     if(
@@ -89,7 +90,8 @@ async createpost(req: Request, res: Response){
         funcao     == undefined || funcao     == "" ||
         elo        == undefined || elo        == "" ||
         hora       == undefined || hora       == "" ||
-        tipo       == undefined 
+        tipo       == undefined ||
+        pros       == undefined
 
     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
@@ -106,6 +108,7 @@ async createpost(req: Request, res: Response){
         elo,
         // hora,
         tipo,
+        pros,
        dono_id: id,
     })
 
@@ -137,7 +140,8 @@ async updatepost(req: Request, res: Response){
         funcao,
         elo,
         hora,
-        tipo
+        tipo,
+        pros
     } = req.body
     
     let response = {
@@ -146,7 +150,8 @@ async updatepost(req: Request, res: Response){
       funcao,
       elo,
       hora,
-      tipo
+      tipo,
+      pros
     }
     // response.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
 
@@ -168,13 +173,15 @@ async updatepost(req: Request, res: Response){
 
   if(hora){
       response.hora = Boolean((await postagemRepository.update( { id: postagem.id }, { hora: hora})).affected)
- }
+  }
 
     if(tipo){
         response.tipo = Boolean((await postagemRepository.update( { id: postagem.id }, { tipo: tipo})).affected)
     }
 
-
+    if(pros){
+      response.pros = Boolean((await postagemRepository.update( { id: postagem.id }, { pros: pros})).affected)
+  }
     }
     
     return res.json({
