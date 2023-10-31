@@ -54,7 +54,10 @@ routes.post('/offer/:time/:jogador',authMiddleware, new PropostaController().env
 routes.delete('/offer/:time/:aceitar',authMiddleware, new PropostaController().responderProposta)
 
 
-// VAGAS
+// NOTIFICACAO
+routes.get('/notification', authMiddleware, )
+routes.post('/notification',authMiddleware,)
+routes.delete('/notification',authMiddleware,)
 
 
 
