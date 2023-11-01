@@ -28,6 +28,9 @@ export class Perfil {
   @OneToMany(() => Proposta, (proposta) => proposta.para , { onDelete: 'CASCADE' })
   @JoinColumn()
   propostas?: Proposta[]
+  @OneToMany(() => Notificacao, (notificacao) => notificacao.de , { onDelete: 'CASCADE' })
+  @JoinColumn()
+  notificacoes?: Notificacao[]
 }
 
 @Entity('tbl_organizacao')
@@ -143,5 +146,20 @@ export class Peneira {
   jogadores?: Perfil[]
   @Column({type : 'text'})
   menssagem: string
+}
+
+@Entity('tbl_Notificacao')
+export class Notificacao {
+  @PrimaryGeneratedColumn()
+  id: number
+  @ManyToOne(() => Perfil, (perfil) => perfil.notificacoes)
+  @JoinColumn()
+  de: Perfil
+  @Column({type : 'text'})
+  menssagem: string
+  @Column({type : 'text'})
+  titulo: string
+  @Column({type : 'text'})
+  link: string
 }
 

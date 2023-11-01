@@ -502,4 +502,5 @@ async updateOrganizer(req: Request, res: Response){
 
 
 
+
 }

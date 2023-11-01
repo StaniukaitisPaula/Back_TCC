@@ -4,6 +4,8 @@ import { TimeController } from './controller/TimeController'
 import { PostagemController } from './controller/PostagemController';
 import { authMiddleware } from './middlewares/authMiddleware'
 import { PropostaController } from './controller/PropostaController';
+import { notificacaoRepository } from './repositories/UserRepository';
+import { NotificacaoController } from './controller/NotificacaoController';
 
 const routes = Router()
 
@@ -41,8 +43,8 @@ routes.delete('/team/:time/:jogador',authMiddleware, new TimeController().delete
 
 
 // POSTAGEM 
-routes.get('/post/:tipo', new PostagemController().getpostPlayer)
 routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken)
+routes.get('/post/:tipo', new PostagemController().getpostPlayer)
 routes.post('/post',authMiddleware, new PostagemController().createpost)
 routes.put('/post/:id',authMiddleware, new PostagemController().updatepost)
 routes.delete('/post/:id',authMiddleware, new PostagemController().deletePpost)
@@ -55,11 +57,14 @@ routes.delete('/offer/:time/:aceitar',authMiddleware, new PropostaController().r
 
 
 // NOTIFICACAO
-routes.get('/notification', authMiddleware, )
-routes.post('/notification',authMiddleware,)
-routes.delete('/notification',authMiddleware,)
+routes.get('/notification', authMiddleware, new NotificacaoController().getNotificacao)
+routes.delete('/notification/:id',authMiddleware, new NotificacaoController().deleteNotificacao)
 
 
-
+//PENEIRA
+routes.post('/sieve',authMiddleware,)
+routes.get('/sieve',authMiddleware,)
+routes.put('/sieve',authMiddleware, )
+routes.delete('/sieve',authMiddleware,)
 
 export default routes
