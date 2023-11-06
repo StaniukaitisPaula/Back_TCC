@@ -267,8 +267,12 @@ if(id == null || org == undefined)  throw new BadRequestError('Id nao informado 
 
 const time = await timeRepository.findOneBy({ id: parseInt(id), organizacao: org })
 
+
+
 if(time){
-  timeRepository.delete(time)
+  await timeRepository.delete({ id: time.id})
+}else{
+
 }
 
 
