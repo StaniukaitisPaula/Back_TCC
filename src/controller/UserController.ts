@@ -49,7 +49,7 @@ async create(req: Request, res: Response){
       throw new BadRequestError('Email já cadastrado!')
     }
     if(usernameExists){
-      throw new BadRequestError('Nome de usuario já cadastrado!')
+      throw new BadRequestError('Nome de usuário já cadastrado!')
     }
     if(nicknameExists){
       throw new BadRequestError('Nickname já cadastrado!')
@@ -134,7 +134,7 @@ async validationMobile(req: Request, res: Response){
       throw new BadRequestError('Email já cadastrado!')
     }
     if(usernameExists){
-      throw new BadRequestError('Nome de usuario já cadastrado!')
+      throw new BadRequestError('Nome de usuário já cadastrado!')
     }
 
 }
@@ -485,11 +485,11 @@ async updateOrganizer(req: Request, res: Response){
  
     const org = req.org
 
-    if(req.org){
+    if(org){
 
-      const orgProfile = await organizadorRepository.delete(org)
+      const orgProfile = await organizadorRepository.delete({ id: org.id })
     }else{
-      throw new BadRequestError('O usuario nao possui organizacao!')
+      throw new BadRequestError('O usuário não possui Organização!')
     }
   
   
@@ -510,7 +510,7 @@ async deletePlayer(req: Request, res: Response){
 
       const playerProfile = await jogadorRepository.delete(player)
     }else{
-      throw new BadRequestError('O usuario nao é Jogador!')
+      throw new BadRequestError('O usuário não tem perfil de Jogador!')
     }
   
   
