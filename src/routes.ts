@@ -31,7 +31,7 @@ routes.delete('/player',authMiddleware, new UserController().deletePlayer,errorM
 // ORGANIZADOR
 routes.post('/organizer',authMiddleware, new UserController().createorganizer,errorMiddleware)
 routes.put('/organizer',authMiddleware, new UserController().updateOrganizer,errorMiddleware)
-routes.delete('/organizer',authMiddleware, new UserController().deleteOrganizer,errorMiddleware)
+routes.delete('/organizer',authMiddleware, new UserController().deleteOrganizer)
 
 // TIME
 routes.get('/team', new TimeController().getTimeFilter,errorMiddleware)

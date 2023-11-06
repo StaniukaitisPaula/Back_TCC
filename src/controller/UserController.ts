@@ -347,7 +347,7 @@ async updateProfile(req: Request, res: Response){
     }
     if(nome_completo){
       if(await userRepository.findOneBy({nome_completo: nome_completo})){
-        response.nome_completo = 'Nomeusuario já existe!'
+        response.nome_completo = 'Nome usuario já existe!'
       }else{
         response.nome_completo = await userRepository.update( { id: user.id }, { nome_completo: nome_completo})
       }
@@ -442,6 +442,18 @@ if(elo){
 return res.json({
   response: response
 })
+
+  
+}
+
+async updatePlayerLeave(req: Request, res: Response){
+
+  const user = req.user
+
+  const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
+
+  
+
 
   
 }

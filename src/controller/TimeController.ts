@@ -65,7 +65,7 @@ async getTimeFilter(req: Request, res: Response) {
     teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } }, take: perPageNumber, skip: skip }) 
 
   }else{
-    teamResponse = await timeRepository.find({ relations: { organizacao: { dono_id: true  }, jogadores: { perfil_id: true }, jogadores_ativos: { perfil_id: true } }}) 
+    teamResponse = await timeRepository.find({ relations: { organizacao: { dono_id: true  }, jogadores: { perfil_id: true } }}) 
   }
   
   //console.log(teamResponse);
