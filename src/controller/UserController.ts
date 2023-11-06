@@ -345,6 +345,14 @@ async updateProfile(req: Request, res: Response){
       }
     
     }
+    if(nome_completo){
+      if(await userRepository.findOneBy({nome_completo: nome_completo})){
+        response.nome_completo = 'Nomeusuario já existe!'
+      }else{
+        response.nome_completo = await userRepository.update( { id: user.id }, { nome_completo: nome_completo})
+      }
+    
+    }
     if(email){
       if(await userRepository.findOneBy({email: email})){
         response.email = 'Email de usuario já cadastrado!'

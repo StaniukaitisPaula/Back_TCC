@@ -25,6 +25,7 @@ routes.put('/profile',authMiddleware, new UserController().updateProfile,errorMi
 routes.get('/player/:id', new UserController().getPlayers,errorMiddleware)
 routes.post('/player',authMiddleware, new UserController().createPlayer,errorMiddleware)
 routes.put('/player',authMiddleware, new UserController().updatePlayer,errorMiddleware)
+routes.put('/player/leave',authMiddleware, new UserController().updatePlayer,errorMiddleware)
 routes.delete('/player',authMiddleware, new UserController().deletePlayer,errorMiddleware)
 
 // ORGANIZADOR
