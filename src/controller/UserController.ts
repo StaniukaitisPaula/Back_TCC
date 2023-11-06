@@ -206,7 +206,7 @@ async getPlayers(req: Request, res: Response) {
 
   }
   if(req.params.id){
-    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
+    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.perfil_id.id == parseInt( req.params.id )) return x  })
     // console.log(jogadorfilter);
     
     jogadorResponse = jogadorfilter
@@ -501,6 +501,25 @@ async updateOrganizer(req: Request, res: Response){
   }  
 
 
+
+async deletePlayer(req: Request, res: Response){
+ 
+    const player = req.player
+
+    if(req.player){
+
+      const playerProfile = await jogadorRepository.delete(player)
+    }else{
+      throw new BadRequestError('O usuario nao é Jogador!')
+    }
+  
+  
+  return res.json({
+    response: true
+  })
+  
+    
+  }  
 
 
 }

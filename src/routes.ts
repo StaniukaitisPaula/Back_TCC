@@ -21,9 +21,10 @@ routes.get('/profile/:id', new UserController().getProfileById)
 routes.put('/profile',authMiddleware, new UserController().updateProfile)
 
 // JOGADOR
-routes.get('/player', new UserController().getPlayers)
+routes.get('/player/:id', new UserController().getPlayers)
 routes.post('/player',authMiddleware, new UserController().createPlayer)
 routes.put('/player',authMiddleware, new UserController().updatePlayer)
+routes.delete('/player',authMiddleware, new UserController().deletePlayer)
 
 // ORGANIZADOR
 routes.post('/organizer',authMiddleware, new UserController().createorganizer)
