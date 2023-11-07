@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository } from '../repositories/UserRepository';
+import { jogadorRepository, organizadorRepository, userRepository, timeRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
@@ -8,10 +8,11 @@ import crypto     from 'crypto';
 import { resolve } from "path";
 import { Perfil, Jogador } from '../entities/User';
 import { Blob } from "buffer";
-import { DataSource } from 'typeorm';
+import { DataSource, Like } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
 import { Jogo } from '../entities/enum/Jogo';
 import { time } from "console";
+import { JoinAttribute } from "typeorm/query-builder/JoinAttribute";
 
 
 
@@ -213,7 +214,7 @@ async getPlayers(req: Request, res: Response) {
     
     jogadorResponse = jogadorfilter
   }
-  let jogadorCount = await jogadorRepository.count()
+  let jogadorCount = await jogadorRepository.countBy({nickname: Like(`${name}%`)})
 
   const response = { players: jogadorResponse, limit: jogadorCount }
   
@@ -450,11 +451,22 @@ return res.json({
 
 async updatePlayerLeave(req: Request, res: Response){
 
-  const user = req.user
+ 
+  const player = req.player
 
-  const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
+  if(player != null){
+    const time = await timeRepository.findOneBy({jogadores: {id: player.id}})
+   
+    if(time){
+      let jogadorFilter = time.jogadores?.filter(x => x.id !== player.id);
+      time.jogadores = jogadorFilter
+      await timeRepository.save(time)
+    }
+  }
 
-  
+return res.json({
+  up: true
+} )
 
 
   

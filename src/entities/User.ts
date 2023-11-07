@@ -85,9 +85,9 @@ export class Jogador {
   funcao: Funcao
   @Column({type : 'int'})
   elo: Elo
-  @ManyToOne(() => Time, (time) => time.jogadores,{ onDelete: 'SET NULL'})
+  @ManyToOne(() => Time, (time) => time.jogadores,{ onDelete: 'SET NULL', nullable: true })
   @JoinColumn()
-  time_atual?: Time
+  time_atual?: Time 
 }
 
 
