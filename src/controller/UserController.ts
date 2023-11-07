@@ -181,6 +181,8 @@ async getPlayers(req: Request, res: Response) {
 
   let perPage: string =  req.query.perPage as string
   let page: string =  req.query.page as string
+ 
+  const id = req.query.id as string
 
   const perPageNumber = parseInt(perPage)
   const pagenumber = parseInt(page)
@@ -205,8 +207,8 @@ async getPlayers(req: Request, res: Response) {
     jogadorResponse = jogadorfilter
 
   }
-  if(req.params.id){
-    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.perfil_id.id == parseInt( req.params.id )) return x  })
+  if(id){
+    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.perfil_id.id == parseInt( id )) return x  })
     // console.log(jogadorfilter);
     
     jogadorResponse = jogadorfilter
