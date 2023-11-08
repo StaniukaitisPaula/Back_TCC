@@ -9,6 +9,7 @@ import { resolve } from "path";
 import { Perfil, Jogador, Postagem } from '../entities/User';
 import { Funcao } from '../entities/enum/Funcao';
 import { isDataView } from "util/types";
+import { Elo } from "../entities/enum/Elo";
 
 
 export class PostagemController {
@@ -53,10 +54,31 @@ async getpostPlayer(req: Request, res: Response) {
 
     if(req.params.id){
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
-      // console.log(jogadorfilter);
-      
+
       postagemResponse = posatgemFilter
     }
+
+    // if(req.query.elo){
+
+
+
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.elo  == req.query.elo) return x  })
+
+    //   postagemResponse = posatgemFilter
+    // }
+       
+    // if(req.query.funcao){
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao ==  req.query.funcao ) return x  })
+
+    //   postagemResponse = posatgemFilter
+    // }
+       
+    // if(req.query.hora){
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (parseInt(x.hora) >=   parseInt(req.query.hora) ) return x  })
+
+    //   postagemResponse = posatgemFilter
+    // }
+
     let postCount = await postagemRepository.count()
   
     const response = {post: postagemResponse, limit: postCount }

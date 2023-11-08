@@ -103,7 +103,7 @@ export class Postagem {
   @Column({type : 'int'})
   jogo: Jogo
   @Column({type : 'int'})
-  funcao: Funcao[]
+  funcao?: Funcao
   @Column({type : 'int'})
   elo?: Elo  
   @Column()
