@@ -7,6 +7,7 @@ import { PropostaController } from './controller/PropostaController';
 import { notificacaoRepository } from './repositories/UserRepository';
 import { NotificacaoController } from './controller/NotificacaoController';
 import { errorMiddleware } from './middlewares/error';
+import { PeneiraController } from './controller/PeneiraController';
 
 const routes = Router()
 
@@ -50,7 +51,7 @@ routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken,
 routes.get('/post/:tipo', new PostagemController().getpostPlayer,errorMiddleware)
 routes.post('/post',authMiddleware, new PostagemController().createpost,errorMiddleware)
 routes.put('/post/:id',authMiddleware, new PostagemController().updatepost,errorMiddleware)
-routes.delete('/post/:id',authMiddleware, new PostagemController().deletePpost,errorMiddleware)
+routes.delete('/post',authMiddleware, new PostagemController().deletePost)
 
 
 // PROPOSTAS
@@ -65,9 +66,9 @@ routes.delete('/notification/:id',authMiddleware, new NotificacaoController().de
 
 
 //PENEIRA
-routes.post('/sieve',authMiddleware,)
-routes.get('/sieve',authMiddleware,)
-routes.put('/sieve',authMiddleware, )
-routes.delete('/sieve',authMiddleware,)
+routes.post('/sieve/:jogador/:time',authMiddleware, new PeneiraController().postPeneira)
+routes.get('/sieve',authMiddleware, new PeneiraController().getPeneira)
+routes.put('/sieve',authMiddleware, new PeneiraController().putPeneira)
+routes.delete('/sieve',authMiddleware, new PeneiraController().deletePeneira)
 
 export default routes

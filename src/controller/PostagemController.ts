@@ -8,6 +8,7 @@ import crypto     from 'crypto';
 import { resolve } from "path";
 import { Perfil, Jogador, Postagem } from '../entities/User';
 import { Funcao } from '../entities/enum/Funcao';
+import { isDataView } from "util/types";
 
 
 export class PostagemController {
@@ -191,13 +192,13 @@ async updatepost(req: Request, res: Response){
 
 
  //DELETE
-async deletePpost(req: Request, res: Response){
+async deletePost(req: Request, res: Response){
 
-  const idPost = req.params.id
+  const  postUser  = req.user 
 
-  if(idPost){
+  if(postUser){
     
-    const post = await postagemRepository.delete(idPost)
+    const post = await postagemRepository.delete({dono_id: postUser} )
 
   }else{
     throw new BadRequestError('!!!')
