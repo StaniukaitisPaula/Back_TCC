@@ -126,8 +126,7 @@ async createpost(req: Request, res: Response){
 
 //PUT
 async updatepost(req: Request, res: Response){
-  
-  const idPost = req.params.id
+
   const  user  = req.user 
 
   const postagem = await postagemRepository.findOne({ where: { dono_id: user} })

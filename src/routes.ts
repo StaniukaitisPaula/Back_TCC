@@ -50,7 +50,7 @@ routes.delete('/team/:time/:jogador',authMiddleware, new TimeController().delete
 routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken,errorMiddleware)
 routes.get('/post/:tipo', new PostagemController().getpostPlayer,errorMiddleware)
 routes.post('/post',authMiddleware, new PostagemController().createpost,errorMiddleware)
-routes.put('/post/:id',authMiddleware, new PostagemController().updatepost,errorMiddleware)
+routes.put('/post',authMiddleware, new PostagemController().updatepost,errorMiddleware)
 routes.delete('/post',authMiddleware, new PostagemController().deletePost)
 
 
