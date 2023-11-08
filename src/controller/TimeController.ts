@@ -7,7 +7,7 @@ import crypto     from 'crypto';
 import { resolve } from "path";
 import { Organizacao, Perfil, Time, Jogador } from '../entities/User';
 import { Blob } from "buffer";
-import { DataSource } from 'typeorm';
+import { Any, DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
 import { isStringObject } from "util/types";
 import { time } from 'console';
@@ -92,21 +92,25 @@ async getTimeFilter(req: Request, res: Response) {
 
 async getTimeFilterOrg(req: Request, res: Response) {
 
-  let org = new Organizacao
+   let org = new Organizacao
+   let responsee = false
 
   if(req.params.id){
     let orgResponse = await organizadorRepository.findOneBy({ dono_id: { id: parseInt(req.params.id) } }) 
+    
     if(orgResponse){
         org = orgResponse
+        let teamResponse = await timeRepository.find( { where: { organizacao: org } } ) 
+        const response = { teams: teamResponse }
+  
+        return res.json(response)
     }
+
     
   }
-  console.log(org)
   
 
-  let teamResponse = await timeRepository.find( { where: { organizacao: org },  relations: { organizacao:  true  } } ) 
-
-  const response = { teams: teamResponse }
+  const response = { teams: responsee }
   
   return res.json(response)
 }  

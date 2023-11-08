@@ -41,14 +41,10 @@ async  postPeneira(req: Request, res: Response){
 
 // if(verifique)throw new BadRequestError('Proposta ja enviada!')
 
-// const peneira = await peneiraRepository.create({jogadores: jogador., menssagem: menssagem ? menssagem : ""})
+// const peneira = await peneiraRepository.create({jogadores: jogador.perfil_id, menssagem: menssagem ? menssagem : ""})
 
 // const oila = await peneiraRepository.save(peneira)
-// console.log(oila);
 
-// const noti = await notificacaoRepository.create({ de: jogador.perfil_id, menssagem: 'Uma proposta foi enviada para o seu perfil!', titulo: 'Proposta recebida' })
-
-// await notificacaoRepository.save(noti)
 
 // res.json({
 //   proposta: oila
