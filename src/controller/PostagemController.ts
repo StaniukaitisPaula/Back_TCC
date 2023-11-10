@@ -52,29 +52,26 @@ async getpostPlayer(req: Request, res: Response) {
       postagemResponse = await postagemRepository.find({relations: { dono_id: true }, where: {tipo: tipo}  })
     }
 
-    if(req.params.id){
-      posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
+    // if(req.params.id){
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
 
-      postagemResponse = posatgemFilter
-    }
+    //   postagemResponse = posatgemFilter
+    // }
 
     // if(req.query.elo){
-
-
-
-    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.elo  == req.query.elo) return x  })
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if ((x.elo)  == (req.query.elo)) return x  })
 
     //   postagemResponse = posatgemFilter
     // }
        
     // if(req.query.funcao){
-    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao ==  req.query.funcao ) return x  })
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao >=  req.query.funcao ) return x  })
 
     //   postagemResponse = posatgemFilter
     // }
        
     // if(req.query.hora){
-    //   posatgemFilter = postagemResponse.filter( (x) => {  if (parseInt(x.hora) >=   parseInt(req.query.hora) ) return x  })
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.hora) == (req.query.hora) ) return x  })
 
     //   postagemResponse = posatgemFilter
     // }

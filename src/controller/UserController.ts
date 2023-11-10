@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository, timeRepository, postagemRepository } from '../repositories/UserRepository';
+import { jogadorRepository, organizadorRepository, userRepository, timeRepository, postagemRepository, notificacaoRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
@@ -463,6 +463,14 @@ async updatePlayerLeave(req: Request, res: Response){
       await timeRepository.save(time)
     }
   }
+   
+
+  const noti = await notificacaoRepository.create({ de:  player.perfil_id, menssagem: 'O jogador(a) ' + player.nickname +'saiu do Time ' + player.time_atual, titulo: 'TIME'  })
+
+  await notificacaoRepository.save(noti)
+
+
+  
 
 return res.json({
   up: true
@@ -544,7 +552,7 @@ async deletePlayer(req: Request, res: Response){
 
       const playerProfile = await jogadorRepository.delete(player)
     }else{
-      
+
       throw new BadRequestError('O usuário não tem perfil de Jogador!')
     }
 
