@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository, timeRepository } from '../repositories/UserRepository';
+import { jogadorRepository, organizadorRepository, userRepository, timeRepository, postagemRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
@@ -544,7 +544,18 @@ async deletePlayer(req: Request, res: Response){
 
       const playerProfile = await jogadorRepository.delete(player)
     }else{
+      
       throw new BadRequestError('O usuário não tem perfil de Jogador!')
+    }
+
+    const  postUser  = req.user 
+
+    if(postUser){
+      
+      const post = await postagemRepository.delete({dono_id: postUser} )
+  
+    }else{
+      throw new BadRequestError('!!!')
     }
   
   
