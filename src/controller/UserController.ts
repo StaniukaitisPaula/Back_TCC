@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository } from '../repositories/UserRepository';
+import { jogadorRepository, organizadorRepository, userRepository, timeRepository, postagemRepository, notificacaoRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
@@ -8,10 +8,11 @@ import crypto     from 'crypto';
 import { resolve } from "path";
 import { Perfil, Jogador } from '../entities/User';
 import { Blob } from "buffer";
-import { DataSource } from 'typeorm';
+import { DataSource, Like } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
 import { Jogo } from '../entities/enum/Jogo';
 import { time } from "console";
+import { JoinAttribute } from "typeorm/query-builder/JoinAttribute";
 
 
 
@@ -49,7 +50,7 @@ async create(req: Request, res: Response){
       throw new BadRequestError('Email já cadastrado!')
     }
     if(usernameExists){
-      throw new BadRequestError('Nome de usuario já cadastrado!')
+      throw new BadRequestError('Nome de usuário já cadastrado!')
     }
     if(nicknameExists){
       throw new BadRequestError('Nickname já cadastrado!')
@@ -134,7 +135,7 @@ async validationMobile(req: Request, res: Response){
       throw new BadRequestError('Email já cadastrado!')
     }
     if(usernameExists){
-      throw new BadRequestError('Nome de usuario já cadastrado!')
+      throw new BadRequestError('Nome de usuário já cadastrado!')
     }
 
 }
@@ -181,6 +182,8 @@ async getPlayers(req: Request, res: Response) {
 
   let perPage: string =  req.query.perPage as string
   let page: string =  req.query.page as string
+ 
+  const id = req.query.id as string
 
   const perPageNumber = parseInt(perPage)
   const pagenumber = parseInt(page)
@@ -205,13 +208,13 @@ async getPlayers(req: Request, res: Response) {
     jogadorResponse = jogadorfilter
 
   }
-  if(req.params.id){
-    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
+  if(id){
+    jogadorfilter = jogadorResponse.filter( (x) => {  if (x.perfil_id.id == parseInt( id )) return x  })
     // console.log(jogadorfilter);
     
     jogadorResponse = jogadorfilter
   }
-  let jogadorCount = await jogadorRepository.count()
+  let jogadorCount = await jogadorRepository.countBy({nickname: Like(`${name}%`)})
 
   const response = { players: jogadorResponse, limit: jogadorCount }
   
@@ -345,6 +348,14 @@ async updateProfile(req: Request, res: Response){
       }
     
     }
+    if(nome_completo){
+      if(await userRepository.findOneBy({nome_completo: nome_completo})){
+        response.nome_completo = 'Nome usuario já existe!'
+      }else{
+        response.nome_completo = await userRepository.update( { id: user.id }, { nome_completo: nome_completo})
+      }
+    
+    }
     if(email){
       if(await userRepository.findOneBy({email: email})){
         response.email = 'Email de usuario já cadastrado!'
@@ -438,6 +449,37 @@ return res.json({
   
 }
 
+async updatePlayerLeave(req: Request, res: Response){
+
+ 
+  const player = req.player
+
+  if(player != null){
+    const time = await timeRepository.findOneBy({jogadores: {id: player.id}})
+   
+    if(time){
+      let jogadorFilter = time.jogadores?.filter(x => x.id !== player.id);
+      time.jogadores = jogadorFilter
+      await timeRepository.save(time)
+    }
+  }
+   
+
+  const noti = await notificacaoRepository.create({ de:  player.perfil_id, menssagem: 'O jogador(a) ' + player.nickname +'saiu do Time ' + player.time_atual, titulo: 'TIME'  })
+
+  await notificacaoRepository.save(noti)
+
+
+  
+
+return res.json({
+  up: true
+} )
+
+
+  
+}
+
 async updateOrganizer(req: Request, res: Response){
  
     const user = req.user
@@ -485,11 +527,11 @@ async updateOrganizer(req: Request, res: Response){
  
     const org = req.org
 
-    if(req.org){
+    if(org){
 
-      const orgProfile = await organizadorRepository.delete(org)
+      const orgProfile = await organizadorRepository.delete({ id: org.id })
     }else{
-      throw new BadRequestError('O usuario nao possui organizacao!')
+      throw new BadRequestError('O usuário não possui Organização!')
     }
   
   
@@ -501,6 +543,36 @@ async updateOrganizer(req: Request, res: Response){
   }  
 
 
+
+async deletePlayer(req: Request, res: Response){
+ 
+    const player = req.player
+
+    if(req.player){
+
+      const playerProfile = await jogadorRepository.delete(player)
+    }else{
+
+      throw new BadRequestError('O usuário não tem perfil de Jogador!')
+    }
+
+    const  postUser  = req.user 
+
+    if(postUser){
+      
+      const post = await postagemRepository.delete({dono_id: postUser} )
+  
+    }else{
+      throw new BadRequestError('!!!')
+    }
+  
+  
+  return res.json({
+    response: true
+  })
+  
+    
+  }  
 
 
 }

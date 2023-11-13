@@ -7,7 +7,7 @@ import crypto     from 'crypto';
 import { resolve } from "path";
 import { Organizacao, Perfil, Time, Jogador } from '../entities/User';
 import { Blob } from "buffer";
-import { DataSource } from 'typeorm';
+import { Any, DataSource } from 'typeorm';
 import { Genero } from '../entities/enum/Genero';
 import { isStringObject } from "util/types";
 import { time } from 'console';
@@ -65,7 +65,7 @@ async getTimeFilter(req: Request, res: Response) {
     teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } }, take: perPageNumber, skip: skip }) 
 
   }else{
-    teamResponse = await timeRepository.find({ relations: { organizacao: { dono_id: true  }, jogadores: { perfil_id: true }, jogadores_ativos: { perfil_id: true } }}) 
+    teamResponse = await timeRepository.find({ relations: { organizacao: { dono_id: true  }, jogadores: { perfil_id: true } }}) 
   }
   
   //console.log(teamResponse);
@@ -92,21 +92,25 @@ async getTimeFilter(req: Request, res: Response) {
 
 async getTimeFilterOrg(req: Request, res: Response) {
 
-  let org = new Organizacao
+   let org = new Organizacao
+   let responsee = false
 
   if(req.params.id){
     let orgResponse = await organizadorRepository.findOneBy({ dono_id: { id: parseInt(req.params.id) } }) 
+    
     if(orgResponse){
         org = orgResponse
+        let teamResponse = await timeRepository.find( { where: { organizacao: org } } ) 
+        const response = { teams: teamResponse }
+  
+        return res.json(response)
     }
+
     
   }
-  console.log(org)
   
 
-  let teamResponse = await timeRepository.find( { where: { organizacao: org },  relations: { organizacao:  true  } } ) 
-
-  const response = { teams: teamResponse }
+  const response = { teams: responsee }
   
   return res.json(response)
 }  
@@ -267,8 +271,12 @@ if(id == null || org == undefined)  throw new BadRequestError('Id nao informado 
 
 const time = await timeRepository.findOneBy({ id: parseInt(id), organizacao: org })
 
+
+
 if(time){
-  timeRepository.delete(time)
+  await timeRepository.delete({ id: time.id})
+}else{
+
 }
 
 

@@ -25,10 +25,10 @@ export class Perfil {
   nickname: string
   @Column({length: 255})
   biografia?: string
-  @OneToMany(() => Proposta, (proposta) => proposta.para , { onDelete: 'CASCADE' })
+  @OneToMany(() => Proposta, (proposta) => proposta.para )
   @JoinColumn()
   propostas?: Proposta[]
-  @OneToMany(() => Notificacao, (notificacao) => notificacao.de , { onDelete: 'CASCADE' })
+  @OneToMany(() => Notificacao, (notificacao) => notificacao.de)
   @JoinColumn()
   notificacoes?: Notificacao[]
 }
@@ -40,7 +40,7 @@ export class Organizacao{
   @OneToOne(() => Perfil)
   @JoinColumn()
   dono_id: Perfil
-  @OneToMany(() => Time, (time) => time.organizacao, { onDelete: 'CASCADE' })
+  @OneToMany(() => Time, (time) => time.organizacao)
   @JoinColumn()
   times?: Time[]
   @Column({length: 100})
@@ -53,7 +53,7 @@ export class Organizacao{
 export class Time{
   @PrimaryGeneratedColumn()
   id: number
-  @ManyToOne(() => Organizacao, (organizacao) => organizacao.times, { orphanedRowAction: 'delete' })
+  @ManyToOne(() => Organizacao, (organizacao) => organizacao.times, { orphanedRowAction: 'delete', onDelete: 'CASCADE' })
   @JoinColumn()
   organizacao: Organizacao
   @Column({length: 100})
@@ -65,9 +65,6 @@ export class Time{
   @OneToMany(() => Jogador, (jogador) => jogador.time_atual, {eager:true})
   @JoinColumn()
   jogadores?: Jogador[]
-  @OneToMany(() => Jogador, (jogador) => jogador.ativo , {eager:true})
-  @JoinColumn()
-  jogadores_ativos?: Jogador[]
   @OneToMany(() => Proposta, (proposta) => proposta.de , {eager:true})
   @JoinColumn()
   propostas?: Proposta[]
@@ -88,12 +85,9 @@ export class Jogador {
   funcao: Funcao
   @Column({type : 'int'})
   elo: Elo
-  @ManyToOne(() => Time, (time) => time.jogadores)
+  @ManyToOne(() => Time, (time) => time.jogadores,{ onDelete: 'SET NULL', nullable: true })
   @JoinColumn()
-  time_atual?: Time
-  @ManyToOne(() => Time, (time) => time.jogadores)
-  @JoinColumn()
-  ativo?: Time
+  time_atual?: Time 
 }
 
 
@@ -109,7 +103,7 @@ export class Postagem {
   @Column({type : 'int'})
   jogo: Jogo
   @Column({type : 'int'})
-  funcao: Funcao[]
+  funcao?: Funcao
   @Column({type : 'int'})
   elo?: Elo  
   @Column()

@@ -15,9 +15,17 @@ const authMiddleware = async (req, res, next) => {
     }
     const token = authorization.split(' ')[1];
     const { id } = jsonwebtoken_1.default.verify(token, (_a = process.env.JWT_PASS) !== null && _a !== void 0 ? _a : '');
-    const user = await UserRepository_1.userRepository.findOneBy({ id });
+    const user = await UserRepository_1.userRepository.findOne({ where: { id: id }, relations: { propostas: { de: true } } });
     if (!user) {
         throw new api_erros_1.UnauthorizedError('Não autorizado');
+    }
+    const org = await UserRepository_1.organizadorRepository.findOneBy({ dono_id: user });
+    const player = await UserRepository_1.jogadorRepository.findOneBy({ perfil_id: user });
+    if (org) {
+        req.org = org;
+    }
+    if (player) {
+        req.player = player;
     }
     const { senha: _, ...loggedUser } = user;
     req.user = loggedUser;

@@ -8,6 +8,8 @@ import crypto     from 'crypto';
 import { resolve } from "path";
 import { Perfil, Jogador, Postagem } from '../entities/User';
 import { Funcao } from '../entities/enum/Funcao';
+import { isDataView } from "util/types";
+import { Elo } from "../entities/enum/Elo";
 
 
 export class PostagemController {
@@ -50,12 +52,30 @@ async getpostPlayer(req: Request, res: Response) {
       postagemResponse = await postagemRepository.find({relations: { dono_id: true }, where: {tipo: tipo}  })
     }
 
-    if(req.params.id){
-      posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
-      // console.log(jogadorfilter);
-      
-      postagemResponse = posatgemFilter
-    }
+    // if(req.params.id){
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
+
+    //   postagemResponse = posatgemFilter
+    // }
+
+    // if(req.query.elo){
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if ((x.elo)  == (req.query.elo)) return x  })
+
+    //   postagemResponse = posatgemFilter
+    // }
+       
+    // if(req.query.funcao){
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao >=  req.query.funcao ) return x  })
+
+    //   postagemResponse = posatgemFilter
+    // }
+       
+    // if(req.query.hora){
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.hora) == (req.query.hora) ) return x  })
+
+    //   postagemResponse = posatgemFilter
+    // }
+
     let postCount = await postagemRepository.count()
   
     const response = {post: postagemResponse, limit: postCount }
@@ -125,8 +145,7 @@ async createpost(req: Request, res: Response){
 
 //PUT
 async updatepost(req: Request, res: Response){
-  
-  const idPost = req.params.id
+
   const  user  = req.user 
 
   const postagem = await postagemRepository.findOne({ where: { dono_id: user} })
@@ -191,13 +210,13 @@ async updatepost(req: Request, res: Response){
 
 
  //DELETE
-async deletePpost(req: Request, res: Response){
+async deletePost(req: Request, res: Response){
 
-  const idPost = req.params.id
+  const  postUser  = req.user 
 
-  if(idPost){
+  if(postUser){
     
-    const post = await postagemRepository.delete(idPost)
+    const post = await postagemRepository.delete({dono_id: postUser} )
 
   }else{
     throw new BadRequestError('!!!')
