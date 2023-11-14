@@ -465,19 +465,12 @@ async updatePlayerLeave(req: Request, res: Response){
       await timeRepository.save(time)
 
       const noti = await notificacaoRepository.create({ de: time.organizacao.dono_id, menssagem: 'tesssteteeete' + player.nickname +'foi recusada!', titulo: 'TIME' })
-
+      console.log(noti);
+      
     await notificacaoRepository.save(noti)
 
     }
   }
-
-
-
-  
-    // const noti = await notificacaoRepository.create({ de: time ,menssagem: 'O jogador(a) ' + player.nickname +'saiu do Time ' + player.time_atual, titulo: 'TIME'  })
-
-    // await notificacaoRepository.save(noti)
-
 
 
 
