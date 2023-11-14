@@ -454,6 +454,7 @@ async updatePlayerLeave(req: Request, res: Response){
  
   const player = req.player
 
+
   if(player != null){
     const time = await timeRepository.findOneBy({jogadores: {id: player.id}})
    
@@ -461,13 +462,19 @@ async updatePlayerLeave(req: Request, res: Response){
       let jogadorFilter = time.jogadores?.filter(x => x.id !== player.id);
       time.jogadores = jogadorFilter
       await timeRepository.save(time)
+
+    const noti = await notificacaoRepository.create({ de: player ,menssagem: 'O jogador(a) ' + player.nickname +'saiu do Time ' + player.time_atual, titulo: 'TIME'  })
+
+    await notificacaoRepository.save(noti)
+
     }
-  }
-   
+  } 
 
-  const noti = await notificacaoRepository.create({ de:  player.perfil_id, menssagem: 'O jogador(a) ' + player.nickname +'saiu do Time ' + player.time_atual, titulo: 'TIME'  })
 
-  await notificacaoRepository.save(noti)
+
+  
+
+
 
 
   

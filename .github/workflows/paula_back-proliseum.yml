@@ -53,4 +53,4 @@ jobs:
           app-name: 'Back-Proliseum'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F3F986B32CEE424AAFE777EEA5ED36D0 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_70ABC0C5816F435C8F01010F50250A24 }}
