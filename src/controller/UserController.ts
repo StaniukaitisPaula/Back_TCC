@@ -461,14 +461,16 @@ async updatePlayerLeave(req: Request, res: Response){
     if(time){
       let jogadorFilter = time.jogadores?.filter(x => x.id !== player.id);
       time.jogadores = jogadorFilter
+
+
       await timeRepository.save(time)
 
-    const noti = await notificacaoRepository.create({ de: player ,menssagem: 'O jogador(a) ' + player.nickname +'saiu do Time ' + player.time_atual, titulo: 'TIME'  })
+    const noti = await notificacaoRepository.create({ de: time ,menssagem: 'O jogador(a) ' + player.nickname +'saiu do Time ' + player.time_atual, titulo: 'TIME'  })
 
     await notificacaoRepository.save(noti)
 
     }
-  } 
+  }
 
 
 
