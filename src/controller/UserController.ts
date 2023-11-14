@@ -463,11 +463,10 @@ async updatePlayerLeave(req: Request, res: Response){
       time.jogadores = jogadorFilter
 
       await timeRepository.save(time)
-
-      const noti = await notificacaoRepository.create({ de: time.organizacao.dono_id, menssagem: 'tesssteteeete' + player.nickname +'foi recusada!', titulo: 'TIME' })
+      const noti = await notificacaoRepository.create({ de: time.organizacao.dono_id, menssagem: 'oooiiiiiii ' + player.nickname +'foi aceita!', titulo: 'timeeeeeee' })
       console.log(noti);
       
-    await notificacaoRepository.save(noti)
+      await notificacaoRepository.save(noti)
 
     }
   }
