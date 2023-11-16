@@ -202,10 +202,11 @@ async getPlayers(req: Request, res: Response) {
     jogadorResponse = await jogadorRepository.find({relations: { perfil_id: true, time_atual: true }})
   }
   
-
+  let jogadorCount = await jogadorRepository.count()
   if(name != undefined && name != "" ){
     jogadorfilter = jogadorResponse.filter( (x) => {  if (x.nickname.toLowerCase().startsWith(name.toLowerCase())) return x  })
     jogadorResponse = jogadorfilter
+    jogadorCount = await jogadorRepository.countBy({nickname: Like(`${name}%`)})
 
   }
   if(id){
@@ -214,7 +215,7 @@ async getPlayers(req: Request, res: Response) {
     
     jogadorResponse = jogadorfilter
   }
-  let jogadorCount = await jogadorRepository.countBy({nickname: Like(`${name}%`)})
+  
 
   const response = { players: jogadorResponse, limit: jogadorCount }
   
@@ -349,12 +350,7 @@ async updateProfile(req: Request, res: Response){
     
     }
     if(nome_completo){
-      if(await userRepository.findOneBy({nome_completo: nome_completo})){
-        response.nome_completo = 'Nome usuario já existe!'
-      }else{
         response.nome_completo = await userRepository.update( { id: user.id }, { nome_completo: nome_completo})
-      }
-    
     }
     if(email){
       if(await userRepository.findOneBy({email: email})){
