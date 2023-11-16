@@ -40,7 +40,7 @@ export class Organizacao{
   @OneToOne(() => Perfil)
   @JoinColumn()
   dono_id: Perfil
-  @OneToMany(() => Time, (time) => time.organizacao)
+  @OneToMany(() => Time, (time) => time.organizacao, { orphanedRowAction: 'delete', onDelete: 'CASCADE' })
   @JoinColumn()
   times?: Time[]
   @Column({length: 100})
@@ -95,9 +95,12 @@ export class Jogador {
 export class Postagem {
   @PrimaryGeneratedColumn()
   id: number
-  @ManyToOne(() => Perfil)
+  @ManyToOne(() => Perfil , {nullable: true })
   @JoinColumn()
-  dono_id: Perfil
+  dono_id?: Perfil 
+  @ManyToOne(() => Time,  {nullable: true })
+  @JoinColumn()
+  time?: Time
   @Column({type : 'text'})
   descricao: string
   @Column({type : 'int'})
@@ -132,7 +135,7 @@ export class Proposta {
 export class Peneira {
   @PrimaryGeneratedColumn()
   id: number
-  @OneToOne(() => Perfil)
+  @OneToOne(() => Time)
   @JoinColumn()
   time: Time
   @ManyToMany(() => Perfil)
