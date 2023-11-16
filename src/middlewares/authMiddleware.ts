@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express"
 import { UnauthorizedError } from "../helpers/api-erros"
 import  jwt  from "jsonwebtoken"
-import { userRepository, organizadorRepository, jogadorRepository } from '../repositories/UserRepository';
+import { userRepository, jogadorRepository } from '../repositories/UserRepository';
 
 type JwtPayload ={
   id: number
@@ -23,12 +23,8 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     throw new UnauthorizedError('Não autorizado')
   }
   
-  const org = await organizadorRepository.findOneBy({ dono_id: user })
   const player = await jogadorRepository.findOneBy({ perfil_id: user })
 
-  if(org){
-    req.org = org
-  }
   if(player){
     req.player = player
   }

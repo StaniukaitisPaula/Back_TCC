@@ -31,31 +31,18 @@ export class Perfil {
   @OneToMany(() => Notificacao, (notificacao) => notificacao.de)
   @JoinColumn()
   notificacoes?: Notificacao[]
-}
-
-@Entity('tbl_organizacao')
-export class Organizacao{
-  @PrimaryGeneratedColumn()
-  id: number
-  @OneToOne(() => Perfil)
-  @JoinColumn()
-  dono_id: Perfil
-  @OneToMany(() => Time, (time) => time.organizacao, { orphanedRowAction: 'delete', onDelete: 'CASCADE' })
+  @OneToMany(() => Time, (time) => time.dono, { orphanedRowAction: 'delete', onDelete: 'CASCADE' })
   @JoinColumn()
   times?: Time[]
-  @Column({length: 100})
-  nome_organizacao: string
-  @Column({type: 'text'})
-  biografia?: string
 }
 
 @Entity('tbl_time')
 export class Time{
   @PrimaryGeneratedColumn()
   id: number
-  @ManyToOne(() => Organizacao, (organizacao) => organizacao.times, { orphanedRowAction: 'delete', onDelete: 'CASCADE' })
+  @ManyToOne(() => Perfil, (perfil) => perfil.times, { orphanedRowAction: 'delete', onDelete: 'CASCADE' })
   @JoinColumn()
-  organizacao: Organizacao
+  dono: Perfil
   @Column({length: 100})
   nome_time: string
   @Column({type : 'int'})

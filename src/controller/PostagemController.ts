@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository, postagemRepository } from '../repositories/UserRepository';
+import { jogadorRepository, userRepository, postagemRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';

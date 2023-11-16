@@ -1,16 +1,7 @@
-import { Request, response, Response } from "express";
-import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository, timeRepository, propostaRepository } from '../repositories/UserRepository';
-import bcrypt from 'bcrypt'
-import  jwt  from "jsonwebtoken";
-import crypto     from 'crypto';
-import { resolve } from "path";
-import { Organizacao, Perfil, Time, Jogador } from '../entities/User';
-import { Blob } from "buffer";
-import { Any, DataSource } from 'typeorm';
-import { Genero } from '../entities/enum/Genero';
-import { isStringObject } from "util/types";
-import { time } from 'console';
+import { Request, Response } from "express";
+import { BadRequestError} from "../helpers/api-erros";
+import { jogadorRepository, timeRepository, userRepository } from '../repositories/UserRepository';
+import { Perfil, Time } from '../entities/User';
 
 
 
@@ -25,7 +16,7 @@ async getTime(req: Request, res: Response) {
   
 
   if(req.org){
-    let teamResponse = await timeRepository.findBy({ organizacao: req.org }) 
+    let teamResponse = await timeRepository.findBy({ dono: req.user }) 
     if(teamResponse){
       team = teamResponse
     }else{
@@ -62,10 +53,10 @@ async getTimeFilter(req: Request, res: Response) {
 
 
   if( !isNaN(perPageNumber) && !isNaN(pagenumber)){
-    teamResponse = await timeRepository.find({ relations: { organizacao: {  dono_id: true  } }, take: perPageNumber, skip: skip }) 
+    teamResponse = await timeRepository.find({ relations: { dono: true }, take: perPageNumber, skip: skip }) 
 
   }else{
-    teamResponse = await timeRepository.find({ relations: { organizacao: { dono_id: true  }, jogadores: { perfil_id: true } }}) 
+    teamResponse = await timeRepository.find({ relations: { dono: true, jogadores: { perfil_id: true } }}) 
   }
   
   //console.log(teamResponse);
@@ -90,17 +81,17 @@ async getTimeFilter(req: Request, res: Response) {
   return res.json(response)
 }  
 
-async getTimeFilterOrg(req: Request, res: Response) {
+async getTimeFilterUser(req: Request, res: Response) {
 
-   let org = new Organizacao
+   let perfil = new Perfil
    let responsee = false
 
   if(req.params.id){
-    let orgResponse = await organizadorRepository.findOneBy({ dono_id: { id: parseInt(req.params.id) } }) 
+    let orgResponse = await userRepository.findOneBy( {id: parseInt(req.params.id) } ) 
     
     if(orgResponse){
-        org = orgResponse
-        let teamResponse = await timeRepository.find( { where: { organizacao: org } } ) 
+        perfil = orgResponse
+        let teamResponse = await timeRepository.find( { where: { dono: perfil } } ) 
         const response = { teams: teamResponse }
   
         return res.json(response)
@@ -123,8 +114,6 @@ async createTime(req: Request, res: Response){
           nome_time,
           biografia,
           jogo,
-          // jogadores,
-          // jogadores_ativos
         } = req.body
 
    
@@ -134,26 +123,20 @@ async createTime(req: Request, res: Response){
     nome_time        == undefined || nome_time        == "" ||
     biografia        == undefined || biografia        == "" ||
     jogo             == undefined || jogo             == "" 
-    // jogadores        == undefined || jogadores        == "" || 
-    // jogadores_ativos == undefined || jogadores_ativos == "" 
 
   ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
 
   const nametimeExists = await timeRepository.findOneBy({nome_time})
-  const organizacao  = await organizadorRepository.findOneBy({dono_id: user})
 
   if(nametimeExists){
     throw new BadRequestError('Nome de Time ja cadastrado!')
-  }
-  if(!organizacao){
-    throw new BadRequestError('Organização não cadastrada!')
   }
 
   
 
   const newTime = timeRepository.create({
-    organizacao,
+    dono: user,
     nome_time,
     biografia,
     jogo
@@ -180,11 +163,11 @@ if(
 
 ) throw new BadRequestError('Faltam Informacoes!')
 
-const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: true } })
+const time = await timeRepository.findOne( {where: {id: idTime }, relations: { dono: true } })
 
 
 if(
-  !time || time.organizacao.id != req.org.id
+  !time || time.dono.id != req.user.id
 ) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
 
 const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
@@ -221,7 +204,7 @@ async updateTime(req: Request, res: Response){
 
   const id = req.params.id
 
- const times = await timeRepository.findOne({ relations: { organizacao: true  }, where: { organizacao: { id : req.org.id }, id: parseInt(id) } , select: { organizacao: { id: false } }})
+ const times = await timeRepository.findOne({ relations: { dono: true  }, where: { dono: { id : req.user.id }, id: parseInt(id) } , select: { dono: { id: false } }})
   // console.log(times);
 
   if(times){
@@ -260,25 +243,20 @@ return res.json({
 
 // DELETE
 async deleteTime(req: Request, res: Response){
-  const org = req.org
+  const user = req.user
   const id = req.params.id
 
   // console.log(org);
   // console.log(id)
   
 
-if(id == null || org == undefined)  throw new BadRequestError('Id nao informado ou nao ha org!')
+if(id == null || user == undefined)  throw new BadRequestError('Id nao informado!')
 
-const time = await timeRepository.findOneBy({ id: parseInt(id), organizacao: org })
-
-
+const time = await timeRepository.findOneBy({ id: parseInt(id), dono: user })
 
 if(time){
   await timeRepository.delete({ id: time.id})
-}else{
-
 }
-
 
 return res.json({
   deleted: true
@@ -302,12 +280,12 @@ if(
 
 ) throw new BadRequestError('Faltam Informacoes!')
 
-const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: true } })
+const time = await timeRepository.findOne( {where: {id: idTime }, relations: { dono: true } })
 
 
 if(
-  !time || time.organizacao.id != req.org.id
-) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
+  !time || time.dono.id != req.user.id
+) throw new BadRequestError('Esse time não exite ou não pertece a esse perfil!')
 
 const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }})
 console.log(jogador);

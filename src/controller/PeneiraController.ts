@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository, peneiraRepository, notificacaoRepository, timeRepository } from '../repositories/UserRepository';
+import { jogadorRepository, userRepository, peneiraRepository, notificacaoRepository, timeRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
@@ -27,11 +27,11 @@ export class PeneiraController{
     
     ) throw new BadRequestError('Faltam Informacoes!')
     
-    const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: true } })
+    const time = await timeRepository.findOne( {where: {id: idTime }, relations: { dono: true } })
     
     if(
-      !time || time.organizacao.id != req.org.id
-    ) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
+      !time || time.dono.id != req.user.id
+    ) throw new BadRequestError('Esse time não exite ou não pertece a esse perfil!')
     
     const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
     

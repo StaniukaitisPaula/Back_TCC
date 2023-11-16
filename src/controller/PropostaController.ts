@@ -1,16 +1,7 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository, timeRepository, propostaRepository, notificacaoRepository } from '../repositories/UserRepository';
-import bcrypt from 'bcrypt'
-import  jwt  from "jsonwebtoken";
-import crypto     from 'crypto';
-import { resolve } from "path";
-import { Organizacao, Perfil, Time, Jogador, Proposta } from '../entities/User';
-import { Blob } from "buffer";
-import { DataSource } from 'typeorm';
-import { Genero } from '../entities/enum/Genero';
-import { isStringObject } from "util/types";
-import { time } from 'console';
+import { jogadorRepository, userRepository, timeRepository, propostaRepository, notificacaoRepository } from '../repositories/UserRepository';
+
 
 
 
@@ -29,10 +20,10 @@ async enviarProposta(req: Request, res: Response){
       
       ) throw new BadRequestError('Faltam Informacoes!')
       
-      const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: true } })
+      const time = await timeRepository.findOne( {where: {id: idTime }, relations: { dono: true } })
       
       if(
-        !time || time.organizacao.id != req.org.id
+        !time || time.dono.id != req.user.id
       ) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
       
       const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
@@ -91,7 +82,7 @@ async responderProposta(req: Request, res: Response){
   
   ) throw new BadRequestError('Faltam Informacoes!')
   
-  const time = await timeRepository.findOne( {where: {id: idTime }, relations: { organizacao: { dono_id: true } } })
+  const time = await timeRepository.findOne( {where: {id: idTime }, relations: { dono: true } })
   
   
   if(
@@ -127,13 +118,13 @@ async responderProposta(req: Request, res: Response){
     await timeRepository.save(time)
 
     await propostaRepository.delete(proposta)
-    const noti = await notificacaoRepository.create({ de: time.organizacao.dono_id, menssagem: 'Aproposta para o ' + jogador.nickname +'foi aceita!', titulo: 'Proposta aceita' })
+    const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'Aproposta para o ' + jogador.nickname +'foi aceita!', titulo: 'Proposta aceita' })
 
     await notificacaoRepository.save(noti)
 
   }else if(proposta){
     await propostaRepository.delete(proposta)
-    const noti = await notificacaoRepository.create({ de: time.organizacao.dono_id, menssagem: 'Aproposta para o ' + jogador.nickname +'foi recusada!', titulo: 'Proposta recusada' })
+    const noti = await notificacaoRepository.create({ de: time.dono , menssagem: 'Aproposta para o ' + jogador.nickname +'foi recusada!', titulo: 'Proposta recusada' })
 
     await notificacaoRepository.save(noti)
   }

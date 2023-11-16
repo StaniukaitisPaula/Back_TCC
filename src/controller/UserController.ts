@@ -1,18 +1,10 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, organizadorRepository, userRepository, timeRepository, postagemRepository, notificacaoRepository } from '../repositories/UserRepository';
+import { jogadorRepository, userRepository, timeRepository, postagemRepository, notificacaoRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
-import nodemailer from 'nodemailer';
-import crypto     from 'crypto';
-import { resolve } from "path";
-import { Perfil, Jogador } from '../entities/User';
-import { Blob } from "buffer";
-import { DataSource, Like } from 'typeorm';
-import { Genero } from '../entities/enum/Genero';
-import { Jogo } from '../entities/enum/Jogo';
-import { time } from "console";
-import { JoinAttribute } from "typeorm/query-builder/JoinAttribute";
+import { Jogador } from '../entities/User';
+import {  Like } from 'typeorm';
 
 
 
@@ -145,10 +137,9 @@ async getProfile(req: Request, res: Response) {
     const user = req.user
 
     const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true, time_atual: true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
-    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true,  dono_id: {id: false} } })
 
 
-    const response = { user: user, playerProfile: playerProfile[0]? playerProfile[0] : null , orgProfile:  orgProfile[0]? orgProfile[0]: null }
+    const response = { user: user, playerProfile: playerProfile[0]? playerProfile[0] : null}
     
     return res.json(response)
 
@@ -170,9 +161,9 @@ async getProfileById(req: Request, res: Response) {
      } = user
     
      const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true, time_atual: true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
-     const orgProfile = await organizadorRepository.find({ relations: { dono_id : true }, where: { dono_id: { id : user.id } } ,select: { biografia: true, nome_organizacao:true, times: true, dono_id: {id: false}} })
+     
   
-    const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : null, orgProfile: orgProfile[0] ? orgProfile[0] : null }
+    const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : null }
 
     return res.json(response)
 
@@ -270,46 +261,6 @@ async createPlayer(req: Request, res: Response){
 
 }
 
-async createorganizer(req: Request, res: Response){
-
-    const id = req.user
-  
-  
-    const {
-    
-      nome_organizacao,
-      biografia,
-    } = req.body
-  
-  
-    if(
-
-      nome_organizacao   == undefined || nome_organizacao   == "" ||
-      biografia          == undefined || biografia          == "" 
-    ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
-  
-  
-    const organizadorExists = await organizadorRepository.findOneBy({dono_id: id})
-  
-  
-    if(organizadorExists) throw new BadRequestError('Perfil Organizador já cadastrado!')
-  
-    const newOrganizador = organizadorRepository.create({
-
-      nome_organizacao,
-      biografia,
-      dono_id: id,
-    })
-  
-    await organizadorRepository.save(newOrganizador)
-  
-
-  
-    return res.status(201).json(newOrganizador)
-  
-  
-  
-}
 
 // PUT
 async updateProfile(req: Request, res: Response){
@@ -459,7 +410,7 @@ async updatePlayerLeave(req: Request, res: Response){
       time.jogadores = jogadorFilter
 
       await timeRepository.save(time)
-      const noti = await notificacaoRepository.create({ de: time.organizacao.dono_id, menssagem: 'oooiiiiiii ' + player.nickname +'foi aceita!', titulo: 'timeeeeeee' })
+      const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'oooiiiiiii ' + player.nickname +'foi aceita!', titulo: 'timeeeeeee' })
       console.log(noti);
       
       await notificacaoRepository.save(noti)
@@ -479,67 +430,6 @@ return res.json({
   
 }
 
-async updateOrganizer(req: Request, res: Response){
- 
-    const user = req.user
-  
-    const orgProfile = await organizadorRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
-  
-    const {
-      times,
-      nome_organizacao,
-      biografia,
-    } = req.body
-  
-
-    let response = {
-      times,
-      nome_organizacao,
-      biografia,
-    }
-
-    
-
-  if(times){
-      response.times = Boolean((await organizadorRepository.update( { id: orgProfile[0].id}, { times: times})).affected)  
-  }
-  
-  if(nome_organizacao){
-      response.nome_organizacao = Boolean((await organizadorRepository.update( { id: orgProfile[0].id }, { nome_organizacao: nome_organizacao})).affected)  
-  }
-  
-  if(biografia){
-    response.biografia = Boolean((await organizadorRepository.update( { id: orgProfile[0].id }, { biografia: biografia})).affected)  
-  }
-
-  
-  return res.json({
-    response: response
-  })
-  
-    
-  }  
-  
-
-  //DELETE
- async deleteOrganizer(req: Request, res: Response){
- 
-    const org = req.org
-
-    if(org){
-
-      const orgProfile = await organizadorRepository.delete({ id: org.id })
-    }else{
-      throw new BadRequestError('O usuário não possui Organização!')
-    }
-  
-  
-  return res.json({
-    response: true
-  })
-  
-    
-  }  
 
 
 
