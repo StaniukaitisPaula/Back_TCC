@@ -15,7 +15,7 @@ async getTime(req: Request, res: Response) {
 
   
 
-  if(req.org){
+  if(req.user){
     let teamResponse = await timeRepository.findBy({ dono: req.user }) 
     if(teamResponse){
       team = teamResponse
