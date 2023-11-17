@@ -102,7 +102,7 @@ async responderProposta(req: Request, res: Response){
 
   const proposta = await propostaRepository.findOne({where: { de: time, para: jogador.perfil_id }})
 
-        console.log(aceitar);
+  console.log(aceitar);
 
   if(aceitar == '1' && proposta){
     console.log("oi");
