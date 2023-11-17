@@ -25,7 +25,7 @@ AppDataSource.initialize().then(() => {
 	})
 	app.use(routes)
 	
-	return app.listen(3000, () => {
+	return app.listen(8080, () => {
 		console.log("online");
 	})
 })

@@ -23,7 +23,7 @@ routes.get('/profile/:id', new UserController().getProfileById,errorMiddleware)
 routes.put('/profile',authMiddleware, new UserController().updateProfile,errorMiddleware)
 
 // JOGADOR
-routes.get('/player', new UserController().getPlayers)
+routes.get('/player', new UserController().getPlayers,errorMiddleware)
 routes.post('/player',authMiddleware, new UserController().createPlayer,errorMiddleware)
 routes.put('/player',authMiddleware, new UserController().updatePlayer,errorMiddleware)
 routes.put('/player/leave',authMiddleware, new UserController().updatePlayerLeave,errorMiddleware)
@@ -33,8 +33,8 @@ routes.delete('/player',authMiddleware, new UserController().deletePlayer,errorM
 routes.get('/team', new TimeController().getTimeFilter,errorMiddleware)
 routes.get('/team/myteams',authMiddleware, new TimeController().getTime,errorMiddleware)
 routes.get('/team/:id', new TimeController().getTimeFilter,errorMiddleware)
-routes.get('/team/org/:id', new TimeController().getTimeFilterUser,errorMiddleware)
-routes.post('/team',authMiddleware, new TimeController().createTime,errorMiddleware)
+routes.get('/team/user/:id', new TimeController().getTimeFilterUser,errorMiddleware)
+routes.post('/team',authMiddleware, new TimeController().createTime)
 routes.put('/team/:id',authMiddleware, new TimeController().updateTime,errorMiddleware)
 routes.delete('/team/:id',authMiddleware, new TimeController().deleteTime,errorMiddleware)
 routes.put('/team/:time/:jogador',authMiddleware, new TimeController().insertJogador,errorMiddleware)
@@ -50,9 +50,9 @@ routes.delete('/post',authMiddleware, new PostagemController().deletePost)
 
 
 // PROPOSTAS
-routes.get('/offer', authMiddleware, new PropostaController().verPropostas,errorMiddleware)
-routes.post('/offer/:time/:jogador',authMiddleware, new PropostaController().enviarProposta,errorMiddleware)
-routes.delete('/offer/:time/:aceitar',authMiddleware, new PropostaController().responderProposta,errorMiddleware)
+routes.get('/offer', authMiddleware, new PropostaController().verPropostas)
+routes.post('/offer/:time/:jogador',authMiddleware, new PropostaController().enviarProposta)
+routes.delete('/offer/:time/:aceitar',authMiddleware, new PropostaController().responderProposta)
 
 
 // NOTIFICACAO

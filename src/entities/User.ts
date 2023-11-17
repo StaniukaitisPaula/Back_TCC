@@ -143,7 +143,5 @@ export class Notificacao {
   menssagem: string
   @Column({type : 'text'})
   titulo: string
-  @Column({type : 'text'})
-  link: string
 }
 
