@@ -296,12 +296,12 @@ async updateProfile(req: Request, res: Response){
       if(await userRepository.findOneBy({nome_usuario: nome_usuario})){
         response.nome_usuario = 'Usuario já existe!'
       }else{
-        response.nome_usuario = await userRepository.update( { id: user.id }, { nome_usuario: nome_usuario})
+        response.nome_usuario = Boolean(await userRepository.update( { id: user.id }, { nome_usuario: nome_usuario}))
       }
     
     }
     if(nome_completo){
-        response.nome_completo = await userRepository.update( { id: user.id }, { nome_completo: nome_completo})
+        response.nome_completo = Boolean(await userRepository.update( { id: user.id }, { nome_completo: nome_completo}))
     }
     if(email){
       if(await userRepository.findOneBy({email: email})){
@@ -403,17 +403,17 @@ async updatePlayerLeave(req: Request, res: Response){
 
 
   if(player != null){
-    const time = await timeRepository.findOneBy({jogadores: {id: player.id}})
+    const time = await timeRepository.findOne({where: {jogadores: {id: player.id}}, relations: { dono: true }})
    
     if(time){
       let jogadorFilter = time.jogadores?.filter(x => x.id !== player.id);
       time.jogadores = jogadorFilter
 
       await timeRepository.save(time)
-      const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'oooiiiiiii ' + player.nickname +'foi aceita!', titulo: 'timeeeeeee' })
+      const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'Jogador ' + player.nickname +' saiu do time: ' + time.nome_time, titulo: 'TIME' })
       console.log(noti);
       
-      await notificacaoRepository.save(noti)
+      console.log(await notificacaoRepository.save(noti))
 
     }
   }
