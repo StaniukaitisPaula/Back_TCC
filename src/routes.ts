@@ -24,7 +24,7 @@ routes.put('/profile',authMiddleware, new UserController().updateProfile,errorMi
 
 // JOGADOR
 routes.get('/player', new UserController().getPlayers,errorMiddleware)
-routes.post('/player',authMiddleware, new UserController().createPlayer,errorMiddleware)
+routes.post('/player',authMiddleware, new UserController().createPlayer)
 routes.put('/player',authMiddleware, new UserController().updatePlayer,errorMiddleware)
 routes.put('/player/leave',authMiddleware, new UserController().updatePlayerLeave,errorMiddleware)
 routes.delete('/player',authMiddleware, new UserController().deletePlayer,errorMiddleware)
@@ -44,7 +44,7 @@ routes.delete('/team/:time/:jogador',authMiddleware, new TimeController().delete
 // POSTAGEM 
 routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken,errorMiddleware)
 routes.get('/post/:tipo', new PostagemController().getpostPlayer,errorMiddleware)
-routes.post('/post',authMiddleware, new PostagemController().createpost,errorMiddleware)
+routes.post('/post',authMiddleware, new PostagemController().createpost)
 routes.put('/post',authMiddleware, new PostagemController().updatepost,errorMiddleware)
 routes.delete('/post',authMiddleware, new PostagemController().deletePost)
 
