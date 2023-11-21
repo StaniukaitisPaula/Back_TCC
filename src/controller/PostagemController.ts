@@ -31,6 +31,11 @@ async getpostPlayer(req: Request, res: Response) {
 
     let perPage: string =  req.query.perPage as string
     let page: string =  req.query.page as string
+    let elo: string = req.query.elo as string
+    let funcao: string = req.query.funcao as string
+    //let hora: string = req.query.hora as string
+
+      const hora = new Date().getTime()
   
 
     const perPageNumber = parseInt(perPage)
@@ -52,26 +57,28 @@ async getpostPlayer(req: Request, res: Response) {
       postagemResponse = await postagemRepository.find({relations: { dono_id: true }, where: {tipo: tipo}  })
     }
 
-    // if(req.params.id){
-    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
+    if(req.params.id){
+      posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
 
-    //   postagemResponse = posatgemFilter
-    // }
+      postagemResponse = posatgemFilter
+    }
 
-    // if(req.query.elo){
-    //   posatgemFilter = postagemResponse.filter( (x) => {  if ((x.elo)  == (req.query.elo)) return x  })
+    if(req.query.elo){
+      posatgemFilter = postagemResponse.filter( (x) => {  if ( x.elo != undefined && x.elo  >= parseInt(elo)) return x  })
 
-    //   postagemResponse = posatgemFilter
-    // }
+      postagemResponse = posatgemFilter
+    }
        
-    // if(req.query.funcao){
-    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao >=  req.query.funcao ) return x  })
+    if(req.query.funcao){
+      posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao !=  undefined && x.funcao >= parseInt(funcao) ) return x  })
 
-    //   postagemResponse = posatgemFilter
-    // }
+      postagemResponse = posatgemFilter
+    }
        
     // if(req.query.hora){
-    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.hora) == (req.query.hora) ) return x  })
+     
+
+    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.hora !=  undefined && x.hora >= parseInt(hora) ) return x  })
 
     //   postagemResponse = posatgemFilter
     // }
