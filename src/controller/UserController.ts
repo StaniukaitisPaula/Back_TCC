@@ -88,7 +88,7 @@ async login(req: Request, res: Response){
       throw new BadRequestError('Login ou senha invalidos')
     }
 
-     const token = jwt.sign({ id: user.id}, process.env.JWT_PASS ?? '', {expiresIn: "1d", })
+     const token = jwt.sign({ id: user.id}, process.env.JWT_PASS ?? '', {expiresIn: "7d", })
 
      const {senha:_, ...userLogin} = user
 
