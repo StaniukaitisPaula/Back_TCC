@@ -33,11 +33,8 @@ async getpostPlayer(req: Request, res: Response) {
     let page: string =  req.query.page as string
     let elo: string = req.query.elo as string
     let funcao: string = req.query.funcao as string
-    //let hora: string = req.query.hora as string
-
-      const hora = new Date().getTime()
-  
-
+    let hora: string = req.query.hora as string
+    
     const perPageNumber = parseInt(perPage)
     const pagenumber = parseInt(page)
     const tipo = Boolean(parseInt(req.params.tipo))
@@ -70,18 +67,17 @@ async getpostPlayer(req: Request, res: Response) {
     }
        
     if(req.query.funcao){
-      posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao !=  undefined && x.funcao >= parseInt(funcao) ) return x  })
+      posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao !=  undefined && x.funcao == parseInt(funcao) ) return x  })
 
       postagemResponse = posatgemFilter
     }
        
-    // if(req.query.hora){
+    if(req.query.hora){
      
+      posatgemFilter = postagemResponse.filter( (x) => {  if (x.hora !=  undefined &&  new Date (' 1/1/1999 ' + x.hora) <= new Date (' 1/1/1999 ' + hora )  ) return x  })
 
-    //   posatgemFilter = postagemResponse.filter( (x) => {  if (x.hora !=  undefined && x.hora >= parseInt(hora) ) return x  })
-
-    //   postagemResponse = posatgemFilter
-    // }
+      postagemResponse = posatgemFilter
+    }
 
     let postCount = await postagemRepository.count()
   
