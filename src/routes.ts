@@ -46,7 +46,7 @@ routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken,
 routes.get('/post/:tipo', new PostagemController().getpostPlayer,errorMiddleware)
 routes.post('/post',authMiddleware, new PostagemController().createpost,errorMiddleware)
 routes.put('/post',authMiddleware, new PostagemController().updatepost,errorMiddleware)
-routes.delete('/post',authMiddleware, new PostagemController().deletePost,errorMiddleware)
+routes.delete('/post/:time',authMiddleware, new PostagemController().deletePost,errorMiddleware)
 
 
 // PROPOSTAS
@@ -61,9 +61,8 @@ routes.delete('/notification/:id',authMiddleware, new NotificacaoController().de
 
 
 //PENEIRA
-routes.post('/sieve/:time',authMiddleware, new PeneiraController().postPeneira,errorMiddleware)
 routes.get('/sieve/:time',authMiddleware, new PeneiraController().getPeneira)
-routes.put('/sieve',authMiddleware, new PeneiraController().putPeneira)
-routes.delete('/sieve',authMiddleware, new PeneiraController().deletePeneira)
+routes.put('/sieve/:time',authMiddleware, new PeneiraController().putPeneira)
+routes.delete('/sieve/:time/:acietar',authMiddleware, new PeneiraController().deletePeneira)
 
 export default routes
