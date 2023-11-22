@@ -16,45 +16,43 @@ export class PeneiraController{
     //POST
     async  postPeneira(req: Request, res: Response){
     
-       const idTime = parseInt(req.params.time)
-      const idJogador = parseInt(req.params.jogador)
+      const idTime = parseInt(req.params.time)
+      const idJogador =  req.player
       const menssagem = req.body.menssage
-    
+          
     if(
         idTime     == undefined ||
-        idJogador  == undefined ||
-        isNaN(idTime)           || isNaN(idJogador)
+        isNaN(idTime)           
     
     ) throw new BadRequestError('Faltam Informacoes!')
     
     const time = await timeRepository.findOne( {where: {id: idTime }, relations: { dono: true } })
-    
+
+    if(!time)throw new BadRequestError('Time não encontrado!')
+  
     if(
-      !time || time.dono.id != req.user.id
-    ) throw new BadRequestError('Esse time não exite ou não pertece a esse perfil!')
-    
-    const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
-    
-    
-    if(
-      !jogador
+      !idJogador
     ) throw new BadRequestError('Jogador não exite!')
     
-    if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
-    
-    const verifique = await peneiraRepository.findOneBy({jogadores: jogador.perfil_id, time: time}) 
-    
-    if(verifique)throw new BadRequestError('Proposta ja enviada!')
+    if(idJogador.time_atual)throw new BadRequestError('Jogador já tem time!')
+
+    const timeVerifique = await peneiraRepository.findOneBy({time: { id: time.id } }) 
+    if(timeVerifique)throw new BadRequestError('Esse Time não tem peneira ativa!')
+
     
     const peneira = await peneiraRepository.create({jogadores: time.jogadores , menssagem: menssagem ? menssagem : ""})
     
     const pen = await peneiraRepository.save(peneira)
     
-    const noti = await notificacaoRepository.create({ de: jogador.perfil_id, menssagem: 'Uma proposta foi enviada para o seu perfil!', titulo: 'Proposta recebida' })
+    const noti = await notificacaoRepository.create({ de: idJogador.perfil_id, menssagem: 'Uma proposta foi enviada para o seu perfil!', titulo: 'Proposta recebida' })
     
     await notificacaoRepository.save(noti)
+
     
-    
+  
+    res.json({
+      acepted: true
+    })
     
 
         
