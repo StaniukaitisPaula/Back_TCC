@@ -1,15 +1,16 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, userRepository, postagemRepository } from '../repositories/UserRepository';
+import { jogadorRepository, userRepository, postagemRepository, peneiraRepository, notificacaoRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
 import crypto     from 'crypto';
 import { resolve } from "path";
-import { Perfil, Jogador, Postagem } from '../entities/User';
+import { Perfil, Jogador, Postagem, Peneira } from '../entities/User';
 import { Funcao } from '../entities/enum/Funcao';
 import { isDataView } from "util/types";
 import { Elo } from "../entities/enum/Elo";
+import { time } from "console";
 
 
 export class PostagemController {
@@ -97,6 +98,8 @@ async getpostPlayer(req: Request, res: Response) {
 async createpost(req: Request, res: Response){
 
     const id = req.user
+    const menssagem = req.body.menssage
+    const idTime = parseInt(req.params.time)
 
     const {
         descricao,
@@ -163,6 +166,11 @@ async createpost(req: Request, res: Response){
         })
       
       await postagemRepository.save(newPost)
+
+      const peneira = await peneiraRepository.create({jogadores: time.jogadores , menssagem: menssagem ? menssagem : "", time: time })
+    
+      const pen = await peneiraRepository.save(peneira) 
+
   
   
   
@@ -242,14 +250,30 @@ async updatepost(req: Request, res: Response){
 async deletePost(req: Request, res: Response){
 
   const  postUser  = req.user 
+  const idTime = parseInt(req.params.time)
 
-  if(postUser){
+  if(req.params.time){
+    if(idTime){
     
-    const post = await postagemRepository.delete({dono_id: postUser} )
-
+      const postime = await postagemRepository.delete({ time: {id: idTime} }  )
+      const poen = await peneiraRepository.delete({} )
+  
+    }else{
+      throw new BadRequestError('opaaa')
+    }
   }else{
-    throw new BadRequestError('!!!')
+    if(postUser){
+    
+      const post = await postagemRepository.delete({dono_id: postUser }   )
+  
+    }else{
+      throw new BadRequestError('!!!')
+    }
   }
+
+
+
+
 
 return res.json({
   response: true
