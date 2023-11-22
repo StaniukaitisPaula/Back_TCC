@@ -51,25 +51,30 @@ async getpostPlayer(req: Request, res: Response) {
     
       
     }else{
-      postagemResponse = await postagemRepository.find({relations: { dono_id: true }, where: {tipo: tipo}  })
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, where: {tipo: tipo}  })
     }
+
+    let postCount = await postagemRepository.count()
 
     if(req.params.id){
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
 
       postagemResponse = posatgemFilter
+      postCount = posatgemFilter.length
     }
 
     if(req.query.elo){
       posatgemFilter = postagemResponse.filter( (x) => {  if ( x.elo != undefined && x.elo  >= parseInt(elo)) return x  })
 
       postagemResponse = posatgemFilter
+      postCount = posatgemFilter.length
     }
        
     if(req.query.funcao){
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao !=  undefined && x.funcao == parseInt(funcao) ) return x  })
 
       postagemResponse = posatgemFilter
+      postCount = posatgemFilter.length
     }
        
     if(req.query.hora){
@@ -77,10 +82,9 @@ async getpostPlayer(req: Request, res: Response) {
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.hora !=  undefined &&  new Date (' 1/1/1999 ' + x.hora) <= new Date (' 1/1/1999 ' + hora )  ) return x  })
 
       postagemResponse = posatgemFilter
+      postCount = posatgemFilter.length
     }
 
-    let postCount = await postagemRepository.count()
-  
     const response = {post: postagemResponse, limit: postCount }
   
     console.log(postagemResponse);
@@ -94,9 +98,6 @@ async createpost(req: Request, res: Response){
 
     const id = req.user
 
-   // const data = new Date().getTime()
-    
-
     const {
         descricao,
         jogo,
@@ -104,7 +105,8 @@ async createpost(req: Request, res: Response){
         elo,
         hora,
         tipo,
-        pros
+        pros,
+        time
     } = req.body
 
     if(
@@ -118,6 +120,7 @@ async createpost(req: Request, res: Response){
 
     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
+    if(tipo == '0' ){
     const verifique = await postagemRepository.findOneBy({dono_id: id }) 
 
     if(verifique)throw new BadRequestError('Postagem ja exsite!')
@@ -132,11 +135,8 @@ async createpost(req: Request, res: Response){
         hora,
         tipo,
         pros,
-       dono_id: id,
+       dono_id: id
     })
-
-    // newPost.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
-    // console.log(newPost);
     
     await postagemRepository.save(newPost)
 
@@ -144,6 +144,32 @@ async createpost(req: Request, res: Response){
 
     return res.status(201).json(newPost)
   
+    }else if(tipo == '1'){
+
+      const verifique = await postagemRepository.findOneBy({time: { id: time } }) 
+
+      if(verifique)throw new BadRequestError('Postagem ja exsite!')
+       
+      const newPost = postagemRepository.create({
+
+          descricao,
+          jogo,
+          funcao,
+          elo,
+          hora,
+          tipo,
+          pros,
+          time 
+        })
+      
+      await postagemRepository.save(newPost)
+  
+  
+  
+      return res.status(201).json(newPost)
+
+    }
+
 }
 
 //PUT
