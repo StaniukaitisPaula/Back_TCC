@@ -63,6 +63,6 @@ routes.delete('/notification/:id',authMiddleware, new NotificacaoController().de
 //PENEIRA
 routes.get('/sieve/:time',authMiddleware, new PeneiraController().getPeneira)
 routes.put('/sieve/:time',authMiddleware, new PeneiraController().putPeneira)
-routes.delete('/sieve/:time/:acietar',authMiddleware, new PeneiraController().deletePeneira)
+routes.delete('/sieve/:time/:acietar',authMiddleware, new PeneiraController().responderPeneira)
 
 export default routes
