@@ -44,9 +44,9 @@ routes.delete('/team/:time/:jogador',authMiddleware, new TimeController().delete
 // POSTAGEM 
 routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken,errorMiddleware)
 routes.get('/post/:tipo', new PostagemController().getpostPlayer,errorMiddleware)
-routes.post('/post',authMiddleware, new PostagemController().createpost)
+routes.post('/post',authMiddleware, new PostagemController().createpost,errorMiddleware)
 routes.put('/post',authMiddleware, new PostagemController().updatepost,errorMiddleware)
-routes.delete('/post',authMiddleware, new PostagemController().deletePost)
+routes.delete('/post/:time',authMiddleware, new PostagemController().deletePost,errorMiddleware)
 
 
 // PROPOSTAS
@@ -61,9 +61,8 @@ routes.delete('/notification/:id',authMiddleware, new NotificacaoController().de
 
 
 //PENEIRA
-routes.post('/sieve/:jogador/:time',authMiddleware, new PeneiraController().postPeneira)
-routes.get('/sieve',authMiddleware, new PeneiraController().getPeneira)
-routes.put('/sieve',authMiddleware, new PeneiraController().putPeneira)
-routes.delete('/sieve',authMiddleware, new PeneiraController().deletePeneira)
+routes.get('/sieve/:time',authMiddleware, new PeneiraController().getPeneira)
+routes.put('/sieve/:time',authMiddleware, new PeneiraController().putPeneira)
+routes.delete('/sieve/:time/:acietar',authMiddleware, new PeneiraController().responderPeneira)
 
 export default routes

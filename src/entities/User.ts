@@ -74,7 +74,10 @@ export class Jogador {
   elo: Elo
   @ManyToOne(() => Time, (time) => time.jogadores,{ onDelete: 'SET NULL', nullable: true })
   @JoinColumn()
-  time_atual?: Time 
+  time_atual?: Time
+    @ManyToMany(() => Peneira)
+  @JoinColumn()
+  peneiras?: Peneira[]
 }
 
 
@@ -127,7 +130,7 @@ export class Peneira {
   time: Time
   @ManyToMany(() => Perfil)
   @JoinColumn()
-  jogadores?: Perfil[]
+  jogadores?: Jogador[]
   @Column({type : 'text'})
   menssagem: string
 }

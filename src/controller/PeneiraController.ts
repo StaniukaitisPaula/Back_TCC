@@ -6,81 +6,147 @@ import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
 import crypto     from 'crypto';
 import { resolve } from "path";
-import { Perfil, Jogador, Postagem } from '../entities/User';
+import { Perfil, Jogador, Postagem, Peneira } from '../entities/User';
+import { time } from "console";
 
 
 export class PeneiraController{
 
+///GET
+async  getPeneira(req: Request, res: Response){
+
+  const idTime = req.params.time 
+
+ 
+  let peneiraResponse = [new Peneira]
 
 
-    //POST
-    async  postPeneira(req: Request, res: Response){
+  peneiraResponse = await peneiraRepository.find({ where:{ time: {id: parseInt(idTime)}}, relations: { time: true , jogadores: true}   }) 
+
+
+  res.json({
+    acepted: peneiraResponse
+  })
     
-       const idTime = parseInt(req.params.time)
-      const idJogador = parseInt(req.params.jogador)
-      const menssagem = req.body.menssage
+}
+
     
+//PUT
+ async  putPeneira(req: Request, res: Response){
+    
+      const idTime = parseInt(req.params.time)
+      const idJogador =  req.user
+      
+          
     if(
         idTime     == undefined ||
-        idJogador  == undefined ||
-        isNaN(idTime)           || isNaN(idJogador)
+        isNaN(idTime)           
     
     ) throw new BadRequestError('Faltam Informacoes!')
     
     const time = await timeRepository.findOne( {where: {id: idTime }, relations: { dono: true } })
-    
+
+    if(!time)throw new BadRequestError('Time não encontrado!')
+
+    const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador.id } }, relations: { perfil_id: true , time_atual: true } })
+  
     if(
-      !time || time.dono.id != req.user.id
-    ) throw new BadRequestError('Esse time não exite ou não pertece a esse perfil!')
-    
-    const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
-    
-    
-    if(
-      !jogador
+      !idJogador || !jogador
     ) throw new BadRequestError('Jogador não exite!')
     
     if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
+
+    const timeVerifique = await peneiraRepository.findOneBy({time: { id: time.id } }) 
+    if(!timeVerifique)throw new BadRequestError('Esse Time não tem peneira ativa!')
+
+
+    let jogadores = timeVerifique.jogadores
     
-    const verifique = await peneiraRepository.findOneBy({jogadores: jogador.perfil_id, time: time}) 
+
+    jogadores ? jogadores.push(jogador) : jogadores = [jogador]
+
+    timeVerifique.jogadores = jogadores
+    console.log(timeVerifique);
     
-    if(verifique)throw new BadRequestError('Proposta ja enviada!')
-    
-    const peneira = await peneiraRepository.create({jogadores: time.jogadores , menssagem: menssagem ? menssagem : ""})
-    
-    const pen = await peneiraRepository.save(peneira)
-    
-    const noti = await notificacaoRepository.create({ de: jogador.perfil_id, menssagem: 'Uma proposta foi enviada para o seu perfil!', titulo: 'Proposta recebida' })
-    
-    await notificacaoRepository.save(noti)
-    
-    
+
+   const a = await peneiraRepository.save(timeVerifique)
+
+  
+    res.json({
+      acepted: true
+    })
     
 
         
-    }
-    ///GET
-    async  getPeneira(req: Request, res: Response){
-    
-    
-    
-    }
-    
-    //PUT
-    async  putPeneira(req: Request, res: Response){
-    
-    
-        
-    }
-    
-    //DELETE
-    async  deletePeneira(req: Request, res: Response){
-    
-    
-        
-    }
-    
-    
+  }
+
+
+
+//DELETE
+async responderPeneira(req: Request, res: Response){
+  const idTime = parseInt(req.params.time)
+  const idJogador = req.user.id
+  const aceitar = req.params.aceitar
+
+if(
+    idTime     == undefined ||
+    idJogador  == undefined ||
+    isNaN(idTime)           || isNaN(idJogador)
+
+) throw new BadRequestError('Faltam Informacoes!')
+
+const time = await timeRepository.findOne( {where: {id: idTime }, relations: { dono: true } })
+
+
+if(
+  !time
+) throw new BadRequestError('Esse time não exite ou não pertece a esse usuario!')
+
+const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
+
+
+if(
+  !jogador
+) throw new BadRequestError('Jogador não exite!')
+
+if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
+
+const peneira = await peneiraRepository.findOne({where: { time: time, jogadores: jogador.perfil_id }})
+
+console.log(aceitar);
+
+if(aceitar == '1' && peneira){
+  console.log("oi");
+  
+  let jogadores = time.jogadores
+
+  jogadores ? jogadores.push(jogador) : jogadores = [jogador]
+  
+  if(jogadores.length > 10) throw new BadRequestError('Time atigil o limite de jogadores')
+  
+  time.jogadores = jogadores
+  
+  await timeRepository.save(time)
+
+  await peneiraRepository.delete(peneira)
+  const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'teste da peneira ' + jogador.nickname +'foi aceita!', titulo: 'Proposta aceita' })
+
+  await notificacaoRepository.save(noti)
+
+}else if(peneira){
+  await peneiraRepository.delete(peneira)
+  const noti = await notificacaoRepository.create({ de: time.dono , menssagem: 'teste de peneira ' + jogador.nickname +'foi recusada!', titulo: 'Proposta recusada' })
+
+  await notificacaoRepository.save(noti)
+}
+
+res.json({
+  acepted: true
+})
+
+
+}    
+  
     
     
     

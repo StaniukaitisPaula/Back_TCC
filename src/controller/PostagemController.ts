@@ -1,15 +1,16 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, userRepository, postagemRepository } from '../repositories/UserRepository';
+import { jogadorRepository, userRepository, postagemRepository, peneiraRepository, notificacaoRepository } from '../repositories/UserRepository';
 import bcrypt from 'bcrypt'
 import  jwt  from "jsonwebtoken";
 import nodemailer from 'nodemailer';
 import crypto     from 'crypto';
 import { resolve } from "path";
-import { Perfil, Jogador, Postagem } from '../entities/User';
+import { Perfil, Jogador, Postagem, Peneira } from '../entities/User';
 import { Funcao } from '../entities/enum/Funcao';
 import { isDataView } from "util/types";
 import { Elo } from "../entities/enum/Elo";
+import { time } from "console";
 
 
 export class PostagemController {
@@ -51,25 +52,30 @@ async getpostPlayer(req: Request, res: Response) {
     
       
     }else{
-      postagemResponse = await postagemRepository.find({relations: { dono_id: true }, where: {tipo: tipo}  })
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, where: {tipo: tipo}  })
     }
+
+    let postCount = await postagemRepository.count()
 
     if(req.params.id){
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
 
       postagemResponse = posatgemFilter
+      postCount = posatgemFilter.length
     }
 
     if(req.query.elo){
       posatgemFilter = postagemResponse.filter( (x) => {  if ( x.elo != undefined && x.elo  >= parseInt(elo)) return x  })
 
       postagemResponse = posatgemFilter
+      postCount = posatgemFilter.length
     }
        
     if(req.query.funcao){
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao !=  undefined && x.funcao == parseInt(funcao) ) return x  })
 
       postagemResponse = posatgemFilter
+      postCount = posatgemFilter.length
     }
        
     if(req.query.hora){
@@ -77,10 +83,9 @@ async getpostPlayer(req: Request, res: Response) {
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.hora !=  undefined &&  new Date (' 1/1/1999 ' + x.hora) <= new Date (' 1/1/1999 ' + hora )  ) return x  })
 
       postagemResponse = posatgemFilter
+      postCount = posatgemFilter.length
     }
 
-    let postCount = await postagemRepository.count()
-  
     const response = {post: postagemResponse, limit: postCount }
   
     console.log(postagemResponse);
@@ -93,9 +98,8 @@ async getpostPlayer(req: Request, res: Response) {
 async createpost(req: Request, res: Response){
 
     const id = req.user
-
-   // const data = new Date().getTime()
-    
+    const menssagem = req.body.menssage
+    const idTime = parseInt(req.params.time)
 
     const {
         descricao,
@@ -104,7 +108,8 @@ async createpost(req: Request, res: Response){
         elo,
         hora,
         tipo,
-        pros
+        pros,
+        time
     } = req.body
 
     if(
@@ -118,6 +123,7 @@ async createpost(req: Request, res: Response){
 
     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
+    if(tipo == '0' ){
     const verifique = await postagemRepository.findOneBy({dono_id: id }) 
 
     if(verifique)throw new BadRequestError('Postagem ja exsite!')
@@ -132,11 +138,8 @@ async createpost(req: Request, res: Response){
         hora,
         tipo,
         pros,
-       dono_id: id,
+       dono_id: id
     })
-
-    // newPost.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
-    // console.log(newPost);
     
     await postagemRepository.save(newPost)
 
@@ -144,6 +147,37 @@ async createpost(req: Request, res: Response){
 
     return res.status(201).json(newPost)
   
+    }else if(tipo == '1'){
+
+      const verifique = await postagemRepository.findOneBy({time: { id: time } }) 
+
+      if(verifique)throw new BadRequestError('Postagem ja exsite!')
+       
+      const newPost = postagemRepository.create({
+
+          descricao,
+          jogo,
+          funcao,
+          elo,
+          hora,
+          tipo,
+          pros,
+          time 
+        })
+      
+      await postagemRepository.save(newPost)
+
+      const peneira = await peneiraRepository.create({jogadores: time.jogadores , menssagem: menssagem ? menssagem : "", time: time })
+    
+      const pen = await peneiraRepository.save(peneira) 
+
+  
+  
+  
+      return res.status(201).json(newPost)
+
+    }
+
 }
 
 //PUT
@@ -216,14 +250,30 @@ async updatepost(req: Request, res: Response){
 async deletePost(req: Request, res: Response){
 
   const  postUser  = req.user 
+  const idTime = parseInt(req.params.time)
 
-  if(postUser){
+  if(req.params.time){
+    if(idTime){
     
-    const post = await postagemRepository.delete({dono_id: postUser} )
-
+      const postime = await postagemRepository.delete({ time: {id: idTime} }  )
+      const poen = await peneiraRepository.delete({} )
+  
+    }else{
+      throw new BadRequestError('opaaa')
+    }
   }else{
-    throw new BadRequestError('!!!')
+    if(postUser){
+    
+      const post = await postagemRepository.delete({dono_id: postUser }   )
+  
+    }else{
+      throw new BadRequestError('!!!')
+    }
   }
+
+
+
+
 
 return res.json({
   response: true
