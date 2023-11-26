@@ -34,6 +34,9 @@ export class Perfil {
   @OneToMany(() => Time, (time) => time.dono, { orphanedRowAction: 'delete', onDelete: 'CASCADE' })
   @JoinColumn()
   times?: Time[]
+  @OneToMany(() => Highlight, (highlight) => highlight.dono)
+  @JoinColumn()
+  highlights?: Highlight[]
 }
 
 @Entity('tbl_time')
@@ -148,3 +151,13 @@ export class Notificacao {
   titulo: string
 }
 
+@Entity('tbl_highlight')
+export class Highlight {
+  @PrimaryGeneratedColumn()
+  id: number
+  @Column({length: 100})
+  Titulo: string
+  @ManyToOne(() => Perfil, (perfil) => perfil.highlight)
+  @JoinColumn()
+  dono: Perfil
+}
