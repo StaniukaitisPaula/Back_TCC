@@ -37,6 +37,9 @@ export class Perfil {
   @OneToMany(() => Highlight, (highlight) => highlight.dono)
   @JoinColumn()
   highlights?: Highlight[]
+  @OneToMany(() => RedeSocial, (redeSocial) => redeSocial.dono)
+  @JoinColumn()
+  redeSocial?: RedeSocial[]
 }
 
 @Entity('tbl_time')
@@ -161,3 +164,16 @@ export class Highlight {
   @JoinColumn()
   dono: Perfil
 }
+
+@Entity('tbl_redeSocial')
+export class RedeSocial {
+  @PrimaryGeneratedColumn()
+  id: number
+  @Column({length: 100})
+  link: string
+  @ManyToOne(() => Perfil, (perfil) => perfil.redeSocial)
+  @JoinColumn()
+  dono: Perfil
+}
+
+
