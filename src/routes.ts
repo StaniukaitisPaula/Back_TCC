@@ -8,6 +8,7 @@ import { NotificacaoController } from './controller/NotificacaoController';
 import { errorMiddleware } from './middlewares/error';
 import { PeneiraController } from './controller/PeneiraController';
 import { HighlightController } from './controller/HighlightController';
+import { RedeSocialController } from './controller/RedeSocialController';
 
 const routes = Router()
 
@@ -71,5 +72,11 @@ routes.post('/highlight',authMiddleware, new HighlightController().postHighlight
 routes.get('/highlight',authMiddleware, new HighlightController().getHighlight  )
 routes.put('/highlight',authMiddleware, new HighlightController().putHighlight )
 routes.delete('/highlight/:id',authMiddleware,new HighlightController().deleteHighlight)
+
+//REDESOCIAL
+routes.post('/network',authMiddleware, new RedeSocialController().postRedeSocial )
+routes.get('/network',authMiddleware, new RedeSocialController().getRedeSocial  )
+routes.put('/network',authMiddleware, new RedeSocialController().putRedeSocial )
+routes.delete('/network/:id',authMiddleware,new RedeSocialController().deleteRedeSocial)
 
 export default routes
