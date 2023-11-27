@@ -156,8 +156,8 @@ export class Highlight {
   @PrimaryGeneratedColumn()
   id: number
   @Column({length: 100})
-  Titulo: string
-  @ManyToOne(() => Perfil, (perfil) => perfil.highlight)
+  titulo: string
+  @ManyToOne(() => Perfil, (perfil) => perfil.highlights)
   @JoinColumn()
   dono: Perfil
 }

@@ -4,10 +4,10 @@ import { TimeController } from './controller/TimeController'
 import { PostagemController } from './controller/PostagemController';
 import { authMiddleware } from './middlewares/authMiddleware'
 import { PropostaController } from './controller/PropostaController';
-import { notificacaoRepository } from './repositories/UserRepository';
 import { NotificacaoController } from './controller/NotificacaoController';
 import { errorMiddleware } from './middlewares/error';
 import { PeneiraController } from './controller/PeneiraController';
+import { HighlightController } from './controller/HighlightController';
 
 const routes = Router()
 
@@ -64,5 +64,12 @@ routes.delete('/notification/:id',authMiddleware, new NotificacaoController().de
 routes.get('/sieve/:time',authMiddleware, new PeneiraController().getPeneira)
 routes.put('/sieve/:time',authMiddleware, new PeneiraController().putPeneira)
 routes.delete('/sieve/:time/:acietar',authMiddleware, new PeneiraController().responderPeneira)
+
+
+//HIGHLIGHT
+routes.post('/highlight',authMiddleware, new HighlightController().postHighlight )
+routes.get('/ts',authMiddleware, new HighlightController().getHighlight  )
+routes.put('/highlight',authMiddleware, new HighlightController().putHighlight )
+routes.delete('/highlight/:id',authMiddleware,new HighlightController().deleteHighlight)
 
 export default routes
