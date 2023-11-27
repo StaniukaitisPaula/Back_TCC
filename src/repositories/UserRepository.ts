@@ -1,5 +1,5 @@
 import { AppDataSource } from "../data-source";
-import { Jogador, Perfil, Time, Postagem, Proposta, Notificacao, Peneira, Highlight } from '../entities/User';
+import { Jogador, Perfil, Time, Postagem, Proposta, Notificacao, Peneira, Highlight, RedeSocial } from '../entities/User';
 
 
 export const jogadorRepository = AppDataSource.getRepository(Jogador)
@@ -17,3 +17,6 @@ export const notificacaoRepository = AppDataSource.getRepository(Notificacao)
 export const peneiraRepository = AppDataSource.getRepository(Peneira)
 
 export const highlightRepository = AppDataSource.getRepository(Highlight)
+
+
+export const redeSocialRepository = AppDataSource.getRepository(RedeSocial)
