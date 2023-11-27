@@ -15,9 +15,7 @@ async postHighlight(req: Request, res: Response){
     const id = req.user
 
     const {
-
         titulo
-
     } = req.body
 
     if(
@@ -31,9 +29,9 @@ async postHighlight(req: Request, res: Response){
       dono: id
       
     })
-    console.log(newPost);
-    
-    
+
+    await highlightRepository.save(newPost)
+
     return res.status(201).json(newPost)
   
 
