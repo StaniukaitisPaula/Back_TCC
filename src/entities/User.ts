@@ -3,6 +3,7 @@ import { Genero } from "./enum/Genero";
 import { Jogo } from "./enum/Jogo";
 import { Funcao } from "./enum/Funcao";
 import { Elo } from "./enum/Elo";
+import { Rede } from "./enum/Rede";
 
 
 @Entity('tbl_perfil')
@@ -171,6 +172,8 @@ export class RedeSocial {
   id: number
   @Column({length: 100})
   link: string
+  @Column()
+  tipo: Rede
   @ManyToOne(() => Perfil, (perfil) => perfil.redeSocial)
   @JoinColumn()
   dono: Perfil
