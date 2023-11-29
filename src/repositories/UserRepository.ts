@@ -18,5 +18,4 @@ export const peneiraRepository = AppDataSource.getRepository(Peneira)
 
 export const highlightRepository = AppDataSource.getRepository(Highlight)
 
-
 export const redeSocialRepository = AppDataSource.getRepository(RedeSocial)
