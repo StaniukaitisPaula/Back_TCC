@@ -1,9 +1,8 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
 import { jogadorRepository, redeSocialRepository} from '../repositories/UserRepository';
-import { log } from "console";
-import { TIMEOUT } from "dns";
-import { Highlight } from "../entities/User";
+
+import { RedeSocial } from "../entities/User";
 
 
 export class RedeSocialController{
@@ -13,19 +12,22 @@ export class RedeSocialController{
 async postRedeSocial(req: Request, res: Response){
 
     const id = req.user
-
+    
     const {
-       link
+       link,
+       tipo
     } = req.body
 
     if(
-        link  == undefined || link == "" 
+        link  == undefined || link == "" ||
+        tipo  == undefined 
 
     ) throw new BadRequestError('JSON invalido, Faltam Informacoes!')
 
     const newPost = redeSocialRepository.create({
 
       link,
+      tipo,
       dono: id
       
     })
@@ -66,18 +68,23 @@ async putRedeSocial(req: Request, res: Response){
 
   const {
 
-        link
+        link,
+        tipo
 
     } = req.body
 
       
     let response = {
-        link
+        link,
+        tipo
       }
     
-  
+
       if(link){
         response.link= Boolean((await redeSocialRepository.update( { id: redeSocial.id }, { link: link})).affected)
+      }
+      if(tipo){
+        response.tipo= Boolean((await redeSocialRepository.update( { id: redeSocial.id }, { tipo: tipo})).affected)
       }
 
 
