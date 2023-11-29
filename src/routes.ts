@@ -62,9 +62,9 @@ routes.delete('/notification/:id',authMiddleware, new NotificacaoController().de
 
 
 //PENEIRA
-routes.get('/sieve/:jogador/:time',authMiddleware, new PeneiraController().getPeneira)
-routes.put('/sieve/:jogador/:time',authMiddleware, new PeneiraController().putPeneira)
-routes.delete('/sieve/:time/:aceitar',authMiddleware, new PeneiraController().deletePeneira)
+routes.get('/sieve/:time',authMiddleware, new PeneiraController().getPeneira)
+routes.put('/sieve/:time',authMiddleware, new PeneiraController().putPeneira)
+routes.delete('/sieve/:time/:jogador',authMiddleware, new PeneiraController().deletePeneira)
 
 
 //HIGHLIGHT

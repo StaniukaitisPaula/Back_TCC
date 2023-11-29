@@ -1,4 +1,4 @@
- import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Genero } from "./enum/Genero";
 import { Jogo } from "./enum/Jogo";
 import { Funcao } from "./enum/Funcao";
@@ -135,8 +135,8 @@ export class Peneira {
   @OneToOne(() => Time)
   @JoinColumn()
   time: Time
-  @ManyToMany(() => Perfil)
-  @JoinColumn()
+  @ManyToMany(() => Jogador)
+  @JoinTable()
   jogadores?: Jogador[]
   @Column({type : 'text'})
   menssagem: string
