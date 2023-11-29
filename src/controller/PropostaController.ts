@@ -1,6 +1,6 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
-import { jogadorRepository, userRepository, timeRepository, propostaRepository, notificacaoRepository } from '../repositories/UserRepository';
+import { jogadorRepository, userRepository, timeRepository, propostaRepository, notificacaoRepository, postagemRepository } from '../repositories/UserRepository';
 
 
 
@@ -118,6 +118,7 @@ async responderProposta(req: Request, res: Response){
     await timeRepository.save(time)
 
     await propostaRepository.delete(proposta)
+    const post = await postagemRepository.delete({dono_id: req.user })
     const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'Aproposta para o ' + jogador.nickname +'foi aceita!', titulo: 'Proposta aceita' })
 
     await notificacaoRepository.save(noti)
