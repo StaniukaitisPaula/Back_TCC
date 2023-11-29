@@ -151,7 +151,7 @@ async createpost(req: Request, res: Response){
 
       const verifique = await postagemRepository.findOneBy({time: { id: time } }) 
 
-      if(verifique)throw new BadRequestError('Postagem ja exsite!')
+      if(verifique)throw new BadRequestError('Postagem ja existe!')
        
       const newPost = postagemRepository.create({
 
@@ -167,7 +167,7 @@ async createpost(req: Request, res: Response){
       
       await postagemRepository.save(newPost)
 
-      const peneira = await peneiraRepository.create({jogadores: time.jogadores , menssagem: menssagem ? menssagem : "", time: time })
+      const peneira = await peneiraRepository.create({menssagem: menssagem ? menssagem : "", time: time })
     
       const pen = await peneiraRepository.save(peneira) 
 
@@ -255,8 +255,8 @@ async deletePost(req: Request, res: Response){
   if(req.params.time){
     if(idTime){
     
-      const postime = await postagemRepository.delete({ time: {id: idTime} }  )
-      const poen = await peneiraRepository.delete({} )
+      const postime = await postagemRepository.delete({ time: {id: idTime} } )
+      const poen = await peneiraRepository.delete({ time: {id: idTime} } )
   
     }else{
       throw new BadRequestError('opaaa')
@@ -264,7 +264,7 @@ async deletePost(req: Request, res: Response){
   }else{
     if(postUser){
     
-      const post = await postagemRepository.delete({dono_id: postUser }   )
+      const post = await postagemRepository.delete({dono_id: postUser })
   
     }else{
       throw new BadRequestError('!!!')

@@ -21,7 +21,7 @@ async  getPeneira(req: Request, res: Response){
   let peneiraResponse = [new Peneira]
 
 
-  peneiraResponse = await peneiraRepository.find({ where:{ time: {id: parseInt(idTime)}}, relations: { time: true , jogadores: true}   }) 
+  peneiraResponse = await peneiraRepository.find({relations: { time: true, jogadores: { perfil_id: true } } })
 
 
   res.json({
@@ -85,15 +85,14 @@ async  getPeneira(req: Request, res: Response){
 //DELETE
 async  deletePeneira(req: Request, res: Response){
   const idTime = parseInt(req.params.time)
-  const idJogador = req.user.id
-  const aceitar = req.params.aceitar
+  const idJogador = parseInt(req.params.jogador)
+  const aceitar = req.body.aceitar
 
 if(
     idTime     == undefined ||
-    idJogador  == undefined ||
-    isNaN(idTime)           || isNaN(idJogador)
-
-) throw new BadRequestError('Faltam Informacoes!')
+    idJogador  == undefined 
+  
+  ) throw new BadRequestError('Faltam Informacoes!')
 
 const time = await timeRepository.findOne( {where: {id: idTime }, relations: { dono: true } })
 
@@ -102,7 +101,7 @@ if(
   !time
 ) throw new BadRequestError('Esse time não exite ou não pertece a essa organização!')
 
-const jogador = await jogadorRepository.findOne( {where: {perfil_id: { id: idJogador } }, relations: { perfil_id: true , time_atual: true } })
+const jogador = await jogadorRepository.findOne( {where: { id: idJogador } , relations: { perfil_id: true , time_atual: true } })
 
 console.log(jogador);
 
@@ -113,11 +112,11 @@ if(
 
 if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
 
-const proposta = await peneiraRepository.findOne({ where:{ time: {id: idTime}}, relations: { time: true , jogadores: true}  })
+const peneira = await peneiraRepository.findOne({ where:{ time: {id: idTime}}, relations: { time: true , jogadores: true}  })
 
 console.log(aceitar);
 
-if(aceitar == '1' && proposta){
+if(aceitar == '1' && peneira){
   console.log("oi");
   
   let jogadores = time.jogadores
@@ -130,14 +129,12 @@ if(aceitar == '1' && proposta){
   
   await timeRepository.save(time)
 
-  await peneiraRepository.delete(proposta)
-  const noti = await notificacaoRepository.create({ de: time.dono, menssagem: ' Jogador(a) ' + jogador.nickname +'foi aceita!', titulo: 'Proposta aceita' })
+  const noti = await notificacaoRepository.create({ de: jogador.perfil_id, menssagem: ' Você foi aceito(a) no time' + time.nome_time, titulo: 'Proposta aceita' })
 
   await notificacaoRepository.save(noti)
 
-}else if(proposta){
-  await peneiraRepository.delete(proposta)
-  const noti = await notificacaoRepository.create({ de: time.dono , menssagem: ' Jogador(a)' + jogador.nickname +'foi recusada!', titulo: 'Proposta recusada' })
+}else if(peneira){
+  const noti = await notificacaoRepository.create({ de: jogador.perfil_id , menssagem: ' Você não foi aceito(a) no time' + time.nome_time, titulo: 'Proposta recusada' })
 
   await notificacaoRepository.save(noti)
 }
