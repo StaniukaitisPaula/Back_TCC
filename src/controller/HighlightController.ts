@@ -1,9 +1,7 @@
 import { Request, response, Response } from "express";
 import { BadRequestError, UnauthorizedError } from "../helpers/api-erros";
 import { jogadorRepository, userRepository, postagemRepository, highlightRepository} from '../repositories/UserRepository';
-import { log } from "console";
-import { TIMEOUT } from "dns";
-import { Highlight } from "../entities/User";
+
 
 
 export class HighlightController{
