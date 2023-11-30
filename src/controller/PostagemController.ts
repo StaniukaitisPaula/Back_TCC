@@ -71,7 +71,7 @@ async getpostPlayer(req: Request, res: Response) {
       postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, where: {tipo: tipo}  })
     }
 
-    let postCount = await postagemRepository.count()
+    let postCount = await postagemRepository.count({where: {tipo: tipo}})
 
     if(req.params.id){
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
@@ -102,9 +102,9 @@ async getpostPlayer(req: Request, res: Response) {
       postCount = posatgemFilter.length
     }
 
+    
     const response = {post: postagemResponse, limit: postCount }
-  
-    console.log(postagemResponse);
+
     
     return res.json(response)
 
