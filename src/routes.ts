@@ -71,7 +71,7 @@ routes.delete('/sieve/:time/:jogador',authMiddleware, new PeneiraController().de
 //HIGHLIGHT
 routes.post('/highlight',authMiddleware, new HighlightController().postHighlight,errorMiddleware )
 routes.get('/highlight',authMiddleware, new HighlightController().getHighlight,errorMiddleware  )
-routes.put('/highlight',authMiddleware, new HighlightController().putHighlight,errorMiddleware )
+routes.put('/highlight/:id',authMiddleware, new HighlightController().putHighlight,errorMiddleware )
 routes.delete('/highlight/:id',authMiddleware,new HighlightController().deleteHighlight,errorMiddleware)
 
 //REDESOCIAL

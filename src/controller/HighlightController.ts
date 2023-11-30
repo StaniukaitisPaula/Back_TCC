@@ -55,9 +55,9 @@ async getHighlight(req: Request, res: Response){
 //PUT
 async putHighlight(req: Request, res: Response){
 
-    const id = req.user
+    const id = parseInt(req.params.id)
 
-    const highlight = await highlightRepository.findOne({ where: { dono: id} })
+    const highlight = await highlightRepository.findOne({ where: { id: id} })
 
 
     if(highlight){
