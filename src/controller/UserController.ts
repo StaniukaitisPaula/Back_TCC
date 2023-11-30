@@ -149,7 +149,7 @@ async getProfileById(req: Request, res: Response) {
 
     const id = req.params.id
 
-    const user = await userRepository.findOne({ where: {id: parseInt(id)}})
+    const user = await userRepository.findOne({ where: {id: parseInt(id)}, relations: { redeSocial: true, highlights: true  }})
 
     if(user == null){
       throw new BadRequestError('Usuario não existe!')
@@ -160,7 +160,7 @@ async getProfileById(req: Request, res: Response) {
       ...userReturn
      } = user
     
-     const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true, time_atual: true  }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
+     const playerProfile = await jogadorRepository.find({ relations: { perfil_id : true, time_atual: true }, where: { perfil_id: { id : user.id } } , select: { perfil_id: { id: false } }} )
      
   
     const response = { user: userReturn, playerProfile: playerProfile[0] ? playerProfile[0] : null }
