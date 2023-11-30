@@ -17,7 +17,9 @@ export class PostagemController {
 
 // GET
 async getPostToken(req: Request, res: Response) {
+
     const user = req.user
+ 
 
     const postProfile = await postagemRepository.find({ relations: { dono_id : true  }, where: { dono_id: { id : user.id } } , select: { dono_id: { id: false } }} )
 
@@ -25,6 +27,20 @@ async getPostToken(req: Request, res: Response) {
     const response = { user: user, postProfile: postProfile[0]? postProfile[0] : null  }
     
     return res.json(response)
+
+}
+
+async getPostTime(req: Request, res: Response) {
+
+
+  const idTime = parseInt(req.params.time)
+  const postProfile = await postagemRepository.find({ where: { time: {id: idTime} }} )
+  
+
+  
+  const response = { postProfile: postProfile[0]? postProfile[0] : null  }
+  
+  return res.json(response)
 
 }
 
@@ -55,7 +71,7 @@ async getpostPlayer(req: Request, res: Response) {
       postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, where: {tipo: tipo}  })
     }
 
-    let postCount = await postagemRepository.count()
+    let postCount = await postagemRepository.count({where: {tipo: tipo}})
 
     if(req.params.id){
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.id == parseInt( req.params.id )) return x  })
@@ -86,9 +102,9 @@ async getpostPlayer(req: Request, res: Response) {
       postCount = posatgemFilter.length
     }
 
+    
     const response = {post: postagemResponse, limit: postCount }
-  
-    console.log(postagemResponse);
+
     
     return res.json(response)
 
@@ -179,6 +195,7 @@ async createpost(req: Request, res: Response){
     }
 
 }
+
 
 //PUT
 async updatepost(req: Request, res: Response){

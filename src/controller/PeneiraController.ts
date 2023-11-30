@@ -59,16 +59,14 @@ async  getPeneira(req: Request, res: Response){
     const timeVerifique = await peneiraRepository.findOneBy({time: { id: time.id } }) 
     if(!timeVerifique)throw new BadRequestError('Esse Time não tem peneira ativa!')
 
-
     let jogadores = timeVerifique.jogadores
-    
 
     jogadores ? jogadores.push(jogador) : jogadores = [jogador]
-
-    timeVerifique.jogadores = jogadores
-    console.log(timeVerifique);
+      
     
-
+    
+    timeVerifique.jogadores = jogadores
+    
    const a = await peneiraRepository.save(timeVerifique)
 
   
