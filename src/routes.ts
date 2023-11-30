@@ -44,6 +44,7 @@ routes.delete('/team/:time/:jogador',authMiddleware, new TimeController().delete
 
 // POSTAGEM 
 routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken,errorMiddleware)
+routes.get('/post/:time', new PostagemController().getPostTime,errorMiddleware)
 routes.get('/post/:tipo', new PostagemController().getpostPlayer,errorMiddleware)
 routes.post('/post',authMiddleware, new PostagemController().createpost,errorMiddleware)
 routes.put('/post',authMiddleware, new PostagemController().updatepost,errorMiddleware)
@@ -51,9 +52,9 @@ routes.delete('/post/:time',authMiddleware, new PostagemController().deletePost,
 
 
 // PROPOSTAS
-routes.get('/offer', authMiddleware, new PropostaController().verPropostas)
-routes.post('/offer/:time/:jogador',authMiddleware, new PropostaController().enviarProposta)
-routes.delete('/offer/:time/:aceitar',authMiddleware, new PropostaController().responderProposta)
+routes.get('/offer', authMiddleware, new PropostaController().verPropostas,errorMiddleware)
+routes.post('/offer/:time/:jogador',authMiddleware, new PropostaController().enviarProposta,errorMiddleware)
+routes.delete('/offer/:time/:aceitar',authMiddleware, new PropostaController().responderProposta,errorMiddleware)
 
 
 // NOTIFICACAO
@@ -62,21 +63,21 @@ routes.delete('/notification/:id',authMiddleware, new NotificacaoController().de
 
 
 //PENEIRA
-routes.get('/sieve/:time',authMiddleware, new PeneiraController().getPeneira)
-routes.put('/sieve/:time',authMiddleware, new PeneiraController().putPeneira)
-routes.delete('/sieve/:time/:jogador',authMiddleware, new PeneiraController().deletePeneira)
+routes.get('/sieve/:time',authMiddleware, new PeneiraController().getPeneira,errorMiddleware)
+routes.put('/sieve/:time',authMiddleware, new PeneiraController().putPeneira,errorMiddleware)
+routes.delete('/sieve/:time/:jogador',authMiddleware, new PeneiraController().deletePeneira,errorMiddleware)
 
 
 //HIGHLIGHT
-routes.post('/highlight',authMiddleware, new HighlightController().postHighlight )
-routes.get('/highlight',authMiddleware, new HighlightController().getHighlight  )
-routes.put('/highlight',authMiddleware, new HighlightController().putHighlight )
-routes.delete('/highlight/:id',authMiddleware,new HighlightController().deleteHighlight)
+routes.post('/highlight',authMiddleware, new HighlightController().postHighlight,errorMiddleware )
+routes.get('/highlight',authMiddleware, new HighlightController().getHighlight,errorMiddleware  )
+routes.put('/highlight',authMiddleware, new HighlightController().putHighlight,errorMiddleware )
+routes.delete('/highlight/:id',authMiddleware,new HighlightController().deleteHighlight,errorMiddleware)
 
 //REDESOCIAL
-routes.post('/network',authMiddleware, new RedeSocialController().postRedeSocial )
-routes.get('/network',authMiddleware, new RedeSocialController().getRedeSocial  )
-routes.put('/network',authMiddleware, new RedeSocialController().putRedeSocial )
-routes.delete('/network/:id',authMiddleware,new RedeSocialController().deleteRedeSocial)
+routes.post('/network',authMiddleware, new RedeSocialController().postRedeSocial,errorMiddleware )
+routes.get('/network',authMiddleware, new RedeSocialController().getRedeSocial,errorMiddleware  )
+routes.put('/network',authMiddleware, new RedeSocialController().putRedeSocial,errorMiddleware )
+routes.delete('/network/:id',authMiddleware,new RedeSocialController().deleteRedeSocial,errorMiddleware)
 
 export default routes
