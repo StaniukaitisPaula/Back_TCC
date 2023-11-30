@@ -18,7 +18,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
   const { id } = jwt.verify(token, process.env.JWT_PASS ?? '') as JwtPayload
 
-  const user = await userRepository.findOne({ where: {id: id}, relations: { propostas: { de: true }} })
+  const user = await userRepository.findOne({ where: {id: id}, relations: { propostas: { de: true }, redeSocial: true, highlights: true} })
   if(!user){
     throw new UnauthorizedError('Não autorizado')
   }
