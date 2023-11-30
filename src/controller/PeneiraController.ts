@@ -15,13 +15,13 @@ export class PeneiraController{
 ///GET
 async  getPeneira(req: Request, res: Response){
 
-  const idTime = req.params.time 
+  const idTime = parseInt( req.params.time )
 
  
   let peneiraResponse = [new Peneira]
 
 
-  peneiraResponse = await peneiraRepository.find({relations: { time: true, jogadores: { perfil_id: true } } })
+  peneiraResponse = await peneiraRepository.find({relations: { time: true, jogadores: { perfil_id: true } }, where: {time: {id: idTime}} })
 
 
   res.json({
