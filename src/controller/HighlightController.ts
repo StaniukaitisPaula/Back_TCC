@@ -93,11 +93,11 @@ async putHighlight(req: Request, res: Response){
 //DELETE
 async deleteHighlight(req: Request, res: Response){
 
-    const idPost = req.params.id
+    const idPost = parseInt(req.params.id)
   
     if(idPost){
       
-      const post = await highlightRepository.delete(idPost)
+      const post = await highlightRepository.delete({id: idPost})
   
     }else{
       throw new BadRequestError('!!!')
