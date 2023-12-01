@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { BadRequestError} from "../helpers/api-erros";
-import { jogadorRepository, timeRepository, userRepository } from '../repositories/UserRepository';
+import { jogadorRepository, postagemRepository, timeRepository, userRepository } from '../repositories/UserRepository';
 import { Perfil, Time } from '../entities/User';
 
 
@@ -245,18 +245,20 @@ return res.json({
 async deleteTime(req: Request, res: Response){
   const user = req.user
   const id = req.params.id
-
-  // console.log(org);
-  // console.log(id)
   
 
 if(id == null || user == undefined)  throw new BadRequestError('Id nao informado!')
 
 const time = await timeRepository.findOneBy({ id: parseInt(id), dono: user })
 
+
 if(time){
+  const postagem = await postagemRepository.findOneBy({ time: time })
+
+
   await timeRepository.delete({ id: time.id})
 }
+
 
 return res.json({
   deleted: true
