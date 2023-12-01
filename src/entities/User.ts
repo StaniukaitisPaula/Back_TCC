@@ -88,14 +88,14 @@ export class Jogador {
 }
 
 
-@Entity('tbl_Postagem')
+@Entity('tbl_postagem')
 export class Postagem {
   @PrimaryGeneratedColumn()
   id: number
-  @ManyToOne(() => Perfil , {nullable: true })
+  @ManyToOne(() => Perfil , {nullable: true, onDelete: 'CASCADE'})
   @JoinColumn()
   dono_id?: Perfil 
-  @ManyToOne(() => Time,  {nullable: true })
+  @ManyToOne(() => Time,  {nullable: true, onDelete: 'CASCADE'})
   @JoinColumn()
   time?: Time
   @Column({type : 'text'})
@@ -114,11 +114,11 @@ export class Postagem {
   pros?: string
 }
 
-@Entity('tbl_Proposta')
+@Entity('tbl_proposta')
 export class Proposta {
   @PrimaryGeneratedColumn()
   id: number
-  @ManyToOne(() => Time, (time) => time.propostas)
+  @ManyToOne(() => Time, (time) => time.propostas, {onDelete: 'CASCADE'})
   @JoinColumn()
   de: Time
   @ManyToOne(() => Perfil, (perfil) => perfil.propostas)
@@ -128,11 +128,11 @@ export class Proposta {
   menssagem: string
 }
 
-@Entity('tbl_Peneira')
+@Entity('tbl_peneira')
 export class Peneira {
   @PrimaryGeneratedColumn()
   id: number
-  @OneToOne(() => Time)
+  @OneToOne(() => Time, {onDelete: 'CASCADE'})
   @JoinColumn()
   time: Time
   @ManyToMany(() => Jogador)
@@ -142,7 +142,7 @@ export class Peneira {
   menssagem: string
 }
 
-@Entity('tbl_Notificacao')
+@Entity('tbl_potificacao')
 export class Notificacao {
   @PrimaryGeneratedColumn()
   id: number

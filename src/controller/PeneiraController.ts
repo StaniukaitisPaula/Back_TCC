@@ -84,7 +84,7 @@ async  getPeneira(req: Request, res: Response){
 async  deletePeneira(req: Request, res: Response){
   const idTime = parseInt(req.params.time)
   const idJogador = parseInt(req.params.jogador)
-  const aceitar = req.body.aceitar
+  let aceitar: string =  req.query.aceitar as string
 
 if(
     idTime     == undefined ||
@@ -121,7 +121,7 @@ if(aceitar == '1' && peneira){
 
   jogadores ? jogadores.push(jogador) : jogadores = [jogador]
   
-  if(jogadores.length > 10) throw new BadRequestError('Time atigil o limite de jogadores')
+  if(jogadores.length > 10) throw new BadRequestError('Time atigil o limite de jogadores') 
   
   time.jogadores = jogadores
   

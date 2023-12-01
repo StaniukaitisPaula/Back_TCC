@@ -37,7 +37,7 @@ routes.get('/team/:id', new TimeController().getTimeFilter,errorMiddleware)
 routes.get('/team/user/:id', new TimeController().getTimeFilterUser,errorMiddleware)
 routes.post('/team',authMiddleware, new TimeController().createTime)
 routes.put('/team/:id',authMiddleware, new TimeController().updateTime,errorMiddleware)
-routes.delete('/team/:id',authMiddleware, new TimeController().deleteTime,errorMiddleware)
+routes.delete('/team/:id',authMiddleware, new TimeController().deleteTime)
 routes.put('/team/:time/:jogador',authMiddleware, new TimeController().insertJogador,errorMiddleware)
 routes.delete('/team/:time/:jogador',authMiddleware, new TimeController().deleteJogador,errorMiddleware)
 
@@ -46,7 +46,7 @@ routes.delete('/team/:time/:jogador',authMiddleware, new TimeController().delete
 routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken,errorMiddleware)
 routes.get('/post/time/:time', new PostagemController().getPostTime,errorMiddleware)
 routes.get('/post/:tipo', new PostagemController().getpostPlayer,errorMiddleware)
-routes.post('/post',authMiddleware, new PostagemController().createpost,errorMiddleware)
+routes.post('/post',authMiddleware, new PostagemController().createpost)
 routes.put('/post',authMiddleware, new PostagemController().updatepost,errorMiddleware)
 routes.delete('/post/:time',authMiddleware, new PostagemController().deletePost,errorMiddleware)
 
@@ -71,7 +71,7 @@ routes.delete('/sieve/:time/:jogador',authMiddleware, new PeneiraController().de
 //HIGHLIGHT
 routes.post('/highlight',authMiddleware, new HighlightController().postHighlight,errorMiddleware )
 routes.get('/highlight',authMiddleware, new HighlightController().getHighlight,errorMiddleware  )
-routes.put('/highlight',authMiddleware, new HighlightController().putHighlight,errorMiddleware )
+routes.put('/highlight/:id',authMiddleware, new HighlightController().putHighlight,errorMiddleware )
 routes.delete('/highlight/:id',authMiddleware,new HighlightController().deleteHighlight,errorMiddleware)
 
 //REDESOCIAL
