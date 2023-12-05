@@ -403,17 +403,23 @@ async updatePlayerLeave(req: Request, res: Response){
 
 
   if(player != null){
-    const time = await timeRepository.findOne({where: {jogadores: {id: player.id}}, relations: { dono: true }})
+    console.log(req.player);
+    
+    const time = await timeRepository.findOne({where: {jogadores: {id: player.id}}, relations: { dono: true, jogadores: true }})
    
     if(time){
+      console.log(time.jogadores);
+      
       let jogadorFilter = time.jogadores?.filter(x => x.id !== player.id);
       time.jogadores = jogadorFilter
-
-      await timeRepository.save(time)
-      const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'Jogador ' + player.nickname +' saiu do time: ' + time.nome_time, titulo: 'TIME' })
-      console.log(noti);
+      console.log(time.jogadores);
       
-      console.log(await notificacaoRepository.save(noti))
+
+      //await timeRepository.save(time)
+      //const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'Jogador ' + player.nickname +' saiu do time: ' + time.nome_time, titulo: 'TIME' })
+      //console.log(noti);
+      
+      //console.log(await notificacaoRepository.save(noti))
 
     }
   }

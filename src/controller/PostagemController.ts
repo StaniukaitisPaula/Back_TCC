@@ -86,6 +86,13 @@ async getpostPlayer(req: Request, res: Response) {
       postagemResponse = posatgemFilter
       postCount = posatgemFilter.length
     }
+
+    if(req.query.eloPlayer){
+      posatgemFilter = postagemResponse.filter( (x) => {  if ( x.elo != undefined && x.elo  <= parseInt(elo)) return x  })
+
+      postagemResponse = posatgemFilter
+      postCount = posatgemFilter.length
+    }
        
     if(req.query.funcao){
       posatgemFilter = postagemResponse.filter( (x) => {  if (x.funcao !=  undefined && x.funcao == parseInt(funcao) ) return x  })
