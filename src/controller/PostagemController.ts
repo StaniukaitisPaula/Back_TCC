@@ -64,12 +64,12 @@ async getpostPlayer(req: Request, res: Response) {
 
   
     if( !isNaN(perPageNumber) && !isNaN(pagenumber)){
-      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, take: perPageNumber, skip: skip, where:{tipo: tipo} }) 
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, take: perPageNumber, skip: skip, where:{tipo: tipo}, order: { id: "DESC" } }) 
   
     
       
     }else{
-      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, where: {tipo: tipo}  })
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, where: {tipo: tipo}, order: { id: "DESC" }  })
     }
 
     let postCount = await postagemRepository.count({where: {tipo: tipo}})
