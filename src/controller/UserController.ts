@@ -149,7 +149,7 @@ async getProfileById(req: Request, res: Response) {
 
     const id = req.params.id
 
-    const user = await userRepository.findOne({ where: {id: parseInt(id)}, relations: { redeSocial: true, highlights: true  }, order: { id: "DESC" }})
+    const user = await userRepository.findOne({ where: {id: parseInt(id)}, relations: { redeSocial: true, highlights: true  }, order: { highlights: {id: "DESC"} }})
 
     if(user == null){
       throw new BadRequestError('Usuario não existe!')
