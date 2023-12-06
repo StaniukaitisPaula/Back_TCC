@@ -49,6 +49,7 @@ async getpostPlayer(req: Request, res: Response) {
     let perPage: string =  req.query.perPage as string
     let page: string =  req.query.page as string
     let elo: string = req.query.elo as string
+    let eloPlayer: string = req.query.eloPlayer as string
     let funcao: string = req.query.funcao as string
     let hora: string = req.query.hora as string
     
@@ -88,7 +89,7 @@ async getpostPlayer(req: Request, res: Response) {
     }
 
     if(req.query.eloPlayer){
-      posatgemFilter = postagemResponse.filter( (x) => {  if ( x.elo != undefined && x.elo  <= parseInt(elo)) return x  })
+      posatgemFilter = postagemResponse.filter( (x) => {  if ( x.elo != undefined && x.elo  <= parseInt(eloPlayer)) return x  })
 
       postagemResponse = posatgemFilter
       postCount = posatgemFilter.length
