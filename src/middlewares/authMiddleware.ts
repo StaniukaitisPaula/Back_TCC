@@ -23,7 +23,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     throw new UnauthorizedError('Não autorizado')
   }
   
-  const player = await jogadorRepository.findOneBy({ perfil_id: user })
+  const player = await jogadorRepository.findOne({ where: { perfil_id: user }, relations: { time_atual: true }})
 
   if(player){
     req.player = player
