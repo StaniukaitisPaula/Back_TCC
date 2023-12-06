@@ -209,7 +209,7 @@ async createpost(req: Request, res: Response){
 async updatepost(req: Request, res: Response){
 
   const user = req.user 
-  const time = req.params.idTime
+  let time: string = req.query.time as string
 
   const postagem = time ? await postagemRepository.findOne({ where: { time: { id: parseInt(time)}} }) : await postagemRepository.findOne({ where: { dono_id: user} })
 
@@ -274,22 +274,15 @@ async updatepost(req: Request, res: Response){
 async deletePost(req: Request, res: Response){
 
   const  postUser  = req.user 
-  const idTime = parseInt(req.params.time)
+  let time: string = req.query.time as string
 
-  if(req.params.time){
-    if(idTime){
-    
-      const postime = await postagemRepository.delete({ time: {id: idTime} } )
-      const poen = await peneiraRepository.delete({ time: {id: idTime} } )
+  if(req.query.time){
+    const postime = await postagemRepository.delete({ time: {id: parseInt(time)} } )
+    const poen = await peneiraRepository.delete({ time: {id: parseInt(time)} } )
   
-    }else{
-      throw new BadRequestError('opaaa')
-    }
   }else{
     if(postUser){
-    
       const post = await postagemRepository.delete({dono_id: postUser })
-  
     }else{
       throw new BadRequestError('!!!')
     }

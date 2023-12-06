@@ -47,8 +47,8 @@ routes.get('/post/mypost',authMiddleware, new PostagemController().getPostToken,
 routes.get('/post/time/:time', new PostagemController().getPostTime,errorMiddleware)
 routes.get('/post/:tipo', new PostagemController().getpostPlayer,errorMiddleware)
 routes.post('/post',authMiddleware, new PostagemController().createpost,errorMiddleware)
-routes.put('/post/:idTime',authMiddleware, new PostagemController().updatepost,errorMiddleware)
-routes.delete('/post/:time',authMiddleware, new PostagemController().deletePost,errorMiddleware)
+routes.put('/post',authMiddleware, new PostagemController().updatepost,errorMiddleware)
+routes.delete('/post',authMiddleware, new PostagemController().deletePost,errorMiddleware)
 
 
 // PROPOSTAS
