@@ -208,15 +208,14 @@ async createpost(req: Request, res: Response){
 //PUT
 async updatepost(req: Request, res: Response){
 
-  const  user  = req.user 
+  const user = req.user 
+  const time = req.params.idTime
 
-  const postagem = await postagemRepository.findOne({ where: { dono_id: user} })
-
+  const postagem = time ? await postagemRepository.findOne({ where: { time: { id: parseInt(time)}} }) : await postagemRepository.findOne({ where: { dono_id: user} })
 
     if(postagem){
- const {
-  
-      descricao,
+      const {
+        descricao,
         jogo,
         funcao,
         elo,
@@ -234,7 +233,7 @@ async updatepost(req: Request, res: Response){
       tipo,
       pros
     }
-    // response.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
+
 
     if(descricao){
       response.descricao = Boolean((await postagemRepository.update( { id: postagem.id }, { descricao: descricao})).affected)
