@@ -28,7 +28,7 @@ routes.get('/player', new UserController().getPlayers,errorMiddleware)
 routes.post('/player',authMiddleware, new UserController().createPlayer,errorMiddleware)
 routes.put('/player',authMiddleware, new UserController().updatePlayer,errorMiddleware)
 routes.put('/player/leave',authMiddleware, new UserController().updatePlayerLeave,errorMiddleware)
-routes.delete('/player',authMiddleware, new UserController().deletePlayer,errorMiddleware)
+routes.delete('/player',authMiddleware, new UserController().deletePlayer)
 
 // TIME
 routes.get('/team', new TimeController().getTimeFilter,errorMiddleware)
