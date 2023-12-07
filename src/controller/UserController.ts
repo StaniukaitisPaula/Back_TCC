@@ -149,7 +149,7 @@ async getProfileById(req: Request, res: Response) {
 
     const id = req.params.id
 
-    const user = await userRepository.findOne({ where: {id: parseInt(id)}, relations: { redeSocial: true, highlights: true  }})
+    const user = await userRepository.findOne({ where: {id: parseInt(id)}, relations: { redeSocial: true, highlights: true  }, order: { highlights: {id: "DESC"} }})
 
     if(user == null){
       throw new BadRequestError('Usuario não existe!')
@@ -405,7 +405,7 @@ async updatePlayerLeave(req: Request, res: Response){
   if(player != null){
     console.log(req.player);
     
-    const time = await timeRepository.findOne({where: {jogadores: {id: player.id}}, relations: { dono: true, jogadores: true }})
+    const time = await timeRepository.findOne({where: { id: player.time_atual?.id }, relations: { dono: true, jogadores: true }})
    
     if(time){
       console.log(time.jogadores);
@@ -415,11 +415,11 @@ async updatePlayerLeave(req: Request, res: Response){
       console.log(time.jogadores);
       
 
-      //await timeRepository.save(time)
-      //const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'Jogador ' + player.nickname +' saiu do time: ' + time.nome_time, titulo: 'TIME' })
-      //console.log(noti);
+      await timeRepository.save(time)
+      const noti = await notificacaoRepository.create({ de: time.dono, menssagem: 'Jogador ' + player.nickname +' saiu do time: ' + time.nome_time, titulo: 'TIME' })
+      console.log(noti);
       
-      //console.log(await notificacaoRepository.save(noti))
+      console.log(await notificacaoRepository.save(noti))
 
     }
   }

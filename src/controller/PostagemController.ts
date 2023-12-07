@@ -49,6 +49,7 @@ async getpostPlayer(req: Request, res: Response) {
     let perPage: string =  req.query.perPage as string
     let page: string =  req.query.page as string
     let elo: string = req.query.elo as string
+    let eloPlayer: string = req.query.eloPlayer as string
     let funcao: string = req.query.funcao as string
     let hora: string = req.query.hora as string
     
@@ -63,12 +64,12 @@ async getpostPlayer(req: Request, res: Response) {
 
   
     if( !isNaN(perPageNumber) && !isNaN(pagenumber)){
-      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, take: perPageNumber, skip: skip, where:{tipo: tipo} }) 
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, take: perPageNumber, skip: skip, where:{tipo: tipo}, order: { id: "DESC" } }) 
   
     
       
     }else{
-      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, where: {tipo: tipo}  })
+      postagemResponse = await postagemRepository.find({relations: { dono_id: true, time: true }, where: {tipo: tipo}, order: { id: "DESC" }  })
     }
 
     let postCount = await postagemRepository.count({where: {tipo: tipo}})
@@ -88,7 +89,7 @@ async getpostPlayer(req: Request, res: Response) {
     }
 
     if(req.query.eloPlayer){
-      posatgemFilter = postagemResponse.filter( (x) => {  if ( x.elo != undefined && x.elo  <= parseInt(elo)) return x  })
+      posatgemFilter = postagemResponse.filter( (x) => {  if ( x.elo != undefined && x.elo  <= parseInt(eloPlayer)) return x  })
 
       postagemResponse = posatgemFilter
       postCount = posatgemFilter.length
@@ -207,15 +208,14 @@ async createpost(req: Request, res: Response){
 //PUT
 async updatepost(req: Request, res: Response){
 
-  const  user  = req.user 
+  const user = req.user 
+  let time: string = req.query.time as string
 
-  const postagem = await postagemRepository.findOne({ where: { dono_id: user} })
-
+  const postagem = time ? await postagemRepository.findOne({ where: { time: { id: parseInt(time)}} }) : await postagemRepository.findOne({ where: { dono_id: user} })
 
     if(postagem){
- const {
-  
-      descricao,
+      const {
+        descricao,
         jogo,
         funcao,
         elo,
@@ -233,7 +233,7 @@ async updatepost(req: Request, res: Response){
       tipo,
       pros
     }
-    // response.hora = (`${new Date().getHours()}:${new Date().getMinutes()}`)
+
 
     if(descricao){
       response.descricao = Boolean((await postagemRepository.update( { id: postagem.id }, { descricao: descricao})).affected)
@@ -274,22 +274,15 @@ async updatepost(req: Request, res: Response){
 async deletePost(req: Request, res: Response){
 
   const  postUser  = req.user 
-  const idTime = parseInt(req.params.time)
+  let time: string = req.query.time as string
 
-  if(req.params.time){
-    if(idTime){
-    
-      const postime = await postagemRepository.delete({ time: {id: idTime} } )
-      const poen = await peneiraRepository.delete({ time: {id: idTime} } )
+  if(req.query.time){
+    const postime = await postagemRepository.delete({ time: {id: parseInt(time)} } )
+    const poen = await peneiraRepository.delete({ time: {id: parseInt(time)} } )
   
-    }else{
-      throw new BadRequestError('opaaa')
-    }
   }else{
     if(postUser){
-    
       const post = await postagemRepository.delete({dono_id: postUser })
-  
     }else{
       throw new BadRequestError('!!!')
     }

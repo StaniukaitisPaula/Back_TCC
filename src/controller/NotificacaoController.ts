@@ -15,7 +15,7 @@ async getNotificacao(req: Request, res: Response){
 
     const user = req.user
 
-    const notificacoes = await notificacaoRepository.find({ relations: { de : true  }, where: { de: { id : user.id } } , select: { de: { id: false } }} )
+    const notificacoes = await notificacaoRepository.find({ relations: { de : true  }, where: { de: { id : user.id } } , select: { de: { id: false } }, order: { id: "DESC" }} )
 
     
     const response = { notifications: notificacoes }

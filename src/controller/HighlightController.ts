@@ -42,7 +42,7 @@ async getHighlight(req: Request, res: Response){
    
     const id = req.user
 
-    const highlight = await highlightRepository.find({relations: { dono : true  }} )
+    const highlight = await highlightRepository.find({relations: { dono : true  }, order: { id: "DESC" }} )
 
     
     const response = { highlight: highlight }
