@@ -56,7 +56,7 @@ async  getPeneira(req: Request, res: Response){
     
     if(jogador.time_atual)throw new BadRequestError('Jogador já tem time!')
 
-    const timeVerifique = await peneiraRepository.findOneBy({time: { id: time.id } }) 
+    const timeVerifique = await peneiraRepository.findOne({ where: {time: { id: time.id } }, relations: {jogadores: true}}) 
     if(!timeVerifique)throw new BadRequestError('Esse Time não tem peneira ativa!')
 
     let jogadores = timeVerifique.jogadores
