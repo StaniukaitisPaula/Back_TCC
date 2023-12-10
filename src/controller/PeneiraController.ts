@@ -131,8 +131,39 @@ if(aceitar == '1' && peneira){
 
   await notificacaoRepository.save(noti)
 
+  let jogadoresP = peneira.jogadores
+  let jogadorFilter;
+  
+  if (jogadoresP) {
+    jogadorFilter = jogadoresP.filter(x => x.id !== jogador.id);
+  } else {
+    jogadores = [];
+  }
+  
+  
+  peneira.jogadores = jogadorFilter
+  
+  const a = await peneiraRepository.save(peneira)
+
+
+
+
 }else if(peneira){
   const noti = await notificacaoRepository.create({ de: jogador.perfil_id , menssagem: ' Você não foi aceito(a) no time' + time.nome_time, titulo: 'Proposta recusada' })
+  
+  let jogadores = peneira.jogadores
+  let jogadorFilter;
+  
+  if (jogadores) {
+    jogadorFilter = jogadores.filter(x => x.id !== jogador.id);
+  } else {
+    jogadores = [];
+  }
+  
+  
+  peneira.jogadores = jogadorFilter
+  
+  const a = await peneiraRepository.save(peneira)
 
   await notificacaoRepository.save(noti)
 }
