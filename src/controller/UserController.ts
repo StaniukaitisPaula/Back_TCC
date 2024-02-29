@@ -445,7 +445,7 @@ async deletePlayer(req: Request, res: Response){
 
     if(req.player){
 
-      const playerProfile = await jogadorRepository.delete(player)
+      const playerProfile = await jogadorRepository.delete({id: player.id})
     }else{
 
       throw new BadRequestError('O usuário não tem perfil de Jogador!')
